@@ -7,6 +7,7 @@ import java.time.OffsetDateTime;
 @Data
 public class Role {
     private Long id;
+    private Long tenantId;
     private String roleCode;
     private String roleName;
     private String description;

@@ -8,6 +8,7 @@ spring:
     password: L0-postgres
 
 mybatis:
-  mapper-locations: classpath:xenosoft/imldintelligence/modules/**/internal/repository/*.xml
+  mapper-locations: classpath:xenosoft/imldintelligence/module/**/internal/repository/*.xml
+  type-handlers-package: xenosoft.imldintelligence.shared.mybatis
   configuration:
     map-underscore-to-camel-case: true
