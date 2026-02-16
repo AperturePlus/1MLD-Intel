@@ -126,7 +126,9 @@ class DiagnosesRepositoryIntegrationTest extends AbstractPostgresIntegrationTest
                 });
 
         assertThat(diagnosisSessionRepository.deleteById(tenant.getId(), session.getId())).isTrue();
-        assertThat(diagnosisSessionRepository.findById(tenant.getId(), session.getId())).isEmpty();
+        assertThat(diagnosisSessionRepository.findById(tenant.getId(), session.getId())).get()
+                .extracting(DiagnosisSession::getStatus)
+                .isEqualTo("ARCHIVED");
     }
 
     @Test
@@ -326,4 +328,3 @@ class DiagnosesRepositoryIntegrationTest extends AbstractPostgresIntegrationTest
         return prefix + "_" + System.nanoTime();
     }
 }
-

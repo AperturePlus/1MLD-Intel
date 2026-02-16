@@ -110,12 +110,11 @@
           AND id = #{id}
     </update>
 
-    <delete id="deleteById">
-        DELETE
-        FROM diagnosis_session
+    <update id="deleteById">
+        UPDATE diagnosis_session
+        SET status = 'ARCHIVED'
         WHERE tenant_id = #{tenantId}
           AND id = #{id}
-    </delete>
+    </update>
 
 </mapper>
-
