@@ -4,6 +4,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class LicenseStartupValidator implements ApplicationRunner {
     private static final String OPT_COMMAND = "license-cli-command";
@@ -15,9 +17,18 @@ public class LicenseStartupValidator implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        if (args.containsOption(OPT_COMMAND)) {
+        if (isCliCommandActive(args)) {
             return;
         }
         validateService.validateStartupOrThrow();
+    }
+
+    private boolean isCliCommandActive(ApplicationArguments args) {
+        List<String> values = args.getOptionValues(OPT_COMMAND);
+        if (values == null || values.isEmpty()) {
+            return false;
+        }
+        String command = values.get(values.size() - 1);
+        return command != null && !command.trim().isEmpty();
     }
 }
