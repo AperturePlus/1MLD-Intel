@@ -8,6 +8,9 @@ spring:
     init:
       mode: always
   ai:
+    chat:
+      client:
+        enabled: false
     openai:
       chat:
         enabled: false
