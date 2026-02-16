@@ -22,4 +22,4 @@ CREATE INDEX idx_notification_receiver_status ON notification_message(receiver_t
 CREATE INDEX idx_integration_job_source_time ON integration_job(source_system, created_at DESC);
 CREATE INDEX idx_audit_log_resource_time ON audit_log(resource_type, resource_id, created_at DESC);
 CREATE INDEX idx_sensitive_access_resource_time ON sensitive_data_access_log(resource_type, resource_id, created_at DESC);
-CREATE INDEX idx_model_invocation_session_time ON model_invocatio
+CREATE INDEX idx_model_invocation_session_time ON model_invocation_log(session_id, created_at DESC);
