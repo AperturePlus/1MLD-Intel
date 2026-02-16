@@ -2,7 +2,6 @@ plugins {
     java
     id("org.springframework.boot") version "3.5.10"
     id("io.spring.dependency-management") version "1.1.7"
-    id("org.hibernate.orm") version "6.6.41.Final"
     id("org.graalvm.buildtools.native") version "0.10.6"
     id("org.asciidoctor.jvm.convert") version "4.0.5"
 }
@@ -32,7 +31,6 @@ extra["springAiVersion"] = "1.1.2"
 extra["springModulithVersion"] = "1.4.7"
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -51,6 +49,8 @@ dependencies {
     testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.5")
     testImplementation("org.springframework.modulith:spring-modulith-starter-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:postgresql")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -58,12 +58,6 @@ dependencyManagement {
     imports {
         mavenBom("org.springframework.modulith:spring-modulith-bom:${property("springModulithVersion")}")
         mavenBom("org.springframework.ai:spring-ai-bom:${property("springAiVersion")}")
-    }
-}
-
-hibernate {
-    enhancement {
-        enableAssociationManagement = true
     }
 }
 
