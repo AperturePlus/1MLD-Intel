@@ -15,19 +15,6 @@ spring:
     init:
       mode: ${IMLD_SQL_INIT_MODE:never}
       schema-locations: classpath:schema/domain-A.sql,classpath:schema/domain-B.sql,classpath:schema/domain-C.sql,classpath:schema/domain-D.sql,classpath:schema/index.sql
-  ai:
-    chat:
-      client:
-        enabled: ${IMLD_AI_CHAT_CLIENT_ENABLED:false}
-    openai:
-      chat:
-        enabled: ${IMLD_OPENAI_CHAT_ENABLED:false}
-      embedding:
-        enabled: ${IMLD_OPENAI_EMBEDDING_ENABLED:false}
-      image:
-        enabled: ${IMLD_OPENAI_IMAGE_ENABLED:false}
-  autoconfigure:
-    exclude: ${IMLD_AUTOCONFIG_EXCLUDES:org.springframework.ai.model.openaisdk.autoconfigure.OpenAiSdkChatAutoConfiguration,org.springframework.ai.model.openaisdk.autoconfigure.OpenAiSdkEmbeddingAutoConfiguration,org.springframework.ai.model.openaisdk.autoconfigure.OpenAiSdkImageAutoConfiguration}
 
 mybatis:
   mapper-locations: classpath*:xenosoft/imldintelligence/module/**/internal/repository/*.xml

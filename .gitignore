@@ -38,3 +38,4 @@ out/
 .snow/
 
 failures/
+.gradle-home/
