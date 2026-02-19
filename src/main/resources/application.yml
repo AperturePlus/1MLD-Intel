@@ -30,7 +30,7 @@ spring:
     exclude: ${IMLD_AUTOCONFIG_EXCLUDES:org.springframework.ai.model.openaisdk.autoconfigure.OpenAiSdkChatAutoConfiguration,org.springframework.ai.model.openaisdk.autoconfigure.OpenAiSdkEmbeddingAutoConfiguration,org.springframework.ai.model.openaisdk.autoconfigure.OpenAiSdkImageAutoConfiguration}
 
 mybatis:
-  mapper-locations: classpath:xenosoft/imldintelligence/module/**/internal/repository/*.xml
+  mapper-locations: classpath*:xenosoft/imldintelligence/module/**/internal/repository/*.xml
   type-handlers-package: xenosoft.imldintelligence.shared.mybatis
   configuration:
     map-underscore-to-camel-case: true
