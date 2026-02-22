@@ -61,3 +61,71 @@ imld:
     entitlement:
       enforce-support-window: ${IMLD_UPGRADE_ENFORCE_SUPPORT_WINDOW:true}
       allow-security-patch-after-expiry: ${IMLD_UPGRADE_ALLOW_SECURITY_PATCH_AFTER_EXPIRY:true}
+
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: ${IMLD_RESILIENCE_CB_WINDOW_SIZE:20}
+        minimum-number-of-calls: ${IMLD_RESILIENCE_CB_MIN_CALLS:10}
+        permitted-number-of-calls-in-half-open-state: ${IMLD_RESILIENCE_CB_HALF_OPEN_CALLS:5}
+        wait-duration-in-open-state: ${IMLD_RESILIENCE_CB_WAIT_OPEN:30s}
+        failure-rate-threshold: ${IMLD_RESILIENCE_CB_FAILURE_RATE:50}
+        slow-call-rate-threshold: ${IMLD_RESILIENCE_CB_SLOW_CALL_RATE:70}
+        slow-call-duration-threshold: ${IMLD_RESILIENCE_CB_SLOW_CALL_DURATION:2s}
+        automatic-transition-from-open-to-half-open-enabled: true
+        record-exceptions:
+          - java.lang.Exception
+    instances:
+      cloudBridge:
+        base-config: default
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: ${IMLD_RESILIENCE_TIME_LIMITER_TIMEOUT:3s}
+        cancel-running-future: true
+    instances:
+      cloudBridge:
+        base-config: default
+  retry:
+    configs:
+      default:
+        max-attempts: ${IMLD_RESILIENCE_RETRY_MAX_ATTEMPTS:3}
+        wait-duration: ${IMLD_RESILIENCE_RETRY_WAIT:500ms}
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: ${IMLD_RESILIENCE_RETRY_BACKOFF_MULTIPLIER:2}
+        exponential-max-wait-duration: ${IMLD_RESILIENCE_RETRY_MAX_WAIT:3s}
+        retry-exceptions:
+          - java.io.IOException
+          - java.util.concurrent.TimeoutException
+    instances:
+      cloudBridge:
+        base-config: default
+  ratelimiter:
+    configs:
+      default:
+        limit-for-period: ${IMLD_RESILIENCE_RL_LIMIT_FOR_PERIOD:100}
+        limit-refresh-period: ${IMLD_RESILIENCE_RL_REFRESH_PERIOD:1s}
+        timeout-duration: ${IMLD_RESILIENCE_RL_TIMEOUT:0}
+    instances:
+      cloudBridge:
+        base-config: default
+  bulkhead:
+    configs:
+      default:
+        max-concurrent-calls: ${IMLD_RESILIENCE_BH_MAX_CONCURRENT_CALLS:25}
+        max-wait-duration: ${IMLD_RESILIENCE_BH_MAX_WAIT:0}
+    instances:
+      cloudBridge:
+        base-config: default
+  thread-pool-bulkhead:
+    configs:
+      default:
+        core-thread-pool-size: ${IMLD_RESILIENCE_TPBH_CORE_POOL_SIZE:4}
+        max-thread-pool-size: ${IMLD_RESILIENCE_TPBH_MAX_POOL_SIZE:8}
+        queue-capacity: ${IMLD_RESILIENCE_TPBH_QUEUE_CAPACITY:32}
+    instances:
+      cloudBridge:
+        base-config: default
