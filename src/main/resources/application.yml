@@ -15,6 +15,34 @@ spring:
     init:
       mode: ${IMLD_SQL_INIT_MODE:never}
       schema-locations: classpath:schema/domain-A.sql,classpath:schema/domain-B.sql,classpath:schema/domain-C.sql,classpath:schema/domain-D.sql,classpath:schema/index.sql
+  data:
+    redis:
+      host: ${IMLD_REDIS_HOST:localhost}
+      port: ${IMLD_REDIS_PORT:6379}
+      database: ${IMLD_REDIS_DATABASE:0}
+      password: ${IMLD_REDIS_PASSWORD:}
+      timeout: ${IMLD_REDIS_TIMEOUT:2s}
+      connect-timeout: ${IMLD_REDIS_CONNECT_TIMEOUT:2s}
+      ssl:
+        enabled: ${IMLD_REDIS_SSL_ENABLED:false}
+  kafka:
+    bootstrap-servers: ${IMLD_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    client-id: ${IMLD_KAFKA_CLIENT_ID:imld-intelligence}
+    properties:
+      security.protocol: ${IMLD_KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
+      sasl.mechanism: ${IMLD_KAFKA_SASL_MECHANISM:}
+      sasl.jaas.config: ${IMLD_KAFKA_SASL_JAAS_CONFIG:}
+      ssl.endpoint.identification.algorithm: ${IMLD_KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM:https}
+      retries: ${IMLD_KAFKA_RETRIES:3}
+    producer:
+      acks: ${IMLD_KAFKA_PRODUCER_ACKS:all}
+      retries: ${IMLD_KAFKA_RETRIES:3}
+      properties:
+        enable.idempotence: ${IMLD_KAFKA_ENABLE_IDEMPOTENCE:true}
+    consumer:
+      group-id: ${IMLD_KAFKA_CONSUMER_GROUP:imld-intelligence-group}
+      auto-offset-reset: ${IMLD_KAFKA_AUTO_OFFSET_RESET:latest}
+      enable-auto-commit: ${IMLD_KAFKA_ENABLE_AUTO_COMMIT:false}
 
 mybatis:
   mapper-locations: classpath*:xenosoft/imldintelligence/module/**/internal/repository/*.xml
