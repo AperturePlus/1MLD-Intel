@@ -16,7 +16,7 @@
         created_at
     </sql>
 
-    <resultMap id="DiagnosisRecommendationResultMap" type="xenosoft.imldintelligence.module.diagnoses.model.DiagnosisRecommendation">
+    <resultMap id="DiagnosisRecommendationResultMap" type="xenosoft.imldintelligence.module.diagnoses.internal.model.DiagnosisRecommendation">
         <id property="id" column="id"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="sessionId" column="session_id"/>

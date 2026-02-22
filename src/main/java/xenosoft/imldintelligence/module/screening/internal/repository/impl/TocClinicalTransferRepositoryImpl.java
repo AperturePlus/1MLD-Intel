@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import xenosoft.imldintelligence.module.screening.internal.repository.TocClinicalTransferRepository;
 import xenosoft.imldintelligence.module.screening.internal.repository.mybatis.TocClinicalTransferMapper;
-import xenosoft.imldintelligence.module.screening.model.TocClinicalTransfer;
+import xenosoft.imldintelligence.module.screening.internal.model.TocClinicalTransfer;
 
 import java.util.List;
 import java.util.Optional;

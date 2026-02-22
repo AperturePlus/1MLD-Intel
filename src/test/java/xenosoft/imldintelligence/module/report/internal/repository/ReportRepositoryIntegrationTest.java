@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import xenosoft.imldintelligence.AbstractPostgresIntegrationTest;
 import xenosoft.imldintelligence.module.diagnoses.internal.repository.DiagnosisSessionRepository;
 import xenosoft.imldintelligence.module.diagnoses.internal.repository.ModelRegistryRepository;
-import xenosoft.imldintelligence.module.diagnoses.model.DiagnosisSession;
-import xenosoft.imldintelligence.module.diagnoses.model.ModelRegistry;
+import xenosoft.imldintelligence.module.diagnoses.internal.model.DiagnosisSession;
+import xenosoft.imldintelligence.module.diagnoses.internal.model.ModelRegistry;
 import xenosoft.imldintelligence.module.identity.internal.model.Encounter;
 import xenosoft.imldintelligence.module.identity.internal.model.Patient;
 import xenosoft.imldintelligence.module.identity.internal.model.Tenant;
@@ -20,9 +20,9 @@ import xenosoft.imldintelligence.module.identity.internal.repository.EncounterRe
 import xenosoft.imldintelligence.module.identity.internal.repository.PatientRepository;
 import xenosoft.imldintelligence.module.identity.internal.repository.TenantRepository;
 import xenosoft.imldintelligence.module.identity.internal.repository.UserAccountRepository;
-import xenosoft.imldintelligence.module.report.model.Report;
-import xenosoft.imldintelligence.module.report.model.ReportTemplate;
-import xenosoft.imldintelligence.module.report.model.ReportVersion;
+import xenosoft.imldintelligence.module.report.internal.model.Report;
+import xenosoft.imldintelligence.module.report.internal.model.ReportTemplate;
+import xenosoft.imldintelligence.module.report.internal.model.ReportVersion;
 
 import java.time.OffsetDateTime;
 

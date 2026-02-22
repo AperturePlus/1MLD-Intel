@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import xenosoft.imldintelligence.module.careplan.internal.repository.CarePlanTemplateRepository;
 import xenosoft.imldintelligence.module.careplan.internal.repository.mybatis.CarePlanTemplateMapper;
-import xenosoft.imldintelligence.module.careplan.model.CarePlanTemplate;
+import xenosoft.imldintelligence.module.careplan.internal.model.CarePlanTemplate;
 
 import java.util.List;
 import java.util.Optional;

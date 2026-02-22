@@ -1,6 +1,6 @@
 package xenosoft.imldintelligence.module.careplan.internal.repository;
 
-import xenosoft.imldintelligence.module.careplan.model.CarePlanTemplate;
+import xenosoft.imldintelligence.module.careplan.internal.model.CarePlanTemplate;
 
 import java.util.List;
 import java.util.Optional;

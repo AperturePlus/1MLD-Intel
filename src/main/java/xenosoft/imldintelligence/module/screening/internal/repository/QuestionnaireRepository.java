@@ -1,6 +1,6 @@
 package xenosoft.imldintelligence.module.screening.internal.repository;
 
-import xenosoft.imldintelligence.module.screening.model.Questionnaire;
+import xenosoft.imldintelligence.module.screening.internal.model.Questionnaire;
 
 import java.util.List;
 import java.util.Optional;

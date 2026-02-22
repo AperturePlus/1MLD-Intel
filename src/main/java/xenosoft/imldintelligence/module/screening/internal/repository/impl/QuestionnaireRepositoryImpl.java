@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import xenosoft.imldintelligence.module.screening.internal.repository.QuestionnaireRepository;
 import xenosoft.imldintelligence.module.screening.internal.repository.mybatis.QuestionnaireMapper;
-import xenosoft.imldintelligence.module.screening.model.Questionnaire;
+import xenosoft.imldintelligence.module.screening.internal.model.Questionnaire;
 
 import java.util.List;
 import java.util.Optional;

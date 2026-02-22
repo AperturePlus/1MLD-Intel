@@ -20,7 +20,7 @@
         resolution_note
     </sql>
 
-    <resultMap id="AlertEventResultMap" type="xenosoft.imldintelligence.module.careplan.model.AlertEvent">
+    <resultMap id="AlertEventResultMap" type="xenosoft.imldintelligence.module.careplan.internal.model.AlertEvent">
         <id property="id" column="id"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="patientId" column="patient_id"/>

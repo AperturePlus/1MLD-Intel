@@ -1,4 +1,4 @@
-package xenosoft.imldintelligence.module.screening.model;
+package xenosoft.imldintelligence.module.screening.internal.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 @lombok.Data

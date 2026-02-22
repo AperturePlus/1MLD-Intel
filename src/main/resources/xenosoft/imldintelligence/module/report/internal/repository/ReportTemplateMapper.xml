@@ -19,7 +19,7 @@
         created_at
     </sql>
 
-    <resultMap id="ReportTemplateResultMap" type="xenosoft.imldintelligence.module.report.model.ReportTemplate">
+    <resultMap id="ReportTemplateResultMap" type="xenosoft.imldintelligence.module.report.internal.model.ReportTemplate">
         <id property="id" column="id"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="templateCode" column="template_code"/>

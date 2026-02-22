@@ -2,7 +2,7 @@ package xenosoft.imldintelligence.module.careplan.internal.repository.mybatis;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import xenosoft.imldintelligence.module.careplan.model.CarePlan;
+import xenosoft.imldintelligence.module.careplan.internal.model.CarePlan;
 
 import java.util.List;
 

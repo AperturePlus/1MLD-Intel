@@ -18,7 +18,7 @@
         created_at
     </sql>
 
-    <resultMap id="ModelRegistryResultMap" type="xenosoft.imldintelligence.module.diagnoses.model.ModelRegistry">
+    <resultMap id="ModelRegistryResultMap" type="xenosoft.imldintelligence.module.diagnoses.internal.model.ModelRegistry">
         <id property="id" column="id"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="modelCode" column="model_code"/>

@@ -19,7 +19,7 @@
         created_at
     </sql>
 
-    <resultMap id="DiagnosisResultResultMap" type="xenosoft.imldintelligence.module.diagnoses.model.DiagnosisResult">
+    <resultMap id="DiagnosisResultResultMap" type="xenosoft.imldintelligence.module.diagnoses.internal.model.DiagnosisResult">
         <id property="id" column="id"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="sessionId" column="session_id"/>

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import xenosoft.imldintelligence.module.diagnoses.internal.repository.DiagnosisRecommendationRepository;
 import xenosoft.imldintelligence.module.diagnoses.internal.repository.mybatis.DiagnosisRecommendationMapper;
-import xenosoft.imldintelligence.module.diagnoses.model.DiagnosisRecommendation;
+import xenosoft.imldintelligence.module.diagnoses.internal.model.DiagnosisRecommendation;
 
 import java.util.List;
 import java.util.Optional;

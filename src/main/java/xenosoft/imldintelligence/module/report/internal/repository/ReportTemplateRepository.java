@@ -1,6 +1,6 @@
 package xenosoft.imldintelligence.module.report.internal.repository;
 
-import xenosoft.imldintelligence.module.report.model.ReportTemplate;
+import xenosoft.imldintelligence.module.report.internal.model.ReportTemplate;
 
 import java.util.List;
 import java.util.Optional;

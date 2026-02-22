@@ -17,7 +17,7 @@
         created_at
     </sql>
 
-    <resultMap id="TocClinicalTransferResultMap" type="xenosoft.imldintelligence.module.screening.model.TocClinicalTransfer">
+    <resultMap id="TocClinicalTransferResultMap" type="xenosoft.imldintelligence.module.screening.internal.model.TocClinicalTransfer">
         <id property="id" column="id"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="responseId" column="response_id"/>

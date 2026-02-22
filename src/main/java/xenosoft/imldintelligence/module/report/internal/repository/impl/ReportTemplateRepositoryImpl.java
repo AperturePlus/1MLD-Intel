@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import xenosoft.imldintelligence.module.report.internal.repository.ReportTemplateRepository;
 import xenosoft.imldintelligence.module.report.internal.repository.mybatis.ReportTemplateMapper;
-import xenosoft.imldintelligence.module.report.model.ReportTemplate;
+import xenosoft.imldintelligence.module.report.internal.model.ReportTemplate;
 
 import java.util.List;
 import java.util.Optional;

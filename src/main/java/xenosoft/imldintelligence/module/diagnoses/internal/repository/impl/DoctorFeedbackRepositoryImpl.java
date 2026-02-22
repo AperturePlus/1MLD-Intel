@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import xenosoft.imldintelligence.module.diagnoses.internal.repository.DoctorFeedbackRepository;
 import xenosoft.imldintelligence.module.diagnoses.internal.repository.mybatis.DoctorFeedbackMapper;
-import xenosoft.imldintelligence.module.diagnoses.model.DoctorFeedback;
+import xenosoft.imldintelligence.module.diagnoses.internal.model.DoctorFeedback;
 
 import java.util.List;
 import java.util.Optional;

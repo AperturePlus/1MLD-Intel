@@ -1,6 +1,6 @@
 package xenosoft.imldintelligence.module.careplan.internal.repository;
 
-import xenosoft.imldintelligence.module.careplan.model.AlertEvent;
+import xenosoft.imldintelligence.module.careplan.internal.model.AlertEvent;
 
 import java.util.List;
 import java.util.Optional;

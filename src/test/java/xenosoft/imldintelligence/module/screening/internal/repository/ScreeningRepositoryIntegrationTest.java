@@ -16,10 +16,10 @@ import xenosoft.imldintelligence.module.identity.internal.repository.PatientRepo
 import xenosoft.imldintelligence.module.identity.internal.repository.TenantRepository;
 import xenosoft.imldintelligence.module.identity.internal.repository.TocUserRepository;
 import xenosoft.imldintelligence.module.identity.internal.repository.UserAccountRepository;
-import xenosoft.imldintelligence.module.screening.model.Questionnaire;
-import xenosoft.imldintelligence.module.screening.model.QuestionnaireQuestion;
-import xenosoft.imldintelligence.module.screening.model.QuestionnaireResponse;
-import xenosoft.imldintelligence.module.screening.model.TocClinicalTransfer;
+import xenosoft.imldintelligence.module.screening.internal.model.Questionnaire;
+import xenosoft.imldintelligence.module.screening.internal.model.QuestionnaireQuestion;
+import xenosoft.imldintelligence.module.screening.internal.model.QuestionnaireResponse;
+import xenosoft.imldintelligence.module.screening.internal.model.TocClinicalTransfer;
 
 import java.time.OffsetDateTime;
 

@@ -2,7 +2,7 @@ package xenosoft.imldintelligence.module.diagnoses.internal.repository.mybatis;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import xenosoft.imldintelligence.module.diagnoses.model.DiagnosisResult;
+import xenosoft.imldintelligence.module.diagnoses.internal.model.DiagnosisResult;
 
 import java.util.List;
 

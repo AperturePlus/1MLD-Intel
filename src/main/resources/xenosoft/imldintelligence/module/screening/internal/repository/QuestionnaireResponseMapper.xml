@@ -20,7 +20,7 @@
         expires_at
     </sql>
 
-    <resultMap id="QuestionnaireResponseResultMap" type="xenosoft.imldintelligence.module.screening.model.QuestionnaireResponse">
+    <resultMap id="QuestionnaireResponseResultMap" type="xenosoft.imldintelligence.module.screening.internal.model.QuestionnaireResponse">
         <id property="id" column="id"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="questionnaireId" column="questionnaire_id"/>

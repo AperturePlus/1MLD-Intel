@@ -2,7 +2,7 @@ package xenosoft.imldintelligence.module.report.internal.repository.mybatis;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import xenosoft.imldintelligence.module.report.model.ReportTemplate;
+import xenosoft.imldintelligence.module.report.internal.model.ReportTemplate;
 
 import java.util.List;
 

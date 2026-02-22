@@ -16,7 +16,7 @@
         created_at
     </sql>
 
-    <resultMap id="ReportVersionResultMap" type="xenosoft.imldintelligence.module.report.model.ReportVersion">
+    <resultMap id="ReportVersionResultMap" type="xenosoft.imldintelligence.module.report.internal.model.ReportVersion">
         <id property="id" column="id"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="reportId" column="report_id"/>

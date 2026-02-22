@@ -19,7 +19,7 @@
         created_at
     </sql>
 
-    <resultMap id="QuestionnaireQuestionResultMap" type="xenosoft.imldintelligence.module.screening.model.QuestionnaireQuestion">
+    <resultMap id="QuestionnaireQuestionResultMap" type="xenosoft.imldintelligence.module.screening.internal.model.QuestionnaireQuestion">
         <id property="id" column="id"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="questionnaireId" column="questionnaire_id"/>

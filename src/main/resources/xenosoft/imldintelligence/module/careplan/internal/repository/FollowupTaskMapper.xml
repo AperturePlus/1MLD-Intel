@@ -20,7 +20,7 @@
         created_at
     </sql>
 
-    <resultMap id="FollowupTaskResultMap" type="xenosoft.imldintelligence.module.careplan.model.FollowupTask">
+    <resultMap id="FollowupTaskResultMap" type="xenosoft.imldintelligence.module.careplan.internal.model.FollowupTask">
         <id property="id" column="id"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="carePlanId" column="care_plan_id"/>

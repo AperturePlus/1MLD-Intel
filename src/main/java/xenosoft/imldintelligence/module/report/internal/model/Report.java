@@ -1,4 +1,4 @@
-package xenosoft.imldintelligence.module.report.model;
+package xenosoft.imldintelligence.module.report.internal.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

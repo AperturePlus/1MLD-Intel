@@ -2,7 +2,7 @@ package xenosoft.imldintelligence.module.screening.internal.repository.mybatis;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import xenosoft.imldintelligence.module.screening.model.TocClinicalTransfer;
+import xenosoft.imldintelligence.module.screening.internal.model.TocClinicalTransfer;
 
 import java.util.List;
 

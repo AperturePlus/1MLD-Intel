@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import xenosoft.imldintelligence.module.careplan.internal.repository.FollowupTaskRepository;
 import xenosoft.imldintelligence.module.careplan.internal.repository.mybatis.FollowupTaskMapper;
-import xenosoft.imldintelligence.module.careplan.model.FollowupTask;
+import xenosoft.imldintelligence.module.careplan.internal.model.FollowupTask;
 
 import java.util.List;
 import java.util.Optional;

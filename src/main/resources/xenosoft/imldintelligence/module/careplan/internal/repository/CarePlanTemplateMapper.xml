@@ -18,7 +18,7 @@
         created_at
     </sql>
 
-    <resultMap id="CarePlanTemplateResultMap" type="xenosoft.imldintelligence.module.careplan.model.CarePlanTemplate">
+    <resultMap id="CarePlanTemplateResultMap" type="xenosoft.imldintelligence.module.careplan.internal.model.CarePlanTemplate">
         <id property="id" column="id"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="templateCode" column="template_code"/>

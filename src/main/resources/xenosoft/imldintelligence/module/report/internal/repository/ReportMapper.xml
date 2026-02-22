@@ -23,7 +23,7 @@
         updated_at
     </sql>
 
-    <resultMap id="ReportResultMap" type="xenosoft.imldintelligence.module.report.model.Report">
+    <resultMap id="ReportResultMap" type="xenosoft.imldintelligence.module.report.internal.model.Report">
         <id property="id" column="id"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="patientId" column="patient_id"/>

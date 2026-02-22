@@ -1,4 +1,4 @@
-package xenosoft.imldintelligence.module.diagnoses.model;
+package xenosoft.imldintelligence.module.diagnoses.internal.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

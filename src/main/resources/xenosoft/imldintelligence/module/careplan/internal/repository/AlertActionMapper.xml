@@ -15,7 +15,7 @@
         created_at
     </sql>
 
-    <resultMap id="AlertActionResultMap" type="xenosoft.imldintelligence.module.careplan.model.AlertAction">
+    <resultMap id="AlertActionResultMap" type="xenosoft.imldintelligence.module.careplan.internal.model.AlertAction">
         <id property="id" column="id"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="alertId" column="alert_id"/>

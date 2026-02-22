@@ -1,6 +1,6 @@
 package xenosoft.imldintelligence.module.diagnoses.internal.repository;
 
-import xenosoft.imldintelligence.module.diagnoses.model.DiagnosisRecommendation;
+import xenosoft.imldintelligence.module.diagnoses.internal.model.DiagnosisRecommendation;
 
 import java.util.List;
 import java.util.Optional;

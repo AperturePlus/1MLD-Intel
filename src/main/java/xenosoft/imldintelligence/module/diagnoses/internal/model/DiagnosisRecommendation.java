@@ -1,4 +1,4 @@
-package xenosoft.imldintelligence.module.diagnoses.model;
+package xenosoft.imldintelligence.module.diagnoses.internal.model;
 
 @lombok.Data
 public class DiagnosisRecommendation {

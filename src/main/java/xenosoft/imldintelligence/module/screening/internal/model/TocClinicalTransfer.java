@@ -1,4 +1,4 @@
-package xenosoft.imldintelligence.module.screening.model;
+package xenosoft.imldintelligence.module.screening.internal.model;
 
 @lombok.Data
 public class TocClinicalTransfer {

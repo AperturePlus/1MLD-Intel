@@ -2,7 +2,7 @@ package xenosoft.imldintelligence.module.screening.internal.repository.mybatis;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import xenosoft.imldintelligence.module.screening.model.Questionnaire;
+import xenosoft.imldintelligence.module.screening.internal.model.Questionnaire;
 
 import java.util.List;
 

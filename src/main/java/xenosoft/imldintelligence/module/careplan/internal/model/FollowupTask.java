@@ -1,4 +1,4 @@
-package xenosoft.imldintelligence.module.careplan.model;
+package xenosoft.imldintelligence.module.careplan.internal.model;
 
 @lombok.Data
 public class FollowupTask {

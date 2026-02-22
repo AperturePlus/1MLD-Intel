@@ -1,4 +1,4 @@
-package xenosoft.imldintelligence.module.careplan.model;
+package xenosoft.imldintelligence.module.careplan.internal.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 @lombok.Data

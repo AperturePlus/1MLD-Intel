@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import xenosoft.imldintelligence.module.careplan.internal.repository.AlertActionRepository;
 import xenosoft.imldintelligence.module.careplan.internal.repository.mybatis.AlertActionMapper;
-import xenosoft.imldintelligence.module.careplan.model.AlertAction;
+import xenosoft.imldintelligence.module.careplan.internal.model.AlertAction;
 
 import java.util.List;
 import java.util.Optional;
