@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.aot.DisabledInAotMode;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -106,6 +107,7 @@ class AuditTrailServiceIntegrationTest extends AbstractPostgresIntegrationTest {
     }
 
     @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void shouldFailClosedAndRollbackBusinessTransactionWhenAuditPersistenceFails() {
         Tenant tenant = createTenant();
         String username = "rollback_" + unique("user");
