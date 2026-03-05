@@ -28,7 +28,7 @@
         <result property="valueNumeric" column="value_numeric"/>
         <result property="valueText" column="value_text"/>
         <result property="source" column="source"/>
-        <result property="deviceInfo" column="device_info" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.shared.mybatis.JsonNodeTypeHandler"/>
+        <result property="deviceInfo" column="device_info" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.common.mybatis.JsonNodeTypeHandler"/>
         <result property="recordedAt" column="recorded_at"/>
         <result property="createdAt" column="created_at"/>
     </resultMap>

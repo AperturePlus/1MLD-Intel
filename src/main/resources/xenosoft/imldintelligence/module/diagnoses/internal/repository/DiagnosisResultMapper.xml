@@ -28,7 +28,7 @@
         <result property="confidence" column="confidence"/>
         <result property="rankNo" column="rank_no"/>
         <result property="riskLevel" column="risk_level"/>
-        <result property="evidenceJson" column="evidence_json" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.shared.mybatis.JsonNodeTypeHandler"/>
+        <result property="evidenceJson" column="evidence_json" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.common.mybatis.JsonNodeTypeHandler"/>
         <result property="isDisplayToPatient" column="is_display_to_patient"/>
         <result property="createdAt" column="created_at"/>
     </resultMap>

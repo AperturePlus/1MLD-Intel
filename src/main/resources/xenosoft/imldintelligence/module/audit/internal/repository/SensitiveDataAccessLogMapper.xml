@@ -18,7 +18,7 @@
         created_at
     </sql>
 
-    <resultMap id="SensitiveDataAccessLogResultMap" type="xenosoft.imldintelligence.shared.model.SensitiveDataAccessLog">
+    <resultMap id="SensitiveDataAccessLogResultMap" type="xenosoft.imldintelligence.common.model.SensitiveDataAccessLog">
         <id property="id" column="id"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="userId" column="user_id"/>

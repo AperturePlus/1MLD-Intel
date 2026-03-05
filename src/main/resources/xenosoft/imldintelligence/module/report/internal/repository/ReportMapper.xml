@@ -35,7 +35,7 @@
         <result property="currentVersion" column="current_version"/>
         <result property="signedBy" column="signed_by"/>
         <result property="signedAt" column="signed_at"/>
-        <result property="signatureData" column="signature_data" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.shared.mybatis.JsonNodeTypeHandler"/>
+        <result property="signatureData" column="signature_data" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.common.mybatis.JsonNodeTypeHandler"/>
         <result property="createdBy" column="created_by"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>

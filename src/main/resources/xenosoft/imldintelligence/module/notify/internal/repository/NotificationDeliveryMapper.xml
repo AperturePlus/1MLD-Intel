@@ -26,7 +26,7 @@
         <result property="providerMessageId" column="provider_message_id"/>
         <result property="deliveryStatus" column="delivery_status"/>
         <result property="failReason" column="fail_reason"/>
-        <result property="callbackPayload" column="callback_payload" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.shared.mybatis.JsonNodeTypeHandler"/>
+        <result property="callbackPayload" column="callback_payload" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.common.mybatis.JsonNodeTypeHandler"/>
         <result property="deliveredAt" column="delivered_at"/>
         <result property="createdAt" column="created_at"/>
     </resultMap>

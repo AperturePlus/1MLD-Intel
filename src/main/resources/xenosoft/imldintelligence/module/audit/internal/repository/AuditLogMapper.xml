@@ -22,7 +22,7 @@
         created_at
     </sql>
 
-    <resultMap id="AuditLogResultMap" type="xenosoft.imldintelligence.shared.model.AuditLog">
+    <resultMap id="AuditLogResultMap" type="xenosoft.imldintelligence.common.model.AuditLog">
         <id property="id" column="id"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="userId" column="user_id"/>
@@ -30,8 +30,8 @@
         <result property="action" column="action"/>
         <result property="resourceType" column="resource_type"/>
         <result property="resourceId" column="resource_id"/>
-        <result property="beforeData" column="before_data" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.shared.mybatis.JsonNodeTypeHandler"/>
-        <result property="afterData" column="after_data" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.shared.mybatis.JsonNodeTypeHandler"/>
+        <result property="beforeData" column="before_data" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.common.mybatis.JsonNodeTypeHandler"/>
+        <result property="afterData" column="after_data" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.common.mybatis.JsonNodeTypeHandler"/>
         <result property="ipAddress" column="ip_address"/>
         <result property="deviceInfo" column="device_info"/>
         <result property="appVersion" column="app_version"/>

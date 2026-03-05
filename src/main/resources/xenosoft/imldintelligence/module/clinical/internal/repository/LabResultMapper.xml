@@ -36,7 +36,7 @@
         <result property="referenceHigh" column="reference_high"/>
         <result property="abnormalFlag" column="abnormal_flag"/>
         <result property="sourceType" column="source_type"/>
-        <result property="rawData" column="raw_data" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.shared.mybatis.JsonNodeTypeHandler"/>
+        <result property="rawData" column="raw_data" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.common.mybatis.JsonNodeTypeHandler"/>
         <result property="collectedAt" column="collected_at"/>
         <result property="createdAt" column="created_at"/>
     </resultMap>

@@ -23,7 +23,7 @@
         created_at
     </sql>
 
-    <resultMap id="ModelInvocationLogResultMap" type="xenosoft.imldintelligence.shared.model.ModelInvocationLog">
+    <resultMap id="ModelInvocationLogResultMap" type="xenosoft.imldintelligence.common.model.ModelInvocationLog">
         <id property="id" column="id"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="sessionId" column="session_id"/>

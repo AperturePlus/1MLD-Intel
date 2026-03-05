@@ -24,9 +24,9 @@
         <result property="tenantId" column="tenant_id"/>
         <result property="policyCode" column="policy_code"/>
         <result property="policyName" column="policy_name"/>
-        <result property="subjectExpr" column="subject_expr" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.shared.mybatis.JsonNodeTypeHandler"/>
-        <result property="resourceExpr" column="resource_expr" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.shared.mybatis.JsonNodeTypeHandler"/>
-        <result property="actionExpr" column="action_expr" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.shared.mybatis.JsonNodeTypeHandler"/>
+        <result property="subjectExpr" column="subject_expr" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.common.mybatis.JsonNodeTypeHandler"/>
+        <result property="resourceExpr" column="resource_expr" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.common.mybatis.JsonNodeTypeHandler"/>
+        <result property="actionExpr" column="action_expr" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.common.mybatis.JsonNodeTypeHandler"/>
         <result property="effect" column="effect"/>
         <result property="priority" column="priority"/>
         <result property="status" column="status"/>
@@ -54,7 +54,7 @@
         <include refid="BaseColumns"/>
         FROM abac_policy
         WHERE tenant_id = #{tenantId}
-        ORDER BY id DESC
+        ORDER BY priority ASC, id ASC
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">

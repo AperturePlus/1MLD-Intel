@@ -24,7 +24,7 @@
         <result property="resultId" column="result_id"/>
         <result property="doctorId" column="doctor_id"/>
         <result property="action" column="action"/>
-        <result property="modifiedValue" column="modified_value" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.shared.mybatis.JsonNodeTypeHandler"/>
+        <result property="modifiedValue" column="modified_value" jdbcType="OTHER" typeHandler="xenosoft.imldintelligence.common.mybatis.JsonNodeTypeHandler"/>
         <result property="rejectReason" column="reject_reason"/>
         <result property="createdAt" column="created_at"/>
     </resultMap>
