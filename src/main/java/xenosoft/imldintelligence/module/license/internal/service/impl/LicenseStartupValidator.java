@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Runs license validation at application startup unless a license CLI command is being executed.
+ */
 @Component
 public class LicenseStartupValidator implements ApplicationRunner {
     private static final String OPT_COMMAND = "license-cli-command";
@@ -15,6 +18,12 @@ public class LicenseStartupValidator implements ApplicationRunner {
         this.validateService = validateService;
     }
 
+    /**
+     * Triggers startup license validation for normal application boot.
+     *
+     * @param args parsed application arguments
+     * @throws IllegalStateException if the configured private deployment license is invalid
+     */
     @Override
     public void run(ApplicationArguments args) {
         if (isCliCommandActive(args)) {

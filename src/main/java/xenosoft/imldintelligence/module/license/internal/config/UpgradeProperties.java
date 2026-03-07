@@ -5,6 +5,9 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * 升级配置属性，定义升级清单校验与支持期控制策略。
+ */
 @Setter
 @Getter
 @Component

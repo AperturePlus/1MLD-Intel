@@ -5,6 +5,9 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * 许可证配置属性，定义授权模式与私有化部署所需的许可证参数。
+ */
 @Setter
 @Getter
 @Component

@@ -7,6 +7,9 @@ import xenosoft.imldintelligence.common.model.SensitiveDataAccessLog;
 
 import java.util.List;
 
+/**
+ * 敏感数据访问日志 MyBatis Mapper，定义敏感数据访问日志的数据读写映射。
+ */
 @Mapper
 public interface SensitiveDataAccessLogMapper {
     int insert(SensitiveDataAccessLog log);

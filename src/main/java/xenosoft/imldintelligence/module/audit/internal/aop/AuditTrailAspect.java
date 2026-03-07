@@ -17,6 +17,9 @@ import xenosoft.imldintelligence.module.audit.internal.service.command.Sensitive
 
 import java.lang.reflect.Method;
 
+/**
+ * 审计切面，拦截审计相关注解并写入审计日志。
+ */
 @Aspect
 @Component
 @ConditionalOnProperty(prefix = "imld.audit", name = "enabled", havingValue = "true", matchIfMissing = true)

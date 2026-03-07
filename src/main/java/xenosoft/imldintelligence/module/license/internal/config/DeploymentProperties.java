@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 
+/**
+ * 部署模式配置属性，定义系统当前运行形态及相关部署参数。
+ */
 @Setter
 @Getter
 @Component

@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.common.model.ModelInvocationLog;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
+/**
+ * ModelInvocationLog 响应对象，封装ModelInvocationLog相关的返回字段。
+ */
 @Data
 public class ModelInvocationLogResponse {
     private Long id;

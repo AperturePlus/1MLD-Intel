@@ -19,6 +19,9 @@ public class AuditRequestAuthorizationCustomizer implements ModuleRequestAuthori
         this.auditProperties = auditProperties;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void customize(org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer<org.springframework.security.config.annotation.web.builders.HttpSecurity>.AuthorizationManagerRequestMatcherRegistry requests) {
         Set<String> allowedAuthorities = RoleAuthorityUtils.expandAuthorityNames(auditProperties.getQueryRoleAllowlist());

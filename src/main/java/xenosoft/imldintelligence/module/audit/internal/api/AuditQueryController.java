@@ -27,6 +27,12 @@ import xenosoft.imldintelligence.common.model.SensitiveDataAccessLog;
 
 import java.time.OffsetDateTime;
 
+/**
+ * Exposes read-only endpoints for querying audit data within a tenant boundary.
+ *
+ * <p>Each request must pass the audit query access guard and provide a valid tenant identifier
+ * through the {@code X-Tenant-Id} header.</p>
+ */
 @RestController
 @RequestMapping("/api/v1/audit")
 @ConditionalOnProperty(prefix = "imld.audit", name = {"enabled", "query-api-enabled"}, havingValue = "true", matchIfMissing = true)
@@ -43,6 +49,23 @@ public class AuditQueryController {
         this.auditProperties = auditProperties;
     }
 
+    /**
+     * Queries generic audit logs.
+     *
+     * @param request current HTTP request used for authorization checks
+     * @param tenantHeader tenant identifier supplied through {@code X-Tenant-Id}
+     * @param userId optional user identifier filter
+     * @param action optional action code filter
+     * @param resourceType optional resource type filter
+     * @param resourceId optional resource identifier filter
+     * @param traceId optional distributed trace identifier filter
+     * @param from optional inclusive start timestamp
+     * @param to optional inclusive end timestamp
+     * @param page optional zero-based page index
+     * @param size optional page size
+     * @return paged audit log response payload
+     * @throws ResponseStatusException if access is denied or request parameters are invalid
+     */
     @GetMapping("/logs")
     public PagedResponse<AuditLogResponse> queryAuditLogs(HttpServletRequest request,
                                                           @RequestHeader(value = AuditHeaderNames.TENANT_ID, required = false) String tenantHeader,
@@ -73,6 +96,23 @@ public class AuditQueryController {
         return PagedResponse.from(result, AuditLogResponse::from);
     }
 
+    /**
+     * Queries sensitive-data access audit logs.
+     *
+     * @param request current HTTP request used for authorization checks
+     * @param tenantHeader tenant identifier supplied through {@code X-Tenant-Id}
+     * @param userId optional user identifier filter
+     * @param sensitiveType optional sensitive data classification filter
+     * @param resourceType optional resource type filter
+     * @param resourceId optional resource identifier filter
+     * @param accessResult optional access result filter
+     * @param from optional inclusive start timestamp
+     * @param to optional inclusive end timestamp
+     * @param page optional zero-based page index
+     * @param size optional page size
+     * @return paged sensitive access log response payload
+     * @throws ResponseStatusException if access is denied or request parameters are invalid
+     */
     @GetMapping("/sensitive-access-logs")
     public PagedResponse<SensitiveAccessLogResponse> querySensitiveAccessLogs(HttpServletRequest request,
                                                                                @RequestHeader(value = AuditHeaderNames.TENANT_ID, required = false) String tenantHeader,
@@ -103,6 +143,23 @@ public class AuditQueryController {
         return PagedResponse.from(result, SensitiveAccessLogResponse::from);
     }
 
+    /**
+     * Queries model invocation audit logs.
+     *
+     * @param request current HTTP request used for authorization checks
+     * @param tenantHeader tenant identifier supplied through {@code X-Tenant-Id}
+     * @param sessionId optional diagnosis session identifier filter
+     * @param modelRegistryId optional model registry identifier filter
+     * @param provider optional model provider filter
+     * @param requestId optional upstream request identifier filter
+     * @param status optional invocation status filter
+     * @param from optional inclusive start timestamp
+     * @param to optional inclusive end timestamp
+     * @param page optional zero-based page index
+     * @param size optional page size
+     * @return paged model invocation log response payload
+     * @throws ResponseStatusException if access is denied or request parameters are invalid
+     */
     @GetMapping("/model-invocation-logs")
     public PagedResponse<ModelInvocationLogResponse> queryModelInvocationLogs(HttpServletRequest request,
                                                                                @RequestHeader(value = AuditHeaderNames.TENANT_ID, required = false) String tenantHeader,

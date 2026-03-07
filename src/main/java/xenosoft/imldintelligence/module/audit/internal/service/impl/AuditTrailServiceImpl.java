@@ -22,6 +22,9 @@ import xenosoft.imldintelligence.common.model.SensitiveDataAccessLog;
 
 import java.util.UUID;
 
+/**
+ * 审计追踪服务实现类，负责写入业务审计、敏感访问和模型调用日志。
+ */
 @Service
 @ConditionalOnProperty(prefix = "imld.audit", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class AuditTrailServiceImpl implements AuditTrailService {
@@ -45,6 +48,9 @@ public class AuditTrailServiceImpl implements AuditTrailService {
         this.auditProperties = auditProperties;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public AuditLog recordAudit(AuditRecordCommand command) {
@@ -84,6 +90,9 @@ public class AuditTrailServiceImpl implements AuditTrailService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public SensitiveDataAccessLog recordSensitiveAccess(SensitiveAccessRecordCommand command) {
@@ -116,6 +125,9 @@ public class AuditTrailServiceImpl implements AuditTrailService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public ModelInvocationLog recordModelInvocation(ModelInvocationRecordCommand command) {

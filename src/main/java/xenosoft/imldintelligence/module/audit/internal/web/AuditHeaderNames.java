@@ -1,5 +1,8 @@
 package xenosoft.imldintelligence.module.audit.internal.web;
 
+/**
+ * 审计请求头常量定义类，集中声明审计链路使用的请求头名称。
+ */
 public final class AuditHeaderNames {
     public static final String TENANT_ID = "X-Tenant-Id";
     public static final String USER_ID = "X-User-Id";

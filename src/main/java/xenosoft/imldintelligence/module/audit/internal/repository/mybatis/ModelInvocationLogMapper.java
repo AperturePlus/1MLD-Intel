@@ -7,6 +7,9 @@ import xenosoft.imldintelligence.common.model.ModelInvocationLog;
 
 import java.util.List;
 
+/**
+ * 模型调用日志 MyBatis Mapper，定义模型调用日志的数据读写映射。
+ */
 @Mapper
 public interface ModelInvocationLogMapper {
     int insert(ModelInvocationLog log);

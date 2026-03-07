@@ -15,6 +15,12 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Enforces role-based access to the audit query API.
+ *
+ * <p>The guard first prefers authenticated Spring Security authorities and falls back to the
+ * request role header when security is not fully initialized for the request.</p>
+ */
 @Component
 public class AuditQueryAccessGuard {
     private final AuditProperties properties;
@@ -23,6 +29,12 @@ public class AuditQueryAccessGuard {
         this.properties = properties;
     }
 
+    /**
+     * Rejects requests that do not carry at least one role from the configured audit query allowlist.
+     *
+     * @param request current HTTP request used to resolve fallback role headers
+     * @throws ResponseStatusException with status {@link HttpStatus#FORBIDDEN} if the caller is not allowed
+     */
     public void assertAllowed(HttpServletRequest request) {
         Set<String> requestRoles = resolveRequestRoles(request);
         if (requestRoles.isEmpty()) {

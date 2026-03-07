@@ -7,6 +7,9 @@ import xenosoft.imldintelligence.common.model.AuditLog;
 
 import java.util.List;
 
+/**
+ * 审计日志 MyBatis Mapper，定义审计日志的数据读写映射。
+ */
 @Mapper
 public interface AuditLogMapper {
     int insert(AuditLog auditLog);

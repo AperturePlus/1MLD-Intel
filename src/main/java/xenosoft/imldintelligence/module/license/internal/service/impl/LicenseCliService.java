@@ -21,6 +21,9 @@ import xenosoft.imldintelligence.module.license.internal.model.LicenseInfo;
 import xenosoft.imldintelligence.module.license.internal.model.ReleaseManifest;
 import xenosoft.imldintelligence.module.license.internal.service.CryptoService;
 
+/**
+ * Provides reusable license CLI operations for verifying artifacts and evaluating upgrade rights.
+ */
 @Service
 public class LicenseCliService {
     private final CryptoService cryptoService;
@@ -35,6 +38,14 @@ public class LicenseCliService {
         this.objectMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
     }
 
+    /**
+     * Reads a signed license file, verifies its signature, and converts it into a typed payload.
+     *
+     * @param licenseFilePath path to the signed license envelope
+     * @param publicKeyFilePath path to the RSA public key used for verification
+     * @return verified license payload
+     * @throws IllegalStateException if the artifact cannot be read, verified, or deserialized
+     */
     public LicenseInfo readAndVerifyLicense(Path licenseFilePath, Path publicKeyFilePath) {
         PublicKey publicKey = cryptoService.loadRsaPublicKey(requireExistingPath(publicKeyFilePath, "Public key file"));
         LicenseEnvelope envelope = readSignedEnvelope(requireExistingPath(licenseFilePath, "License file"), "license");
@@ -42,6 +53,14 @@ public class LicenseCliService {
         return toValue(envelope.getPayload(), LicenseInfo.class, "license");
     }
 
+    /**
+     * Reads a signed release manifest, verifies its signature, and converts it into a typed payload.
+     *
+     * @param manifestFilePath path to the signed manifest envelope
+     * @param publicKeyFilePath path to the RSA public key used for verification
+     * @return verified release manifest payload
+     * @throws IllegalStateException if the artifact cannot be read, verified, or deserialized
+     */
     public ReleaseManifest readAndVerifyManifest(Path manifestFilePath, Path publicKeyFilePath) {
         PublicKey publicKey = cryptoService.loadRsaPublicKey(requireExistingPath(publicKeyFilePath, "Public key file"));
         LicenseEnvelope envelope = readSignedEnvelope(requireExistingPath(manifestFilePath, "Manifest file"), "release manifest");
@@ -49,6 +68,13 @@ public class LicenseCliService {
         return toValue(envelope.getPayload(), ReleaseManifest.class, "release manifest");
     }
 
+    /**
+     * Confirms that the license deployment mode matches the expected runtime mode.
+     *
+     * @param licenseInfo verified license payload
+     * @param expectedMode expected deployment mode, for example {@code private} or {@code saas}
+     * @throws IllegalStateException if the expected mode differs from the license mode
+     */
     public void validateDeploymentMode(LicenseInfo licenseInfo, String expectedMode) {
         String runtimeMode = normalize(expectedMode);
         String licenseMode = normalize(licenseInfo.getDeploymentMode());
@@ -59,6 +85,13 @@ public class LicenseCliService {
         }
     }
 
+    /**
+     * Validates an operator-supplied activation code when the license requires one.
+     *
+     * @param licenseInfo verified license payload
+     * @param activationCode activation code entered for the current deployment
+     * @throws IllegalStateException if the license requires an activation code and the supplied value is invalid
+     */
     public void validateActivationCode(LicenseInfo licenseInfo, String activationCode) {
         if (!hasText(licenseInfo.getActivationCodeHash())) {
             return;
@@ -72,6 +105,12 @@ public class LicenseCliService {
         }
     }
 
+    /**
+     * Verifies that the current machine fingerprint matches the fingerprint bound to the license.
+     *
+     * @param licenseInfo verified license payload
+     * @throws IllegalStateException if machine binding is required and the local fingerprint does not match
+     */
     public void validateMachineBinding(LicenseInfo licenseInfo) {
         if (!hasText(licenseInfo.getMachineFingerprintHash())) {
             return;
@@ -83,6 +122,15 @@ public class LicenseCliService {
         }
     }
 
+    /**
+     * Evaluates whether a target release is covered by the license support window policy.
+     *
+     * @param licenseInfo verified license payload
+     * @param releaseManifest verified target release manifest
+     * @param enforceSupportWindow whether support-window enforcement is enabled
+     * @param allowSecurityPatchAfterExpiry whether security patches may bypass an expired support window
+     * @return decision object describing whether the upgrade is allowed and why
+     */
     public UpgradeDecision evaluateUpgrade(LicenseInfo licenseInfo,
                                            ReleaseManifest releaseManifest,
                                            boolean enforceSupportWindow,
@@ -108,6 +156,14 @@ public class LicenseCliService {
         return new UpgradeDecision(false, "outside-support-window");
     }
 
+    /**
+     * Copies a verified license file into the configured installation location.
+     *
+     * @param sourceLicenseFilePath path to the source license file
+     * @param targetLicenseFilePath destination path where the license should be installed
+     * @return normalized target path of the installed license file
+     * @throws IllegalStateException if the source file is missing or the copy operation fails
+     */
     public Path importLicenseFile(Path sourceLicenseFilePath, Path targetLicenseFilePath) {
         try {
             Path source = requireExistingPath(sourceLicenseFilePath, "Source license file");
@@ -177,6 +233,12 @@ public class LicenseCliService {
         return value != null && !value.trim().isEmpty();
     }
 
+    /**
+     * Encapsulates the result of an upgrade entitlement evaluation.
+     *
+     * @param allowed whether the upgrade is permitted
+     * @param reason machine-readable reason for the decision
+     */
     public record UpgradeDecision(boolean allowed, String reason) {
     }
 }

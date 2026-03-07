@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.time.OffsetDateTime;
 
+/**
+ * AuditLogQuery 查询对象，封装筛选条件。
+ */
 @Data
 public class AuditLogQuery {
     private Long tenantId;

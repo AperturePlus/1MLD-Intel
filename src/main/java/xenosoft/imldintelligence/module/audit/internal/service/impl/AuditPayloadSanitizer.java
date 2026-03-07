@@ -16,6 +16,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import xenosoft.imldintelligence.module.audit.internal.config.AuditProperties;
 
+/**
+ * 审计载荷脱敏器，用于在审计数据落库前清洗敏感内容。
+ */
 @Component
 public class AuditPayloadSanitizer {
     private static final String MASKED_VALUE = "******";

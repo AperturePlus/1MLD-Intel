@@ -12,6 +12,9 @@ import java.util.List;
 
 import lombok.Getter;
 
+/**
+ * 设备指纹模型，用于生成并表达当前节点的机器指纹信息。
+ */
 @Getter
 public class Fingerprint {
     private final String cpuId;

@@ -17,6 +17,9 @@ import xenosoft.imldintelligence.common.model.SensitiveDataAccessLog;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * 审计查询服务实现类，负责按分页条件读取审计相关日志。
+ */
 @Service
 @ConditionalOnProperty(prefix = "imld.audit", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class AuditQueryServiceImpl implements AuditQueryService {
@@ -32,6 +35,9 @@ public class AuditQueryServiceImpl implements AuditQueryService {
         this.modelInvocationLogRepository = modelInvocationLogRepository;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PageResult<AuditLog> queryAuditLogs(AuditLogQuery query, int page, int size) {
         int offset = page * size;
@@ -43,6 +49,9 @@ public class AuditQueryServiceImpl implements AuditQueryService {
         return new PageResult<>(page, size, total, items);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PageResult<SensitiveDataAccessLog> querySensitiveAccessLogs(SensitiveDataAccessLogQuery query, int page, int size) {
         int offset = page * size;
@@ -54,6 +63,9 @@ public class AuditQueryServiceImpl implements AuditQueryService {
         return new PageResult<>(page, size, total, items);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PageResult<ModelInvocationLog> queryModelInvocationLogs(ModelInvocationLogQuery query, int page, int size) {
         int offset = page * size;

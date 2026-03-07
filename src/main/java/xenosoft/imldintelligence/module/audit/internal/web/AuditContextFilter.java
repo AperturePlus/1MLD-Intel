@@ -16,6 +16,9 @@ import xenosoft.imldintelligence.module.audit.internal.context.AuditContextHolde
 import java.io.IOException;
 import java.util.UUID;
 
+/**
+ * 审计上下文过滤器，负责从请求头提取审计上下文并绑定到当前线程。
+ */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE + 20)
 @ConditionalOnProperty(prefix = "imld.audit", name = "enabled", havingValue = "true", matchIfMissing = true)

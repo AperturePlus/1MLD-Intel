@@ -19,11 +19,17 @@ import org.springframework.stereotype.Service;
 
 import xenosoft.imldintelligence.module.license.internal.service.CryptoService;
 
+/**
+ * 许可证密码服务实现类，负责公钥加载、签名校验与摘要计算。
+ */
 @Service
 public class CryptoServiceImpl implements CryptoService {
 
     
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PublicKey loadRsaPublicKey(Path publicKeyPath) {
         try {
@@ -40,6 +46,9 @@ public class CryptoServiceImpl implements CryptoService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean verifySha256WithRsa(String payload, String signatureBase64, PublicKey publicKey) {
         try {
@@ -52,6 +61,9 @@ public class CryptoServiceImpl implements CryptoService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String sha256Hex(String input) {
         try {

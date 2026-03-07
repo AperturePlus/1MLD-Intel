@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
+/**
+ * ModelInvocationRecordCommand 命令对象，封装写入操作所需参数。
+ */
 @Data
 public class ModelInvocationRecordCommand {
     private Long tenantId;

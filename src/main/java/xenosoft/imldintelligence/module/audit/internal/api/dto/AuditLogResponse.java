@@ -5,6 +5,9 @@ import xenosoft.imldintelligence.common.model.AuditLog;
 
 import java.time.OffsetDateTime;
 
+/**
+ * AuditLog 响应对象，封装AuditLog相关的返回字段。
+ */
 @Data
 public class AuditLogResponse {
     private Long id;

@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * 审计模块配置属性，定义开关、查询接口与失败策略等运行参数。
+ */
 @Getter
 @Setter
 @Component

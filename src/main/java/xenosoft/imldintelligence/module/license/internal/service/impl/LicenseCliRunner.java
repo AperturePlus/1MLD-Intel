@@ -15,6 +15,9 @@ import xenosoft.imldintelligence.module.license.internal.config.UpgradePropertie
 import xenosoft.imldintelligence.module.license.internal.model.LicenseInfo;
 import xenosoft.imldintelligence.module.license.internal.model.ReleaseManifest;
 
+/**
+ * Executes license-related CLI commands during application startup and exits after completion.
+ */
 @Component
 @Order(0)
 public class LicenseCliRunner implements ApplicationRunner {
@@ -44,6 +47,13 @@ public class LicenseCliRunner implements ApplicationRunner {
         this.upgradeProperties = upgradeProperties;
     }
 
+    /**
+     * Dispatches the requested license CLI command if command-line options are present.
+     *
+     * @param args parsed application arguments
+     * @throws IllegalArgumentException if the requested command is unknown or required options are missing
+     * @throws IllegalStateException if artifact verification or entitlement checks fail
+     */
     @Override
     public void run(ApplicationArguments args) {
         String command = optionValue(args, OPT_COMMAND);

@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.audit.internal.service.model.PageResult;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * Paged 响应对象，封装Paged相关的返回字段。
+ */
 @Data
 public class PagedResponse<T> {
     private int page;

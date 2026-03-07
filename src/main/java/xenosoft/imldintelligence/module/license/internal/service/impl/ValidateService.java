@@ -24,6 +24,12 @@ import xenosoft.imldintelligence.module.license.internal.model.LicenseInfo;
 import xenosoft.imldintelligence.module.license.internal.model.ReleaseManifest;
 import xenosoft.imldintelligence.module.license.internal.service.CryptoService;
 
+/**
+ * Validates signed license artifacts for private deployments during startup and upgrade checks.
+ *
+ * <p>The service enforces signature verification, deployment mode matching, optional activation
+ * code validation, optional machine binding, and support-window based upgrade entitlement.</p>
+ */
 @Service
 public class ValidateService {
     private final DeploymentProperties deploymentProperties;
@@ -48,6 +54,15 @@ public class ValidateService {
         this.objectMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
     }
 
+    /**
+     * Validates the runtime license configuration before the application starts serving traffic.
+     *
+     * <p>The validation is only executed for private deployments when startup validation is enabled.
+     * In that mode the method checks the license signature, deployment mode, activation code,
+     * machine binding, and the optional signed release manifest.</p>
+     *
+     * @throws IllegalStateException if any required artifact is missing or any validation step fails
+     */
     public void validateStartupOrThrow() {
         if (!deploymentProperties.isPrivateMode()) {
             return;
@@ -81,6 +96,13 @@ public class ValidateService {
         }
     }
 
+    /**
+     * Verifies that a release manifest is still covered by the license support entitlement.
+     *
+     * @param licenseInfo verified license payload currently installed for the deployment
+     * @param releaseManifest verified manifest describing the target release
+     * @throws IllegalStateException if support-window enforcement is enabled and the upgrade is not allowed
+     */
     void validateUpgradeEntitlementOrThrow(LicenseInfo licenseInfo, ReleaseManifest releaseManifest) {
         UpgradeProperties.Entitlement entitlement = upgradeProperties.getEntitlement();
         if (!entitlement.isEnforceSupportWindow()) {

@@ -5,6 +5,9 @@ import xenosoft.imldintelligence.common.model.SensitiveDataAccessLog;
 
 import java.time.OffsetDateTime;
 
+/**
+ * SensitiveAccessLog 响应对象，封装SensitiveAccessLog相关的返回字段。
+ */
 @Data
 public class SensitiveAccessLogResponse {
     private Long id;
