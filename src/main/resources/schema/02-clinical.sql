@@ -1,4 +1,4 @@
-﻿CREATE TABLE IF NOT EXISTS indicator_dict (
+CREATE TABLE IF NOT EXISTS indicator_dict (
     code VARCHAR(64) PRIMARY KEY,
     indicator_name VARCHAR(200) NOT NULL,
     category VARCHAR(64) NOT NULL,
