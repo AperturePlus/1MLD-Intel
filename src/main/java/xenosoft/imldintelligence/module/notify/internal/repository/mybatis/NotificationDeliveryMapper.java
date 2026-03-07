@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.notify.internal.model.NotificationDelive
 
 import java.util.List;
 
+/**
+ * 通知投递记录 MyBatis Mapper，定义通知投递记录的数据读写映射。
+ */
 @Mapper
 public interface NotificationDeliveryMapper {
     NotificationDelivery findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -20,4 +23,3 @@ public interface NotificationDeliveryMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

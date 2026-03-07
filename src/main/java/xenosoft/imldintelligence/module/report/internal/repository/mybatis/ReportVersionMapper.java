@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.report.internal.model.ReportVersion;
 
 import java.util.List;
 
+/**
+ * 报告版本 MyBatis Mapper，定义报告版本的数据读写映射。
+ */
 @Mapper
 public interface ReportVersionMapper {
     ReportVersion findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -22,4 +25,3 @@ public interface ReportVersionMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.clinical.internal.model.GeneticReport;
 
 import java.util.List;
 
+/**
+ * 基因报告 MyBatis Mapper，定义基因报告的数据读写映射。
+ */
 @Mapper
 public interface GeneticReportMapper {
     GeneticReport findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -22,4 +25,3 @@ public interface GeneticReportMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

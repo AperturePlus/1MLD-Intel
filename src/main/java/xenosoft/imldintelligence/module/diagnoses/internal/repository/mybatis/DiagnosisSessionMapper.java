@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.diagnoses.internal.model.DiagnosisSessio
 
 import java.util.List;
 
+/**
+ * 诊断会话 MyBatis Mapper，定义诊断会话的数据读写映射。
+ */
 @Mapper
 public interface DiagnosisSessionMapper {
     DiagnosisSession findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -22,4 +25,3 @@ public interface DiagnosisSessionMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

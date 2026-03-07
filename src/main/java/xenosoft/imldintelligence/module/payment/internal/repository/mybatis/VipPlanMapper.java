@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.payment.internal.model.VipPlan;
 
 import java.util.List;
 
+/**
+ * VIP套餐 MyBatis Mapper，定义VIP套餐的数据读写映射。
+ */
 @Mapper
 public interface VipPlanMapper {
     VipPlan findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -20,4 +23,3 @@ public interface VipPlanMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

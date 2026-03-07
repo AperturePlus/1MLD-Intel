@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.diagnoses.internal.model.ModelRegistry;
 
 import java.util.List;
 
+/**
+ * 模型注册 MyBatis Mapper，定义模型注册的数据读写映射。
+ */
 @Mapper
 public interface ModelRegistryMapper {
     ModelRegistry findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -22,4 +25,3 @@ public interface ModelRegistryMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.careplan.internal.model.CarePlan;
 
 import java.util.List;
 
+/**
+ * 护理计划 MyBatis Mapper，定义护理计划的数据读写映射。
+ */
 @Mapper
 public interface CarePlanMapper {
     CarePlan findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -20,4 +23,3 @@ public interface CarePlanMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

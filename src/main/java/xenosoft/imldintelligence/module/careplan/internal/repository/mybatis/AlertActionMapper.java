@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.careplan.internal.model.AlertAction;
 
 import java.util.List;
 
+/**
+ * 预警动作 MyBatis Mapper，定义预警动作的数据读写映射。
+ */
 @Mapper
 public interface AlertActionMapper {
     AlertAction findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -20,4 +23,3 @@ public interface AlertActionMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

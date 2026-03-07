@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.clinical.internal.model.GeneticVariant;
 
 import java.util.List;
 
+/**
+ * 基因变异 MyBatis Mapper，定义基因变异的数据读写映射。
+ */
 @Mapper
 public interface GeneticVariantMapper {
     GeneticVariant findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -20,4 +23,3 @@ public interface GeneticVariantMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

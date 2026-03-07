@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.report.internal.model.Report;
 
 import java.util.List;
 
+/**
+ * 报告 MyBatis Mapper，定义报告的数据读写映射。
+ */
 @Mapper
 public interface ReportMapper {
     Report findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -24,4 +27,3 @@ public interface ReportMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.clinical.internal.model.IndicatorDict;
 
 import java.util.List;
 
+/**
+ * 指标字典 MyBatis Mapper，定义指标字典的数据读写映射。
+ */
 @Mapper
 public interface IndicatorDictMapper {
     IndicatorDict findByCode(@Param("code") String code);
@@ -20,4 +23,3 @@ public interface IndicatorDictMapper {
 
     int deleteByCode(@Param("code") String code);
 }
-

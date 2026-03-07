@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.clinical.internal.model.LabResult;
 
 import java.util.List;
 
+/**
+ * 检验结果 MyBatis Mapper，定义检验结果的数据读写映射。
+ */
 @Mapper
 public interface LabResultMapper {
     LabResult findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -22,4 +25,3 @@ public interface LabResultMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

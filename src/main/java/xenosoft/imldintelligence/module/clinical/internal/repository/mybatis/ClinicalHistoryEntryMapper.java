@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.clinical.internal.model.ClinicalHistoryE
 
 import java.util.List;
 
+/**
+ * 临床病史条目 MyBatis Mapper，定义临床病史条目的数据读写映射。
+ */
 @Mapper
 public interface ClinicalHistoryEntryMapper {
     ClinicalHistoryEntry findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -22,4 +25,3 @@ public interface ClinicalHistoryEntryMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

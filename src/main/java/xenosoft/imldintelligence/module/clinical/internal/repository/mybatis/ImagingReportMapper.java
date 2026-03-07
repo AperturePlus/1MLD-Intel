@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.clinical.internal.model.ImagingReport;
 
 import java.util.List;
 
+/**
+ * 影像报告 MyBatis Mapper，定义影像报告的数据读写映射。
+ */
 @Mapper
 public interface ImagingReportMapper {
     ImagingReport findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -22,4 +25,3 @@ public interface ImagingReportMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

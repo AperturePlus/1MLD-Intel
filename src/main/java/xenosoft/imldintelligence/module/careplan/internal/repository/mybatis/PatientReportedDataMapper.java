@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.careplan.internal.model.PatientReportedD
 
 import java.util.List;
 
+/**
+ * 患者上报数据 MyBatis Mapper，定义患者上报数据的数据读写映射。
+ */
 @Mapper
 public interface PatientReportedDataMapper {
     PatientReportedData findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -22,4 +25,3 @@ public interface PatientReportedDataMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

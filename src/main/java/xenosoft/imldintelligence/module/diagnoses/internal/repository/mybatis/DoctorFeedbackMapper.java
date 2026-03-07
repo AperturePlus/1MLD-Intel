@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.diagnoses.internal.model.DoctorFeedback;
 
 import java.util.List;
 
+/**
+ * 医生反馈 MyBatis Mapper，定义医生反馈的数据读写映射。
+ */
 @Mapper
 public interface DoctorFeedbackMapper {
     DoctorFeedback findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -22,4 +25,3 @@ public interface DoctorFeedbackMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

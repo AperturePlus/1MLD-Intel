@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.clinical.internal.model.IndicatorMapping
 
 import java.util.List;
 
+/**
+ * 指标映射 MyBatis Mapper，定义指标映射的数据读写映射。
+ */
 @Mapper
 public interface IndicatorMappingMapper {
     IndicatorMapping findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -25,4 +28,3 @@ public interface IndicatorMappingMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

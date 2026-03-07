@@ -9,41 +9,61 @@ import xenosoft.imldintelligence.module.notify.internal.repository.mybatis.Notif
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 通知投递记录仓储实现类，基于 MyBatis Mapper 完成通知投递记录的数据持久化。
+ */
 @Repository
 @RequiredArgsConstructor
 public class NotificationDeliveryRepositoryImpl implements NotificationDeliveryRepository {
     private final NotificationDeliveryMapper notificationDeliveryMapper;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<NotificationDelivery> findById(Long tenantId, Long id) {
         return Optional.ofNullable(notificationDeliveryMapper.findById(tenantId, id));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<NotificationDelivery> listByTenantId(Long tenantId) {
         return notificationDeliveryMapper.listByTenantId(tenantId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<NotificationDelivery> listByMessageId(Long tenantId, Long messageId) {
         return notificationDeliveryMapper.listByMessageId(tenantId, messageId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NotificationDelivery save(NotificationDelivery notificationDelivery) {
         notificationDeliveryMapper.insert(notificationDelivery);
         return notificationDelivery;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NotificationDelivery update(NotificationDelivery notificationDelivery) {
         notificationDeliveryMapper.update(notificationDelivery);
         return notificationDelivery;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Boolean deleteById(Long tenantId, Long id) {
         return notificationDeliveryMapper.deleteById(tenantId, id) > 0;
     }
 }
-

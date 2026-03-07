@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.diagnoses.internal.model.DiagnosisRecomm
 
 import java.util.List;
 
+/**
+ * 诊断建议 MyBatis Mapper，定义诊断建议的数据读写映射。
+ */
 @Mapper
 public interface DiagnosisRecommendationMapper {
     DiagnosisRecommendation findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -20,4 +23,3 @@ public interface DiagnosisRecommendationMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

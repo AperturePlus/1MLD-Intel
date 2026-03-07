@@ -9,41 +9,61 @@ import xenosoft.imldintelligence.module.careplan.internal.model.CarePlanTemplate
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 护理计划模板仓储实现类，基于 MyBatis Mapper 完成护理计划模板的数据持久化。
+ */
 @Repository
 @RequiredArgsConstructor
 public class CarePlanTemplateRepositoryImpl implements CarePlanTemplateRepository {
     private final CarePlanTemplateMapper carePlanTemplateMapper;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<CarePlanTemplate> findById(Long tenantId, Long id) {
         return Optional.ofNullable(carePlanTemplateMapper.findById(tenantId, id));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<CarePlanTemplate> findByTemplateCodeAndVersionNo(Long tenantId, String templateCode, Integer versionNo) {
         return Optional.ofNullable(carePlanTemplateMapper.findByTemplateCodeAndVersionNo(tenantId, templateCode, versionNo));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<CarePlanTemplate> listByTenantId(Long tenantId) {
         return carePlanTemplateMapper.listByTenantId(tenantId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CarePlanTemplate save(CarePlanTemplate carePlanTemplate) {
         carePlanTemplateMapper.insert(carePlanTemplate);
         return carePlanTemplate;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CarePlanTemplate update(CarePlanTemplate carePlanTemplate) {
         carePlanTemplateMapper.update(carePlanTemplate);
         return carePlanTemplate;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Boolean deleteById(Long tenantId, Long id) {
         return carePlanTemplateMapper.deleteById(tenantId, id) > 0;
     }
 }
-

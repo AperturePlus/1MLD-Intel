@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.careplan.internal.model.AlertEvent;
 
 import java.util.List;
 
+/**
+ * 预警事件 MyBatis Mapper，定义预警事件的数据读写映射。
+ */
 @Mapper
 public interface AlertEventMapper {
     AlertEvent findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -22,4 +25,3 @@ public interface AlertEventMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

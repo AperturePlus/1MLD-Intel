@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.notify.internal.model.NotificationMessag
 
 import java.util.List;
 
+/**
+ * 通知消息 MyBatis Mapper，定义通知消息的数据读写映射。
+ */
 @Mapper
 public interface NotificationMessageMapper {
     NotificationMessage findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -22,4 +25,3 @@ public interface NotificationMessageMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

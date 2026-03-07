@@ -9,51 +9,77 @@ import xenosoft.imldintelligence.module.screening.internal.model.QuestionnaireRe
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 问卷应答仓储实现类，基于 MyBatis Mapper 完成问卷应答的数据持久化。
+ */
 @Repository
 @RequiredArgsConstructor
 public class QuestionnaireResponseRepositoryImpl implements QuestionnaireResponseRepository {
     private final QuestionnaireResponseMapper questionnaireResponseMapper;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<QuestionnaireResponse> findById(Long tenantId, Long id) {
         return Optional.ofNullable(questionnaireResponseMapper.findById(tenantId, id));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<QuestionnaireResponse> findByResponseNo(Long tenantId, String responseNo) {
         return Optional.ofNullable(questionnaireResponseMapper.findByResponseNo(tenantId, responseNo));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<QuestionnaireResponse> listByTenantId(Long tenantId) {
         return questionnaireResponseMapper.listByTenantId(tenantId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<QuestionnaireResponse> listByQuestionnaireId(Long tenantId, Long questionnaireId) {
         return questionnaireResponseMapper.listByQuestionnaireId(tenantId, questionnaireId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<QuestionnaireResponse> listByTocUserId(Long tenantId, Long tocUserId) {
         return questionnaireResponseMapper.listByTocUserId(tenantId, tocUserId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public QuestionnaireResponse save(QuestionnaireResponse questionnaireResponse) {
         questionnaireResponseMapper.insert(questionnaireResponse);
         return questionnaireResponse;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public QuestionnaireResponse update(QuestionnaireResponse questionnaireResponse) {
         questionnaireResponseMapper.update(questionnaireResponse);
         return questionnaireResponse;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Boolean deleteById(Long tenantId, Long id) {
         return questionnaireResponseMapper.deleteById(tenantId, id) > 0;
     }
 }
-

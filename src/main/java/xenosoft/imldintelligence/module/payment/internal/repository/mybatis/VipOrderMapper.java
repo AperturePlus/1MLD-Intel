@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.payment.internal.model.VipOrder;
 
 import java.util.List;
 
+/**
+ * VIP订单 MyBatis Mapper，定义VIP订单的数据读写映射。
+ */
 @Mapper
 public interface VipOrderMapper {
     VipOrder findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -22,4 +25,3 @@ public interface VipOrderMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.screening.internal.model.TocClinicalTran
 
 import java.util.List;
 
+/**
+ * TOC临床转化 MyBatis Mapper，定义TOC临床转化的数据读写映射。
+ */
 @Mapper
 public interface TocClinicalTransferMapper {
     TocClinicalTransfer findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -22,4 +25,3 @@ public interface TocClinicalTransferMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-

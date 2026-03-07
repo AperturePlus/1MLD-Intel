@@ -6,6 +6,9 @@ import xenosoft.imldintelligence.module.screening.internal.model.Questionnaire;
 
 import java.util.List;
 
+/**
+ * 问卷 MyBatis Mapper，定义问卷的数据读写映射。
+ */
 @Mapper
 public interface QuestionnaireMapper {
     Questionnaire findById(@Param("tenantId") Long tenantId, @Param("id") Long id);
@@ -22,4 +25,3 @@ public interface QuestionnaireMapper {
 
     int deleteById(@Param("tenantId") Long tenantId, @Param("id") Long id);
 }
-
