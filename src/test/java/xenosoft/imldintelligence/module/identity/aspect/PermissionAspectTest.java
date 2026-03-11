@@ -1,4 +1,4 @@
-package xenosoft.imldintelligence.module.identity.aop;
+package xenosoft.imldintelligence.module.identity.aspect;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

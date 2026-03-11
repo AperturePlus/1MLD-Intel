@@ -1,4 +1,4 @@
-package xenosoft.imldintelligence.module.identity.aop;
+package xenosoft.imldintelligence.module.identity.aspect;
 
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
