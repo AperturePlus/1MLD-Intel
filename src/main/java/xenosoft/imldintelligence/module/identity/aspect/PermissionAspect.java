@@ -102,7 +102,7 @@ public class PermissionAspect {
                 || arg instanceof ServletRequest
                 || arg instanceof ServletResponse
                 || arg instanceof Principal
-                || arg instanceof Authentication
+                //|| arg instanceof Authentication
                 || arg instanceof BindingResult;
     }
 }

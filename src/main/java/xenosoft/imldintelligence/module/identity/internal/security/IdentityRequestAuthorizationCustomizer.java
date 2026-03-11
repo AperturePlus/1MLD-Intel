@@ -1,5 +1,6 @@
 package xenosoft.imldintelligence.module.identity.internal.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -11,12 +12,9 @@ import java.util.List;
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
+@RequiredArgsConstructor
 public class IdentityRequestAuthorizationCustomizer implements ModuleRequestAuthorizationCustomizer {
     private final IdentitySecurityProperties properties;
-
-    public IdentityRequestAuthorizationCustomizer(IdentitySecurityProperties properties) {
-        this.properties = properties;
-    }
 
     /**
      * {@inheritDoc}

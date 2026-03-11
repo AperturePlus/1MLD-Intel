@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,16 +25,12 @@ import java.util.Set;
 /**
  * JWT 认证过滤器，负责解析访问令牌并将用户主体写入安全上下文。
  */
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String BEARER_PREFIX = "Bearer ";
 
     private final JwtUtil jwtUtil;
     private final AuthenticationEntryPoint authenticationEntryPoint;
-
-    public JwtAuthenticationFilter(JwtUtil jwtUtil, AuthenticationEntryPoint authenticationEntryPoint) {
-        this.jwtUtil = jwtUtil;
-        this.authenticationEntryPoint = authenticationEntryPoint;
-    }
 
     /**
      * {@inheritDoc}

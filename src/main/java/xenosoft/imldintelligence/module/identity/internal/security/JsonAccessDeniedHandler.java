@@ -3,6 +3,7 @@ package xenosoft.imldintelligence.module.identity.internal.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
@@ -16,12 +17,9 @@ import java.util.Map;
 /**
  * 访问拒绝处理器，负责输出统一的鉴权失败响应。
  */
+@RequiredArgsConstructor
 public class JsonAccessDeniedHandler implements AccessDeniedHandler {
     private final ObjectMapper objectMapper;
-
-    public JsonAccessDeniedHandler(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
 
     /**
      * {@inheritDoc}
