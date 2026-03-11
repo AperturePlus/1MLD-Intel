@@ -1,26 +1,26 @@
 package xenosoft.imldintelligence.module.api;
 
 import org.junit.jupiter.api.Test;
-import xenosoft.imldintelligence.module.careplan.internal.api.CarePlanApi;
-import xenosoft.imldintelligence.module.careplan.internal.api.CarePlanControllerContract;
-import xenosoft.imldintelligence.module.clinical.internal.api.ClinicalApi;
-import xenosoft.imldintelligence.module.clinical.internal.api.ClinicalControllerContract;
-import xenosoft.imldintelligence.module.diagnoses.internal.api.DiagnosesApi;
-import xenosoft.imldintelligence.module.diagnoses.internal.api.DiagnosesControllerContract;
-import xenosoft.imldintelligence.module.identity.internal.api.IdentityApi;
-import xenosoft.imldintelligence.module.identity.internal.api.IdentityControllerContract;
-import xenosoft.imldintelligence.module.integration.internal.api.IntegrationApi;
-import xenosoft.imldintelligence.module.integration.internal.api.IntegrationControllerContract;
-import xenosoft.imldintelligence.module.license.internal.api.LicenseApi;
-import xenosoft.imldintelligence.module.license.internal.api.LicenseControllerContract;
-import xenosoft.imldintelligence.module.notify.internal.api.NotifyApi;
-import xenosoft.imldintelligence.module.notify.internal.api.NotifyControllerContract;
-import xenosoft.imldintelligence.module.payment.internal.api.PaymentApi;
-import xenosoft.imldintelligence.module.payment.internal.api.PaymentControllerContract;
-import xenosoft.imldintelligence.module.report.internal.api.ReportApi;
-import xenosoft.imldintelligence.module.report.internal.api.ReportControllerContract;
-import xenosoft.imldintelligence.module.screening.internal.api.ScreeningApi;
-import xenosoft.imldintelligence.module.screening.internal.api.ScreeningControllerContract;
+import xenosoft.imldintelligence.module.careplan.api.CarePlanApi;
+import xenosoft.imldintelligence.module.careplan.api.CarePlanControllerContract;
+import xenosoft.imldintelligence.module.clinical.api.ClinicalApi;
+import xenosoft.imldintelligence.module.clinical.api.ClinicalControllerContract;
+import xenosoft.imldintelligence.module.diagnoses.api.DiagnosesApi;
+import xenosoft.imldintelligence.module.diagnoses.api.DiagnosesControllerContract;
+import xenosoft.imldintelligence.module.identity.api.IdentityApi;
+import xenosoft.imldintelligence.module.identity.api.IdentityControllerContract;
+import xenosoft.imldintelligence.module.integration.api.IntegrationApi;
+import xenosoft.imldintelligence.module.integration.api.IntegrationControllerContract;
+import xenosoft.imldintelligence.module.license.api.LicenseApi;
+import xenosoft.imldintelligence.module.license.api.LicenseControllerContract;
+import xenosoft.imldintelligence.module.notify.api.NotifyApi;
+import xenosoft.imldintelligence.module.notify.api.NotifyControllerContract;
+import xenosoft.imldintelligence.module.payment.api.PaymentApi;
+import xenosoft.imldintelligence.module.payment.api.PaymentControllerContract;
+import xenosoft.imldintelligence.module.report.api.ReportApi;
+import xenosoft.imldintelligence.module.report.api.ReportControllerContract;
+import xenosoft.imldintelligence.module.screening.api.ScreeningApi;
+import xenosoft.imldintelligence.module.screening.api.ScreeningControllerContract;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
