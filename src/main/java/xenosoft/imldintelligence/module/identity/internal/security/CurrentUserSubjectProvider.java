@@ -10,11 +10,17 @@ import xenosoft.imldintelligence.module.identity.internal.model.UserSubject;
 import java.util.Optional;
 
 /**
- * 当前用户主体提供器，用于从安全上下文读取当前登录用户。
+ * Reads the authenticated {@link UserSubject} from Spring Security context.
  */
 @Component
 public class CurrentUserSubjectProvider {
 
+    /**
+     * Returns the current authenticated subject if present and typed as {@link UserSubject}.
+     *
+     * <p>The returned subject is reconstructed with normalized role codes so downstream authorization
+     * checks see a stable role representation.</p>
+     */
     public Optional<UserSubject> getCurrentSubject() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
@@ -33,6 +39,9 @@ public class CurrentUserSubjectProvider {
         ));
     }
 
+    /**
+     * Returns the current authenticated subject or throws when the request is unauthenticated.
+     */
     public UserSubject requireCurrentSubject() {
         return getCurrentSubject().orElseThrow(() ->
                 new AuthenticationCredentialsNotFoundException("Authenticated user context is required."));
