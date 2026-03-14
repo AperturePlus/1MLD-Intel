@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import xenosoft.imldintelligence.module.identity.internal.model.Patient;
 import xenosoft.imldintelligence.module.identity.internal.repository.mybatis.PatientPageRow;
 
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -89,7 +90,8 @@ public class PatientRepositoryImpl implements PatientRepository {
                 .set(Patient::getMobileEncrypted, patient.getMobileEncrypted())
                 .set(Patient::getPatientType, patient.getPatientType())
                 .set(Patient::getStatus, patient.getStatus())
-                .set(Patient::getSourceChannel, patient.getSourceChannel());
+                .set(Patient::getSourceChannel, patient.getSourceChannel())
+                .set(Patient::getUpdatedAt, OffsetDateTime.now());
         patientMapper.update(null, updateWrapper);
         return patient;
     }
@@ -99,7 +101,8 @@ public class PatientRepositoryImpl implements PatientRepository {
         LambdaUpdateWrapper<Patient> updateWrapper = new LambdaUpdateWrapper<Patient>()
                 .eq(Patient::getTenantId, tenantId)
                 .eq(Patient::getId, patientId)
-                .set(Patient::getStatus, "INACTIVE");
+                .set(Patient::getStatus, "INACTIVE")
+                .set(Patient::getUpdatedAt, OffsetDateTime.now());
         return patientMapper.update(null, updateWrapper) > 0;
     }
 
@@ -108,7 +111,8 @@ public class PatientRepositoryImpl implements PatientRepository {
         LambdaUpdateWrapper<Patient> updateWrapper = new LambdaUpdateWrapper<Patient>()
                 .eq(Patient::getTenantId, tenantId)
                 .eq(Patient::getPatientNo, patientNo)
-                .set(Patient::getStatus, "INACTIVE");
+                .set(Patient::getStatus, "INACTIVE")
+                .set(Patient::getUpdatedAt, OffsetDateTime.now());
         return patientMapper.update(null, updateWrapper) > 0;
     }
 }
