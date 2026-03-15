@@ -63,7 +63,8 @@ public class PatientExternalIdRepositoryImpl implements PatientExternalIdReposit
                 .set(PatientExternalId::getPatientId, patientExternalId.getPatientId())
                 .set(PatientExternalId::getIdType, patientExternalId.getIdType())
                 .set(PatientExternalId::getIdValue, patientExternalId.getIdValue())
-                .set(PatientExternalId::getSourceOrg, patientExternalId.getSourceOrg()));
+                .set(PatientExternalId::getSourceOrg, patientExternalId.getSourceOrg())
+                .set(PatientExternalId::getIsPrimary, patientExternalId.getIsPrimary()));
         return patientExternalId;
     }
 

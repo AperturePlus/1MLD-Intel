@@ -64,8 +64,9 @@ public class AbacPolicyRepositoryImpl implements AbacPolicyRepository {
 
     @Override
     public Boolean deleteById(Long tenantId, Long id) {
-        return abacPolicyMapper.delete(new LambdaQueryWrapper<AbacPolicy>()
+        return abacPolicyMapper.update(null, new LambdaUpdateWrapper<AbacPolicy>()
                 .eq(AbacPolicy::getTenantId, tenantId)
-                .eq(AbacPolicy::getId, id)) > 0;
+                .eq(AbacPolicy::getId, id)
+                .set(AbacPolicy::getStatus, "INACTIVE")) > 0;
     }
 }
