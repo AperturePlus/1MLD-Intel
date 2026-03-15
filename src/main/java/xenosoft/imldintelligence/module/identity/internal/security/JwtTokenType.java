@@ -1,21 +1,19 @@
 package xenosoft.imldintelligence.module.identity.internal.security;
 
 import io.jsonwebtoken.JwtException;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
 /**
  * JWT 令牌类型枚举，区分访问令牌与刷新令牌。
  */
+@RequiredArgsConstructor
 public enum JwtTokenType {
     ACCESS("access"),
     REFRESH("refresh");
 
     private final String claimValue;
-
-    JwtTokenType(String claimValue) {
-        this.claimValue = claimValue;
-    }
 
     public String claimValue() {
         return claimValue;

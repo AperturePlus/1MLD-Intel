@@ -126,3 +126,13 @@ SpEL can reference method args (`#p0`) and method result (`#result`).
 - Audit writes are fail-closed by default (`imld.audit.fail-closed=true`): write failure throws and can roll back transaction.
 - The implementation is local persistence only; no cloud egress is introduced by this module.
 - Plaintext PHI should not be logged through application logs; only sanitized payloads are persisted in audit tables.
+
+## Contract Alignment
+
+The audit module now also declares `AuditQueryApi` as the contract-first HTTP boundary and groups query parameters in `AuditQueryDtos.Query`.
+This keeps the existing runtime controller unchanged while making the audit module consistent with the DTO categorization introduced for the other modules.
+
+## Error Responses
+
+Audit query success payloads keep their existing paged response structure.
+When request validation or access checks fail, `GlobalExceptionHandler` now converts errors into the shared `ApiResponse<Void>` envelope while preserving the original HTTP status code.
