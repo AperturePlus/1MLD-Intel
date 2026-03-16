@@ -36,7 +36,7 @@ public class QuestionnaireResponseRepositoryImpl implements QuestionnaireRespons
     public Optional<QuestionnaireResponse> findByResponseNo(Long tenantId, String responseNo) {
         return Optional.ofNullable(questionnaireResponseMapper.selectOne(new LambdaQueryWrapper<QuestionnaireResponse>()
                 .eq(QuestionnaireResponse::getTenantId, tenantId)
-                .eq(QuestionnaireResponse::getResponseNo, responseNo))));
+                .eq(QuestionnaireResponse::getResponseNo, responseNo)));
     }
 
     /**

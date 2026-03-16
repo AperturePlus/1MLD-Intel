@@ -36,7 +36,7 @@ public class IntegrationJobRepositoryImpl implements IntegrationJobRepository {
     public Optional<IntegrationJob> findByJobNo(Long tenantId, String jobNo) {
         return Optional.ofNullable(integrationJobMapper.selectOne(new LambdaQueryWrapper<IntegrationJob>()
                 .eq(IntegrationJob::getTenantId, tenantId)
-                .eq(IntegrationJob::getJobNo, jobNo))));
+                .eq(IntegrationJob::getJobNo, jobNo)));
     }
 
     /**

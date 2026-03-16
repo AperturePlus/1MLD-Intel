@@ -37,7 +37,7 @@ public class QuestionnaireRepositoryImpl implements QuestionnaireRepository {
         return Optional.ofNullable(questionnaireMapper.selectOne(new LambdaQueryWrapper<Questionnaire>()
                 .eq(Questionnaire::getTenantId, tenantId)
                 .eq(Questionnaire::getQuestionnaireCode, questionnaireCode)
-                .eq(Questionnaire::getVersionNo, versionNo))));
+                .eq(Questionnaire::getVersionNo, versionNo)));
     }
 
     /**

@@ -37,7 +37,7 @@ public class CarePlanTemplateRepositoryImpl implements CarePlanTemplateRepositor
         return Optional.ofNullable(carePlanTemplateMapper.selectOne(new LambdaQueryWrapper<CarePlanTemplate>()
                 .eq(CarePlanTemplate::getTenantId, tenantId)
                 .eq(CarePlanTemplate::getTemplateCode, templateCode)
-                .eq(CarePlanTemplate::getVersionNo, versionNo))));
+                .eq(CarePlanTemplate::getVersionNo, versionNo)));
     }
 
     /**

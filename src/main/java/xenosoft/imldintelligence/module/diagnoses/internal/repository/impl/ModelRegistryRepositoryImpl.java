@@ -37,7 +37,7 @@ public class ModelRegistryRepositoryImpl implements ModelRegistryRepository {
         return Optional.ofNullable(modelRegistryMapper.selectOne(new LambdaQueryWrapper<ModelRegistry>()
                 .eq(ModelRegistry::getTenantId, tenantId)
                 .eq(ModelRegistry::getModelCode, modelCode)
-                .eq(ModelRegistry::getModelVersion, modelVersion))));
+                .eq(ModelRegistry::getModelVersion, modelVersion)));
     }
 
     /**
