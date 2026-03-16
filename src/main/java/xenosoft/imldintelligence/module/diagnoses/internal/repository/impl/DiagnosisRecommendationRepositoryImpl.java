@@ -47,6 +47,7 @@ public class DiagnosisRecommendationRepositoryImpl implements DiagnosisRecommend
         return diagnosisRecommendationMapper.selectList(new LambdaQueryWrapper<DiagnosisRecommendation>()
                 .eq(DiagnosisRecommendation::getTenantId, tenantId)
                 .eq(DiagnosisRecommendation::getSessionId, sessionId)
+                .orderByAsc(DiagnosisRecommendation::getPriority)
                 .orderByDesc(DiagnosisRecommendation::getId));
     }
 

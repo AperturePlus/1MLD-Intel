@@ -35,7 +35,7 @@ public class AuditLogRepositoryImpl implements AuditLogRepository {
     public List<AuditLog> query(AuditLogQuery query, int offset, int limit) {
         return mapper.selectList(buildWrapper(query)
                 .orderByDesc(AuditLog::getCreatedAt, AuditLog::getId)
-                .last("LIMIT " + limit + " OFFSET " + offset));
+                .last("LIMIT " + Math.max(1, limit) + " OFFSET " + Math.max(0, offset)));
     }
 
     /**

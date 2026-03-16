@@ -35,7 +35,7 @@ public class ModelInvocationLogRepositoryImpl implements ModelInvocationLogRepos
     public List<ModelInvocationLog> query(ModelInvocationLogQuery query, int offset, int limit) {
         return mapper.selectList(buildWrapper(query)
                 .orderByDesc(ModelInvocationLog::getCreatedAt, ModelInvocationLog::getId)
-                .last("LIMIT " + limit + " OFFSET " + offset));
+                .last("LIMIT " + Math.max(1, limit) + " OFFSET " + Math.max(0, offset)));
     }
 
     /**

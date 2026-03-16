@@ -35,7 +35,7 @@ public class SensitiveDataAccessLogRepositoryImpl implements SensitiveDataAccess
     public List<SensitiveDataAccessLog> query(SensitiveDataAccessLogQuery query, int offset, int limit) {
         return mapper.selectList(buildWrapper(query)
                 .orderByDesc(SensitiveDataAccessLog::getCreatedAt, SensitiveDataAccessLog::getId)
-                .last("LIMIT " + limit + " OFFSET " + offset));
+                .last("LIMIT " + Math.max(1, limit) + " OFFSET " + Math.max(0, offset)));
     }
 
     /**

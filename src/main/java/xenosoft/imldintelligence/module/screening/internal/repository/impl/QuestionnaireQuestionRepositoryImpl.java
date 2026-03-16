@@ -58,7 +58,8 @@ public class QuestionnaireQuestionRepositoryImpl implements QuestionnaireQuestio
         return questionnaireQuestionMapper.selectList(new LambdaQueryWrapper<QuestionnaireQuestion>()
                 .eq(QuestionnaireQuestion::getTenantId, tenantId)
                 .eq(QuestionnaireQuestion::getQuestionnaireId, questionnaireId)
-                .orderByAsc(QuestionnaireQuestion::getSortOrder));
+                .orderByAsc(QuestionnaireQuestion::getSortOrder)
+                .orderByDesc(QuestionnaireQuestion::getId));
     }
 
     /**

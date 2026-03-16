@@ -47,6 +47,7 @@ public class DiagnosisResultRepositoryImpl implements DiagnosisResultRepository 
         return diagnosisResultMapper.selectList(new LambdaQueryWrapper<DiagnosisResult>()
                 .eq(DiagnosisResult::getTenantId, tenantId)
                 .eq(DiagnosisResult::getSessionId, sessionId)
+                .orderByAsc(DiagnosisResult::getRankNo)
                 .orderByDesc(DiagnosisResult::getId));
     }
 
