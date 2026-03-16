@@ -1,5 +1,7 @@
 package xenosoft.imldintelligence.module.diagnoses.internal.repository.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import xenosoft.imldintelligence.module.diagnoses.internal.repository.ModelRegistryRepository;
@@ -22,7 +24,9 @@ public class ModelRegistryRepositoryImpl implements ModelRegistryRepository {
      */
     @Override
     public Optional<ModelRegistry> findById(Long tenantId, Long id) {
-        return Optional.ofNullable(modelRegistryMapper.findById(tenantId, id));
+        return Optional.ofNullable(modelRegistryMapper.selectOne(new LambdaQueryWrapper<ModelRegistry>()
+                .eq(ModelRegistry::getTenantId, tenantId)
+                .eq(ModelRegistry::getId, id)));
     }
 
     /**
@@ -30,7 +34,10 @@ public class ModelRegistryRepositoryImpl implements ModelRegistryRepository {
      */
     @Override
     public Optional<ModelRegistry> findByModelCodeAndModelVersion(Long tenantId, String modelCode, String modelVersion) {
-        return Optional.ofNullable(modelRegistryMapper.findByModelCodeAndModelVersion(tenantId, modelCode, modelVersion));
+        return Optional.ofNullable(modelRegistryMapper.selectOne(new LambdaQueryWrapper<ModelRegistry>()
+                .eq(ModelRegistry::getTenantId, tenantId)
+                .eq(ModelRegistry::getModelCode, modelCode)
+                .eq(ModelRegistry::getModelVersion, modelVersion))));
     }
 
     /**
@@ -38,7 +45,9 @@ public class ModelRegistryRepositoryImpl implements ModelRegistryRepository {
      */
     @Override
     public List<ModelRegistry> listByTenantId(Long tenantId) {
-        return modelRegistryMapper.listByTenantId(tenantId);
+        return modelRegistryMapper.selectList(new LambdaQueryWrapper<ModelRegistry>()
+                .eq(ModelRegistry::getTenantId, tenantId)
+                .orderByDesc(ModelRegistry::getId));
     }
 
     /**
@@ -55,7 +64,9 @@ public class ModelRegistryRepositoryImpl implements ModelRegistryRepository {
      */
     @Override
     public ModelRegistry update(ModelRegistry modelRegistry) {
-        modelRegistryMapper.update(modelRegistry);
+        modelRegistryMapper.update(modelRegistry, new LambdaUpdateWrapper<ModelRegistry>()
+                .eq(ModelRegistry::getTenantId, modelRegistry.getTenantId())
+                .eq(ModelRegistry::getId, modelRegistry.getId()));
         return modelRegistry;
     }
 
@@ -64,6 +75,8 @@ public class ModelRegistryRepositoryImpl implements ModelRegistryRepository {
      */
     @Override
     public Boolean deleteById(Long tenantId, Long id) {
-        return modelRegistryMapper.deleteById(tenantId, id) > 0;
+        return modelRegistryMapper.delete(new LambdaQueryWrapper<ModelRegistry>()
+                .eq(ModelRegistry::getTenantId, tenantId)
+                .eq(ModelRegistry::getId, id)) > 0;
     }
 }

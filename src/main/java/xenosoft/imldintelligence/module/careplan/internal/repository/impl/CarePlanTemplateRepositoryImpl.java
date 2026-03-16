@@ -1,5 +1,7 @@
 package xenosoft.imldintelligence.module.careplan.internal.repository.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import xenosoft.imldintelligence.module.careplan.internal.repository.CarePlanTemplateRepository;
@@ -22,7 +24,9 @@ public class CarePlanTemplateRepositoryImpl implements CarePlanTemplateRepositor
      */
     @Override
     public Optional<CarePlanTemplate> findById(Long tenantId, Long id) {
-        return Optional.ofNullable(carePlanTemplateMapper.findById(tenantId, id));
+        return Optional.ofNullable(carePlanTemplateMapper.selectOne(new LambdaQueryWrapper<CarePlanTemplate>()
+                .eq(CarePlanTemplate::getTenantId, tenantId)
+                .eq(CarePlanTemplate::getId, id)));
     }
 
     /**
@@ -30,7 +34,10 @@ public class CarePlanTemplateRepositoryImpl implements CarePlanTemplateRepositor
      */
     @Override
     public Optional<CarePlanTemplate> findByTemplateCodeAndVersionNo(Long tenantId, String templateCode, Integer versionNo) {
-        return Optional.ofNullable(carePlanTemplateMapper.findByTemplateCodeAndVersionNo(tenantId, templateCode, versionNo));
+        return Optional.ofNullable(carePlanTemplateMapper.selectOne(new LambdaQueryWrapper<CarePlanTemplate>()
+                .eq(CarePlanTemplate::getTenantId, tenantId)
+                .eq(CarePlanTemplate::getTemplateCode, templateCode)
+                .eq(CarePlanTemplate::getVersionNo, versionNo))));
     }
 
     /**
@@ -38,7 +45,9 @@ public class CarePlanTemplateRepositoryImpl implements CarePlanTemplateRepositor
      */
     @Override
     public List<CarePlanTemplate> listByTenantId(Long tenantId) {
-        return carePlanTemplateMapper.listByTenantId(tenantId);
+        return carePlanTemplateMapper.selectList(new LambdaQueryWrapper<CarePlanTemplate>()
+                .eq(CarePlanTemplate::getTenantId, tenantId)
+                .orderByDesc(CarePlanTemplate::getId));
     }
 
     /**
@@ -55,7 +64,9 @@ public class CarePlanTemplateRepositoryImpl implements CarePlanTemplateRepositor
      */
     @Override
     public CarePlanTemplate update(CarePlanTemplate carePlanTemplate) {
-        carePlanTemplateMapper.update(carePlanTemplate);
+        carePlanTemplateMapper.update(carePlanTemplate, new LambdaUpdateWrapper<CarePlanTemplate>()
+                .eq(CarePlanTemplate::getTenantId, carePlanTemplate.getTenantId())
+                .eq(CarePlanTemplate::getId, carePlanTemplate.getId()));
         return carePlanTemplate;
     }
 
@@ -64,6 +75,8 @@ public class CarePlanTemplateRepositoryImpl implements CarePlanTemplateRepositor
      */
     @Override
     public Boolean deleteById(Long tenantId, Long id) {
-        return carePlanTemplateMapper.deleteById(tenantId, id) > 0;
+        return carePlanTemplateMapper.delete(new LambdaQueryWrapper<CarePlanTemplate>()
+                .eq(CarePlanTemplate::getTenantId, tenantId)
+                .eq(CarePlanTemplate::getId, id)) > 0;
     }
 }

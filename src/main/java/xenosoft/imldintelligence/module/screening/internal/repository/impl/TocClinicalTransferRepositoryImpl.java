@@ -1,5 +1,7 @@
 package xenosoft.imldintelligence.module.screening.internal.repository.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import xenosoft.imldintelligence.module.screening.internal.repository.TocClinicalTransferRepository;
@@ -22,7 +24,9 @@ public class TocClinicalTransferRepositoryImpl implements TocClinicalTransferRep
      */
     @Override
     public Optional<TocClinicalTransfer> findById(Long tenantId, Long id) {
-        return Optional.ofNullable(tocClinicalTransferMapper.findById(tenantId, id));
+        return Optional.ofNullable(tocClinicalTransferMapper.selectOne(new LambdaQueryWrapper<TocClinicalTransfer>()
+                .eq(TocClinicalTransfer::getTenantId, tenantId)
+                .eq(TocClinicalTransfer::getId, id)));
     }
 
     /**
@@ -30,7 +34,9 @@ public class TocClinicalTransferRepositoryImpl implements TocClinicalTransferRep
      */
     @Override
     public List<TocClinicalTransfer> listByTenantId(Long tenantId) {
-        return tocClinicalTransferMapper.listByTenantId(tenantId);
+        return tocClinicalTransferMapper.selectList(new LambdaQueryWrapper<TocClinicalTransfer>()
+                .eq(TocClinicalTransfer::getTenantId, tenantId)
+                .orderByDesc(TocClinicalTransfer::getId));
     }
 
     /**
@@ -38,7 +44,10 @@ public class TocClinicalTransferRepositoryImpl implements TocClinicalTransferRep
      */
     @Override
     public List<TocClinicalTransfer> listByResponseId(Long tenantId, Long responseId) {
-        return tocClinicalTransferMapper.listByResponseId(tenantId, responseId);
+        return tocClinicalTransferMapper.selectList(new LambdaQueryWrapper<TocClinicalTransfer>()
+                .eq(TocClinicalTransfer::getTenantId, tenantId)
+                .eq(TocClinicalTransfer::getResponseId, responseId)
+                .orderByDesc(TocClinicalTransfer::getId));
     }
 
     /**
@@ -46,7 +55,10 @@ public class TocClinicalTransferRepositoryImpl implements TocClinicalTransferRep
      */
     @Override
     public List<TocClinicalTransfer> listByPatientId(Long tenantId, Long patientId) {
-        return tocClinicalTransferMapper.listByPatientId(tenantId, patientId);
+        return tocClinicalTransferMapper.selectList(new LambdaQueryWrapper<TocClinicalTransfer>()
+                .eq(TocClinicalTransfer::getTenantId, tenantId)
+                .eq(TocClinicalTransfer::getPatientId, patientId)
+                .orderByDesc(TocClinicalTransfer::getId));
     }
 
     /**
@@ -63,7 +75,9 @@ public class TocClinicalTransferRepositoryImpl implements TocClinicalTransferRep
      */
     @Override
     public TocClinicalTransfer update(TocClinicalTransfer tocClinicalTransfer) {
-        tocClinicalTransferMapper.update(tocClinicalTransfer);
+        tocClinicalTransferMapper.update(tocClinicalTransfer, new LambdaUpdateWrapper<TocClinicalTransfer>()
+                .eq(TocClinicalTransfer::getTenantId, tocClinicalTransfer.getTenantId())
+                .eq(TocClinicalTransfer::getId, tocClinicalTransfer.getId()));
         return tocClinicalTransfer;
     }
 
@@ -72,6 +86,8 @@ public class TocClinicalTransferRepositoryImpl implements TocClinicalTransferRep
      */
     @Override
     public Boolean deleteById(Long tenantId, Long id) {
-        return tocClinicalTransferMapper.deleteById(tenantId, id) > 0;
+        return tocClinicalTransferMapper.delete(new LambdaQueryWrapper<TocClinicalTransfer>()
+                .eq(TocClinicalTransfer::getTenantId, tenantId)
+                .eq(TocClinicalTransfer::getId, id)) > 0;
     }
 }
