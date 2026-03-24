@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "ignoreDeprecations": "6.0",
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
@@ -12,7 +11,6 @@
     "skipLibCheck": true,
     "jsx": "preserve",
     "esModuleInterop": true,
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },

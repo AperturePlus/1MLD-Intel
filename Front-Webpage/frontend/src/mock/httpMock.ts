@@ -76,7 +76,12 @@ const exactHandlers = {
   })
 }
 
-export const isMockEnabled = () => import.meta.env.DEV && import.meta.env.VITE_USE_MOCK === 'true'
+export const isMockEnabled = () => {
+  const mockFlag = import.meta.env.VITE_USE_MOCK === 'true'
+  const isElectronBuild = import.meta.env.MODE === 'electron'
+
+  return mockFlag && (import.meta.env.DEV || isElectronBuild)
+}
 
 export const createMockAdapter = (config) => {
   const method = (config.method || 'get').toUpperCase()
