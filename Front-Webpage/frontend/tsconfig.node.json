@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo", // TypeScript 增量编译的缓存文件，加快编译速度，便于热更新
-    "target": "ES2023", // 编译后的 JavaScript 代码采用 ES2023 标准，支持最新语法
-    "lib": ["ES2023"], // 编译时包含 ES2023 的标准库，提供最新 JS API 类型
+    "target": "esnext", // 编译后的 JavaScript 代码采用 ES2023 标准，支持最新语法
+    "lib": ["ESNext"], // 编译时包含 ES2023 的标准库，提供最新 JS API 类型
     "module": "ESNext", // 采用 ESNext 模块系统，支持 import/export 的最新写法
     "skipLibCheck": true, // 跳过第三方库的类型检查，提升编译速度，减少类型冲突
 
@@ -14,6 +14,7 @@
     "noEmit": true, // 不生成编译后的 JS 文件，只做类型检查
 
     /* Linting */
+    "forceConsistentCasingInFileNames": true, // 强制文件名大小写一致，避免跨平台问题
     "strict": true, // 开启严格类型检查，提升代码安全性
     "noUnusedLocals": true, // 禁止未使用的局部变量，避免冗余代码
     "noUnusedParameters": true, // 禁止未使用的函数参数，提升代码质量
