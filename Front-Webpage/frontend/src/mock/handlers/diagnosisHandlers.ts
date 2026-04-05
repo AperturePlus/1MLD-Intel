@@ -10,7 +10,7 @@ import {
 } from '../core/mockState'
 
 export const diagnosisExactHandlers = {
-  'GET /api/v1/diagnosis/ai-queue/': async () => {
+  'GET /api/v1/web/diagnosis/ai-queue/': async () => {
     const items = loadPatients().map((item) => ({
       id: item.id,
       name: item.name,
@@ -23,7 +23,7 @@ export const diagnosisExactHandlers = {
     return { status: 200, data: { items } }
   },
 
-  'POST /api/v1/diagnosis/ai-reports/': async ({ data }) => {
+  'POST /api/v1/web/diagnosis/ai-reports/': async ({ data }) => {
     const patientId = data.patientId
     const patients = loadPatients()
     const patient = patients.find((item) => item.id === patientId)
@@ -59,7 +59,7 @@ export const diagnosisExactHandlers = {
     return { status: 200, data: diagnosisPayload }
   },
 
-  'GET /api/v1/diagnosis/expert-reports/': async () => {
+  'GET /api/v1/web/diagnosis/expert-reports/': async () => {
     return { status: 200, data: { items: loadReports() } }
   }
 }
@@ -67,7 +67,7 @@ export const diagnosisExactHandlers = {
 export const diagnosisDynamicHandlers = [
   {
     method: 'POST',
-    pattern: /^\/api\/v1\/diagnosis\/expert-reports\/([^/]+)\/sign\/$/,
+    pattern: /^\/api\/v1\/web\/diagnosis\/expert-reports\/([^/]+)\/sign\/$/,
     buildParams: (match) => ({ reportId: match[1] }),
     handler: async ({ params, data }) => {
       const reports = loadReports()
@@ -95,28 +95,28 @@ export const diagnosisRouteDocs = [
   {
     module: 'diagnosis',
     method: 'GET',
-    path: '/api/v1/diagnosis/ai-queue/',
+    path: '/api/v1/web/diagnosis/ai-queue/',
     kind: 'exact',
     description: 'AI 诊断队列。'
   },
   {
     module: 'diagnosis',
     method: 'POST',
-    path: '/api/v1/diagnosis/ai-reports/',
+    path: '/api/v1/web/diagnosis/ai-reports/',
     kind: 'exact',
     description: '触发 AI 诊断并返回诊断详情。'
   },
   {
     module: 'diagnosis',
     method: 'GET',
-    path: '/api/v1/diagnosis/expert-reports/',
+    path: '/api/v1/web/diagnosis/expert-reports/',
     kind: 'exact',
     description: '专家报告列表。'
   },
   {
     module: 'diagnosis',
     method: 'POST',
-    path: '/api/v1/diagnosis/expert-reports/:reportId/sign/',
+    path: '/api/v1/web/diagnosis/expert-reports/:reportId/sign/',
     kind: 'dynamic',
     description: '签发专家报告。'
   }

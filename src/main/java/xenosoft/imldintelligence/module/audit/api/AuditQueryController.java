@@ -42,7 +42,7 @@ import java.time.OffsetDateTime;
  * through the {@code X-Tenant-Id} header.</p>
  */
 @RestController
-@RequestMapping("/api/v1/audit")
+@RequestMapping({"/api/v1/audit", "/api/v1/app/audit", "/api/v1/web/audit"})
 @ConditionalOnProperty(prefix = "imld.audit", name = {"enabled", "query-api-enabled"}, havingValue = "true", matchIfMissing = true)
 @Tag(name = "Audit & Compliance", description = "审计日志查询 APIs - 提供通用审计、敏感数据访问和模型调用审计日志查询")
 public class AuditQueryController {

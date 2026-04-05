@@ -43,7 +43,7 @@ const identityApi = {
     params: UserAccountPageQuery
   ): Promise<AxiosResponse<ApiEnvelope<PagedResult<UserAccountResponse>>>> {
     return service({
-      url: '/api/v1/identity/users',
+      url: '/api/v1/web/identity/users',
       method: 'get',
       params,
       headers: {

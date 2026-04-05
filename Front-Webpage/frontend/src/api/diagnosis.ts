@@ -11,14 +11,14 @@ import type {
 const diagnosisApi = {
   getAiQueue(): Promise<AxiosResponse<DiagnosisQueueResponse>> {
     return service({
-      url: '/api/v1/diagnosis/ai-queue/',
+      url: '/api/v1/web/diagnosis/ai-queue/',
       method: 'get'
     })
   },
 
   runAiDiagnosis(patientId: string): Promise<AxiosResponse<DiagnosisResult>> {
     return service({
-      url: '/api/v1/diagnosis/ai-reports/',
+      url: '/api/v1/web/diagnosis/ai-reports/',
       method: 'post',
       data: { patientId }
     })
@@ -26,7 +26,7 @@ const diagnosisApi = {
 
   getExpertReports(): Promise<AxiosResponse<ExpertReportListResponse>> {
     return service({
-      url: '/api/v1/diagnosis/expert-reports/',
+      url: '/api/v1/web/diagnosis/expert-reports/',
       method: 'get'
     })
   },
@@ -36,7 +36,7 @@ const diagnosisApi = {
     payload: SignExpertReportPayload
   ): Promise<AxiosResponse<SignExpertReportResponse>> {
     return service({
-      url: `/api/v1/diagnosis/expert-reports/${reportId}/sign/`,
+      url: `/api/v1/web/diagnosis/expert-reports/${reportId}/sign/`,
       method: 'post',
       data: payload
     })

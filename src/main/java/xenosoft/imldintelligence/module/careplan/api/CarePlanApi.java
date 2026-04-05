@@ -20,7 +20,7 @@ import xenosoft.imldintelligence.module.careplan.api.dto.CarePlanApiDtos;
  * <p>契约聚焦计划执行闭环，确保私有化场景在不出域时也能完成核心随访流程。</p>
  */
 @Validated
-@RequestMapping("/api/v1/careplans")
+@RequestMapping({"/api/v1/careplans", "/api/v1/app/careplans", "/api/v1/web/careplans"})
 public interface CarePlanApi {
 
     /**

@@ -14,7 +14,7 @@ const managementApi = {
     params: ScreeningOverviewQuery = {}
   ): Promise<AxiosResponse<ScreeningOverviewResponse>> {
     return service({
-      url: '/api/v1/screening/overview/',
+      url: '/api/v1/web/screening/overview/',
       method: 'get',
       params
     })
@@ -22,7 +22,7 @@ const managementApi = {
 
   getDietPatients(params: { keyword?: string } = {}): Promise<AxiosResponse<DietPatientsResponse>> {
     return service({
-      url: '/api/v1/diet/patients/',
+      url: '/api/v1/web/diet/patients/',
       method: 'get',
       params
     })
@@ -30,21 +30,21 @@ const managementApi = {
 
   getDietPlan(patientId: string): Promise<AxiosResponse<DietPlanResponse>> {
     return service({
-      url: `/api/v1/diet/patients/${patientId}/plan/`,
+      url: `/api/v1/web/diet/patients/${patientId}/plan/`,
       method: 'get'
     })
   },
 
   regenerateDietPlan(patientId: string): Promise<AxiosResponse<RegenerateDietPlanResponse>> {
     return service({
-      url: `/api/v1/diet/patients/${patientId}/regenerate/`,
+      url: `/api/v1/web/diet/patients/${patientId}/regenerate/`,
       method: 'post'
     })
   },
 
   pushDietPlan(patientId: string): Promise<AxiosResponse<PushDietPlanResponse>> {
     return service({
-      url: `/api/v1/diet/patients/${patientId}/push/`,
+      url: `/api/v1/web/diet/patients/${patientId}/push/`,
       method: 'post'
     })
   }

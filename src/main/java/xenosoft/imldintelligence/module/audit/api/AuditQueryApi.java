@@ -21,7 +21,7 @@ import xenosoft.imldintelligence.module.audit.api.dto.SensitiveAccessLogResponse
  * 现有 {@link AuditQueryController} 可继续按既有方式演进。</p>
  */
 @Validated
-@RequestMapping("/api/v1/audit")
+@RequestMapping({"/api/v1/audit", "/api/v1/app/audit", "/api/v1/web/audit"})
 public interface AuditQueryApi {
 
     /**

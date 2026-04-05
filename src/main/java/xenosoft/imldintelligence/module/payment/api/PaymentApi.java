@@ -20,7 +20,7 @@ import xenosoft.imldintelligence.module.payment.api.dto.PaymentApiDtos;
  * <p>契约用于承接会员套餐、订单和订阅三段式流程，不包含第三方支付网关细节实现。</p>
  */
 @Validated
-@RequestMapping("/api/v1/payment")
+@RequestMapping({"/api/v1/payment", "/api/v1/app/payment", "/api/v1/web/payment"})
 public interface PaymentApi {
 
     /**

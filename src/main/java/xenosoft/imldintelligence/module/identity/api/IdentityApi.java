@@ -3,8 +3,6 @@ package xenosoft.imldintelligence.module.identity.api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -30,7 +28,7 @@ import xenosoft.imldintelligence.module.identity.api.dto.IdentityApiDtos;
  * 并在响应中优先返回脱敏后的身份数据。</p>
  */
 @Validated
-@RequestMapping("/api/v1/identity")
+@RequestMapping({"/api/v1/identity", "/api/v1/app/identity", "/api/v1/web/identity"})
 @Tag(name = "Identity & Access Management", description = "用户认证、患者管理、权限控制与知情同意管理 APIs")
 public interface IdentityApi {
 

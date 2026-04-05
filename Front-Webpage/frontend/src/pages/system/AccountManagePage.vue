@@ -184,7 +184,7 @@ const resolveErrorMessage = (error: unknown): string => {
     return '当前账号缺少 SYSTEM_ADMIN 权限，无法访问账号权限列表。'
   }
   if (status === 404) {
-    return '后端未提供账号权限接口（/api/v1/identity/users）。'
+    return '后端未提供账号权限接口（/api/v1/web/identity/users）。'
   }
 
   const backendMessage = axiosError?.response?.data?.message

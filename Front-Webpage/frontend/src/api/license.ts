@@ -11,14 +11,14 @@ import type {
 const licenseApi = {
   getLicenseStatus(): Promise<AxiosResponse<ApiEnvelope<LicenseStatusResponse>>> {
     return service({
-      url: '/api/v1/license/status',
+      url: '/api/v1/web/license/status',
       method: 'get'
     })
   },
 
   getFingerprint(): Promise<AxiosResponse<ApiEnvelope<FingerprintResponse>>> {
     return service({
-      url: '/api/v1/license/fingerprint',
+      url: '/api/v1/web/license/fingerprint',
       method: 'get'
     })
   },
@@ -27,7 +27,7 @@ const licenseApi = {
     data: ActivateLicenseRequest
   ): Promise<AxiosResponse<ApiEnvelope<LicenseValidationResponse>>> {
     return service({
-      url: '/api/v1/license/activate',
+      url: '/api/v1/web/license/activate',
       method: 'post',
       data
     })

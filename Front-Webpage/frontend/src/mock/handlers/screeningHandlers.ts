@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 export const screeningExactHandlers = {
-  'GET /api/v1/screening/overview/': async () => {
+  'GET /api/v1/web/screening/overview/': async () => {
     return {
       status: 200,
       data: {
@@ -49,7 +49,7 @@ export const screeningRouteDocs = [
   {
     module: 'screening',
     method: 'GET',
-    path: '/api/v1/screening/overview/',
+    path: '/api/v1/web/screening/overview/',
     kind: 'exact',
     description: '筛查总览数据。'
   }
