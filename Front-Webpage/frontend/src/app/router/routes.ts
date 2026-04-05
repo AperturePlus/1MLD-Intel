@@ -1,57 +1,35 @@
 import type { RouteRecordRaw } from 'vue-router'
+import { authRouteDefinition, centerRouteDefinitions } from './routeCatalog'
+
+const centerChildren = Object.values(centerRouteDefinitions).map<RouteRecordRaw>((definition) => ({
+  path: definition.path,
+  name: definition.name,
+  component: definition.component,
+  meta: {
+    title: definition.title,
+    sectionTitle: definition.sectionTitle
+  }
+}))
 
 export const routes: RouteRecordRaw[] = [
   {
-    path: '/',
-    name: 'index',
-    component: () => import('@/pages/auth/LoginPage.vue')
+    path: authRouteDefinition.path,
+    name: authRouteDefinition.name,
+    component: authRouteDefinition.component,
+    meta: {
+      title: authRouteDefinition.title,
+      sectionTitle: authRouteDefinition.sectionTitle
+    }
   },
   {
     path: '/center',
     name: 'center',
     component: () => import('@/layouts/CenterLayout.vue'),
-    redirect: '/center/welcome',
-    children: [
-      {
-        path: 'welcome',
-        name: 'welcome',
-        component: () => import('@/pages/dashboard/WelcomePage.vue')
-      },
-      {
-        path: 'patient-list',
-        name: 'patient-list',
-        component: () => import('@/pages/patients/PatientListPage.vue')
-      },
-      {
-        path: 'patient-record',
-        name: 'patient-record',
-        component: () => import('@/pages/patients/PatientRecordPage.vue')
-      },
-      {
-        path: 'ai-diagnosis',
-        name: 'ai-diagnosis',
-        component: () => import('@/pages/diagnosis/AiDiagnosisPage.vue')
-      },
-      {
-        path: 'expert-diagnosis',
-        name: 'expert-diagnosis',
-        component: () => import('@/pages/diagnosis/ExpertDiagnosisPage.vue')
-      },
-      {
-        path: 'diet',
-        name: 'diet',
-        component: () => import('@/pages/management/DietPage.vue')
-      },
-      {
-        path: 'data-screening',
-        name: 'data-screening',
-        component: () => import('@/pages/management/DataScreeningPage.vue')
-      },
-      {
-        path: 'license-activation',
-        name: 'license-activation',
-        component: () => import('@/pages/system/LicenseActivationPage.vue')
-      }
-    ]
+    redirect: centerRouteDefinitions.welcome.fullPath,
+    meta: {
+      title: centerRouteDefinitions.welcome.title,
+      sectionTitle: centerRouteDefinitions.welcome.sectionTitle
+    },
+    children: centerChildren
   }
 ]

@@ -238,6 +238,33 @@ export interface ApiEnvelope<T> {
   data: T
 }
 
+export interface PagedResult<T> {
+  page: number
+  size: number
+  total: number
+  items: T[]
+}
+
+export interface RoleItem {
+  id: number
+  roleCode: string
+  roleName: string
+  status: string
+}
+
+export interface UserAccountResponse {
+  id: number
+  userNo: string
+  username: string
+  displayName: string
+  userType: string
+  deptName: string
+  email: string
+  status: string
+  lastLoginAt: string | null
+  roles: RoleItem[]
+}
+
 export interface LicenseStatusResponse {
   licenseId: string | null
   hospitalId: string | null
