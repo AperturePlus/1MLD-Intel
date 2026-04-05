@@ -82,3 +82,21 @@ $env:IMLD_ACTIVATION_STATE_FILE_PATH="D:\imld\license\activation-state.json"
 ```
 
 更多参数见：[docs/license-cli.md](docs/license-cli.md)
+
+## IMLD Java 推理接口
+
+后端已集成 Java 原生 IMLD 推理，不需要额外拉起 Python 服务。默认接口：
+
+- `GET /api/imld/health`
+- `POST /api/imld/predict`
+- `POST /api/imld/batch_predict`
+
+默认模型与元数据路径：
+
+- `vendors/imld_api_project/artifacts/imld_xgboost_model.deprecated.bin`
+- `vendors/imld_api_project/artifacts/imld_model_meta.json`
+
+可通过环境变量覆盖：
+
+- `IMLD_INFERENCE_IMLD_MODEL_FILE_PATH`
+- `IMLD_INFERENCE_IMLD_METADATA_FILE_PATH`
