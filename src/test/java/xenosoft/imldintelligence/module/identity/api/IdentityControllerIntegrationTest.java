@@ -13,7 +13,7 @@ import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoCo
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
-import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
+import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
@@ -230,7 +230,7 @@ class IdentityControllerIntegrationTest {
             RedisAutoConfiguration.class,
             RedisReactiveAutoConfiguration.class,
             RedisRepositoriesAutoConfiguration.class,
-            KafkaAutoConfiguration.class
+            RabbitAutoConfiguration.class
     })
     @Import({
             IdentitySecurityConfiguration.class,

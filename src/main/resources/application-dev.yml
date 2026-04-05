@@ -13,15 +13,19 @@ spring:
       host: localhost
       port: 6379
       database: 0
-  kafka:
-    bootstrap-servers: localhost:9092
-    client-id: imld-intelligence-dev
-    consumer:
-      group-id: imld-intelligence-dev-group
-      auto-offset-reset: earliest
-      enable-auto-commit: false
-    producer:
-      acks: all
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    listener:
+      simple:
+        acknowledge-mode: manual
+        default-requeue-rejected: false
+        prefetch: 20
+    template:
+      mandatory: true
 
 imld:
   deployment:
