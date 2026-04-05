@@ -19,6 +19,11 @@
 			"name": "imld.integration",
 			"type": "java.util.Map<java.lang.String, java.lang.Object>",
 			"description": "Integration channel settings."
+		},
+		{
+			"name": "imld.inference.imld",
+			"type": "java.util.Map<java.lang.String, java.lang.Object>",
+			"description": "IMLD inference engine settings."
 		}
 	],
 	"properties": [
@@ -109,6 +114,58 @@
 			"type": "java.lang.String",
 			"description": "AES key used for sensitive data encryption/decryption; must be at least 16 bytes when enabled.",
 			"defaultValue": ""
+		},
+		{
+			"name": "imld.inference.imld.enabled",
+			"type": "java.lang.Boolean",
+			"description": "Enable Java-native IMLD inference APIs.",
+			"defaultValue": true
+		},
+		{
+			"name": "imld.inference.imld.desensitized-clinical-enabled",
+			"type": "java.lang.Boolean",
+			"description": "Enable desensitized clinical feature fuzzification during inference.",
+			"defaultValue": true
+		},
+		{
+			"name": "imld.inference.imld.model-file-path",
+			"type": "java.lang.String",
+			"description": "Path to Java-loadable XGBoost model file."
+		},
+		{
+			"name": "imld.inference.imld.metadata-file-path",
+			"type": "java.lang.String",
+			"description": "Path to model metadata JSON file."
+		},
+		{
+			"name": "imld.inference.imld.model-version-fallback",
+			"type": "java.lang.String",
+			"description": "Fallback model version when metadata is unavailable.",
+			"defaultValue": "v2_gene_clinical_fusion"
+		},
+		{
+			"name": "imld.inference.imld.engine",
+			"type": "java.lang.String",
+			"description": "Inference engine label exposed by health endpoint.",
+			"defaultValue": "xgboost-java"
+		},
+		{
+			"name": "imld.inference.imld.max-batch-size",
+			"type": "java.lang.Integer",
+			"description": "Maximum records allowed in a single batch inference request.",
+			"defaultValue": 100
+		},
+		{
+			"name": "imld.inference.imld.low-risk-threshold",
+			"type": "java.lang.Double",
+			"description": "Low risk upper threshold.",
+			"defaultValue": 0.2
+		},
+		{
+			"name": "imld.inference.imld.high-risk-threshold",
+			"type": "java.lang.Double",
+			"description": "High risk lower threshold.",
+			"defaultValue": 0.7
 		}
 	],
 	"hints": [
@@ -139,6 +196,14 @@
 			"values": [
 				{
 					"value": "event"
+				}
+			]
+		},
+		{
+			"name": "imld.inference.imld.engine",
+			"values": [
+				{
+					"value": "xgboost-java"
 				}
 			]
 		}

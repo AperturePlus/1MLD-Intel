@@ -142,6 +142,17 @@ imld:
     entitlement:
       enforce-support-window: ${IMLD_UPGRADE_ENFORCE_SUPPORT_WINDOW:true}
       allow-security-patch-after-expiry: ${IMLD_UPGRADE_ALLOW_SECURITY_PATCH_AFTER_EXPIRY:true}
+  inference:
+    imld:
+      enabled: ${IMLD_INFERENCE_IMLD_ENABLED:true}
+      desensitized-clinical-enabled: ${IMLD_INFERENCE_IMLD_DESENSITIZED_CLINICAL_ENABLED:true}
+      model-file-path: ${IMLD_INFERENCE_IMLD_MODEL_FILE_PATH:vendors/imld_api_project/artifacts/imld_xgboost_model.deprecated.bin}
+      metadata-file-path: ${IMLD_INFERENCE_IMLD_METADATA_FILE_PATH:vendors/imld_api_project/artifacts/imld_model_meta.json}
+      model-version-fallback: ${IMLD_INFERENCE_IMLD_MODEL_VERSION_FALLBACK:v2_gene_clinical_fusion}
+      engine: ${IMLD_INFERENCE_IMLD_ENGINE:xgboost-java}
+      max-batch-size: ${IMLD_INFERENCE_IMLD_MAX_BATCH_SIZE:100}
+      low-risk-threshold: ${IMLD_INFERENCE_IMLD_LOW_RISK_THRESHOLD:0.2}
+      high-risk-threshold: ${IMLD_INFERENCE_IMLD_HIGH_RISK_THRESHOLD:0.7}
 
 
 springdoc:
