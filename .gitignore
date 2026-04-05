@@ -45,3 +45,5 @@ docs/
 .claude/
 
 build-codex/
+
+build/
