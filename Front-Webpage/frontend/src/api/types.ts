@@ -231,3 +231,70 @@ export interface SignExpertReportPayload {
 export interface SignExpertReportResponse {
   report: ExpertReport
 }
+
+export interface ApiEnvelope<T> {
+  code: number
+  message: string
+  data: T
+}
+
+export interface PagedResult<T> {
+  page: number
+  size: number
+  total: number
+  items: T[]
+}
+
+export interface RoleItem {
+  id: number
+  roleCode: string
+  roleName: string
+  status: string
+}
+
+export interface UserAccountResponse {
+  id: number
+  userNo: string
+  username: string
+  displayName: string
+  userType: string
+  deptName: string
+  email: string
+  status: string
+  lastLoginAt: string | null
+  roles: RoleItem[]
+}
+
+export interface LicenseStatusResponse {
+  licenseId: string | null
+  hospitalId: string | null
+  deploymentMode: string | null
+  issuer: string | null
+  issuedAt: string | null
+  supportStartDate: string | null
+  supportEndDate: string | null
+  features: string[]
+  scenarios: string[]
+  machineBound: boolean
+  activated: boolean
+}
+
+export interface FingerprintResponse {
+  cpuIdHash: string
+  macAddrHash: string
+  hdIdHash: string
+  osInfoHash: string
+  machineFingerprintHash: string
+}
+
+export interface ActivateLicenseRequest {
+  activationCode: string
+  machineFingerprintHash: string
+}
+
+export interface LicenseValidationResponse {
+  valid: boolean
+  reason: string
+  machineFingerprintHash: string
+  supportActive: boolean
+}

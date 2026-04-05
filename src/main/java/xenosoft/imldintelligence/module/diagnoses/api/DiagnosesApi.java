@@ -1,7 +1,5 @@
 package xenosoft.imldintelligence.module.diagnoses.api;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -10,6 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import xenosoft.imldintelligence.common.dto.ApiResponse;
 import xenosoft.imldintelligence.common.dto.PageQueryRequest;
 import xenosoft.imldintelligence.common.dto.PagedResultResponse;
@@ -21,7 +22,7 @@ import xenosoft.imldintelligence.module.diagnoses.api.dto.DiagnosesApiDtos;
  * <p>接口围绕会话触发、结果查看、人工反馈和模型管理设计，明确区分自动结论与人工校正。</p>
  */
 @Validated
-@RequestMapping("/api/v1/diagnoses")
+@RequestMapping({"/api/v1/diagnoses", "/api/v1/app/diagnoses", "/api/v1/web/diagnoses"})
 public interface DiagnosesApi {
 
     /**

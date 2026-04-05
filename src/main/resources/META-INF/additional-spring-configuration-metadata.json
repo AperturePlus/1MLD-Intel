@@ -1,0 +1,146 @@
+{
+	"groups": [
+		{
+			"name": "imld.deployment",
+			"type": "java.util.Map<java.lang.String, java.lang.Object>",
+			"description": "Deployment mode settings."
+		},
+		{
+			"name": "imld.cloud-bridge",
+			"type": "java.util.Map<java.lang.String, java.lang.Object>",
+			"description": "Private deployment outbound bridge capability settings."
+		},
+		{
+			"name": "imld.privacy.data-egress",
+			"type": "java.util.Map<java.lang.String, java.lang.Object>",
+			"description": "Data egress privacy control settings."
+		},
+		{
+			"name": "imld.integration",
+			"type": "java.util.Map<java.lang.String, java.lang.Object>",
+			"description": "Integration channel settings."
+		}
+	],
+	"properties": [
+		{
+			"name": "imld.deployment.mode",
+			"type": "java.lang.String",
+			"description": "Deployment mode identifier.",
+			"defaultValue": "private"
+		},
+		{
+			"name": "imld.cloud-bridge.enabled",
+			"type": "java.lang.Boolean",
+			"description": "Enables outbound cloud bridge capability.",
+			"defaultValue": true
+		},
+		{
+			"name": "imld.cloud-bridge.scenario-allowlist",
+			"type": "java.util.List<java.lang.String>",
+			"description": "Business scenarios allowed to trigger cloud communication."
+		},
+		{
+			"name": "imld.cloud-bridge.network.egress-allowlist",
+			"type": "java.util.List<java.lang.String>",
+			"description": "Allowed outbound endpoints in host:port format."
+		},
+		{
+			"name": "imld.cloud-bridge.security.tls-required",
+			"type": "java.lang.Boolean",
+			"description": "Requires TLS for cloud bridge transport.",
+			"defaultValue": true
+		},
+		{
+			"name": "imld.cloud-bridge.security.mtls-required",
+			"type": "java.lang.Boolean",
+			"description": "Requires mTLS for cloud bridge transport.",
+			"defaultValue": true
+		},
+		{
+			"name": "imld.cloud-bridge.security.request-signature-required",
+			"type": "java.lang.Boolean",
+			"description": "Enforces request signing for outbound bridge traffic.",
+			"defaultValue": true
+		},
+		{
+			"name": "imld.cloud-bridge.security.replay-protection-enabled",
+			"type": "java.lang.Boolean",
+			"description": "Enables replay attack protection.",
+			"defaultValue": true
+		},
+		{
+			"name": "imld.privacy.data-egress.minimum-necessary-enabled",
+			"type": "java.lang.Boolean",
+			"description": "Only minimum necessary data may leave private deployment.",
+			"defaultValue": true
+		},
+		{
+			"name": "imld.privacy.data-egress.deidentification-required",
+			"type": "java.lang.Boolean",
+			"description": "Requires de-identification before outbound synchronization.",
+			"defaultValue": true
+		},
+		{
+			"name": "imld.privacy.data-egress.deny-raw-phi-egress",
+			"type": "java.lang.Boolean",
+			"description": "Blocks raw PHI from leaving private deployment.",
+			"defaultValue": true
+		},
+		{
+			"name": "imld.integration.transport",
+			"type": "java.lang.String",
+			"description": "Integration transport type.",
+			"defaultValue": "event"
+		},
+		{
+			"name": "imld.integration.outbound-only-default",
+			"type": "java.lang.Boolean",
+			"description": "Whether integration defaults to outbound-only communication.",
+			"defaultValue": true
+		},
+		{
+			"name": "imld.integration.contract-version",
+			"type": "java.lang.String",
+			"description": "Version of integration contract.",
+			"defaultValue": "v1"
+		},
+		{
+			"name": "imld.security.data-encryption-key",
+			"type": "java.lang.String",
+			"description": "AES key used for sensitive data encryption/decryption; must be at least 16 bytes when enabled.",
+			"defaultValue": ""
+		}
+	],
+	"hints": [
+		{
+			"name": "imld.deployment.mode",
+			"values": [
+				{
+					"value": "saas"
+				},
+				{
+					"value": "private"
+				}
+			]
+		},
+		{
+			"name": "imld.cloud-bridge.scenario-allowlist",
+			"values": [
+				{
+					"value": "followup.push"
+				},
+				{
+					"value": "vip.subscription"
+				}
+			]
+		},
+		{
+			"name": "imld.integration.transport",
+			"values": [
+				{
+					"value": "event"
+				}
+			]
+		}
+	]
+}

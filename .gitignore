@@ -43,3 +43,7 @@ failures/
 plans/
 docs/
 .claude/
+
+build-codex/
+
+build/

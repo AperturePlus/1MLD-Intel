@@ -20,7 +20,7 @@ import xenosoft.imldintelligence.module.clinical.api.dto.ClinicalApiDtos;
  * <p>接口围绕证据采集与标准化设计，不暴露仓储模型，也不在边界层扩散解析实现细节。</p>
  */
 @Validated
-@RequestMapping("/api/v1/clinical")
+@RequestMapping({"/api/v1/clinical", "/api/v1/app/clinical", "/api/v1/web/clinical"})
 public interface ClinicalApi {
 
     /**

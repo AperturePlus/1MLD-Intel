@@ -51,7 +51,7 @@
   },
   "build": {
     "appId": "io.xenosoft.imld.frontend",
-    "productName": "IMLD-Intelligence-Frontend",
+    "productName": "IMLD Intelligence",
     "directories": {
       "output": "release"
     },

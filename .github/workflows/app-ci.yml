@@ -1,0 +1,39 @@
+name: App CI
+
+on:
+  pull_request:
+    paths:
+      - 'Front-APP/front/**'
+      - '.github/workflows/app-ci.yml'
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'Front-APP/front/**'
+      - '.github/workflows/app-ci.yml'
+  workflow_dispatch:
+
+jobs:
+  app-typecheck:
+    name: Type Check Front-APP
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: Front-APP/front
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Type check
+        run: npm run ci:check

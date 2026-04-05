@@ -10,7 +10,7 @@ import type {
 const patientApi = {
   list(params: PatientListQuery = {}): Promise<AxiosResponse<PatientListResponse>> {
     return service({
-      url: '/api/v1/patients/',
+      url: '/api/v1/web/patients/',
       method: 'get',
       params
     })
@@ -18,7 +18,7 @@ const patientApi = {
 
   createRecord(data: PatientRecordPayload): Promise<AxiosResponse<CreatePatientRecordResponse>> {
     return service({
-      url: '/api/v1/patient-records/',
+      url: '/api/v1/web/patient-records/',
       method: 'post',
       data
     })

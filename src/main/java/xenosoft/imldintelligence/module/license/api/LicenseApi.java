@@ -17,7 +17,7 @@ import xenosoft.imldintelligence.module.license.api.dto.LicenseApiDtos;
  * 具体离线验签与激活流程仍由后续实现承接。</p>
  */
 @Validated
-@RequestMapping("/api/v1/license")
+@RequestMapping({"/api/v1/license", "/api/v1/app/license", "/api/v1/web/license"})
 public interface LicenseApi {
 
     /**

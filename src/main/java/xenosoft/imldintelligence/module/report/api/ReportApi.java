@@ -21,7 +21,7 @@ import xenosoft.imldintelligence.module.report.api.dto.ReportApiDtos;
  * <p>该接口强调报告工作流，而不是底层版本表实现细节。</p>
  */
 @Validated
-@RequestMapping("/api/v1/reports")
+@RequestMapping({"/api/v1/reports", "/api/v1/app/reports", "/api/v1/web/reports"})
 public interface ReportApi {
 
     /**

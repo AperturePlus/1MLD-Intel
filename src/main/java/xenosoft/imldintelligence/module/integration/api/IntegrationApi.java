@@ -21,7 +21,7 @@ import xenosoft.imldintelligence.module.integration.api.dto.IntegrationApiDtos;
  * <p>接口按任务编排和重试补偿设计，默认坚持最小出域与摘要回显策略。</p>
  */
 @Validated
-@RequestMapping("/api/v1/integration")
+@RequestMapping({"/api/v1/integration", "/api/v1/app/integration", "/api/v1/web/integration"})
 public interface IntegrationApi {
 
     /**

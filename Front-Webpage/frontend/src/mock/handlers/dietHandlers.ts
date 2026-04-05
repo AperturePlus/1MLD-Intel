@@ -8,7 +8,7 @@ import {
 } from '../core/mockState'
 
 export const dietExactHandlers = {
-  'GET /api/v1/diet/patients/': async ({ query }) => {
+  'GET /api/v1/web/diet/patients/': async ({ query }) => {
     const keyword = (query.keyword || '').trim()
     const items = loadPatients()
       .filter((item) => !keyword || item.name.includes(keyword) || item.id.includes(keyword))
@@ -29,7 +29,7 @@ export const dietExactHandlers = {
 export const dietDynamicHandlers = [
   {
     method: 'GET',
-    pattern: /^\/api\/v1\/diet\/patients\/([^/]+)\/plan\/$/,
+    pattern: /^\/api\/v1\/web\/diet\/patients\/([^/]+)\/plan\/$/,
     buildParams: (match) => ({ patientId: match[1] }),
     handler: async ({ params }) => {
       const patient = loadPatients().find((item) => item.id === params.patientId)
@@ -52,7 +52,7 @@ export const dietDynamicHandlers = [
   },
   {
     method: 'POST',
-    pattern: /^\/api\/v1\/diet\/patients\/([^/]+)\/regenerate\/$/,
+    pattern: /^\/api\/v1\/web\/diet\/patients\/([^/]+)\/regenerate\/$/,
     buildParams: (match) => ({ patientId: match[1] }),
     handler: async ({ params }) => {
       const patient = loadPatients().find((item) => item.id === params.patientId)
@@ -82,7 +82,7 @@ export const dietDynamicHandlers = [
   },
   {
     method: 'POST',
-    pattern: /^\/api\/v1\/diet\/patients\/([^/]+)\/push\/$/,
+    pattern: /^\/api\/v1\/web\/diet\/patients\/([^/]+)\/push\/$/,
     buildParams: (match) => ({ patientId: match[1] }),
     handler: async ({ params }) => {
       const patient = loadPatients().find((item) => item.id === params.patientId)
@@ -106,28 +106,28 @@ export const dietRouteDocs = [
   {
     module: 'diet',
     method: 'GET',
-    path: '/api/v1/diet/patients/',
+    path: '/api/v1/web/diet/patients/',
     kind: 'exact',
     description: '饮食干预患者列表。'
   },
   {
     module: 'diet',
     method: 'GET',
-    path: '/api/v1/diet/patients/:patientId/plan/',
+    path: '/api/v1/web/diet/patients/:patientId/plan/',
     kind: 'dynamic',
     description: '获取患者饮食方案。'
   },
   {
     module: 'diet',
     method: 'POST',
-    path: '/api/v1/diet/patients/:patientId/regenerate/',
+    path: '/api/v1/web/diet/patients/:patientId/regenerate/',
     kind: 'dynamic',
     description: '重生成饮食方案。'
   },
   {
     module: 'diet',
     method: 'POST',
-    path: '/api/v1/diet/patients/:patientId/push/',
+    path: '/api/v1/web/diet/patients/:patientId/push/',
     kind: 'dynamic',
     description: '推送饮食方案给患者。'
   }

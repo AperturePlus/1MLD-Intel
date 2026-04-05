@@ -20,6 +20,11 @@ public class IdentitySecurityProperties {
     private List<String> publicPaths = new ArrayList<>(List.of(
             "/error",
             "/api/v1/auth/**",
+            "/api/v1/app/auth/**",
+            "/api/v1/web/auth/**",
+            "/api/v1/identity/auth/**",
+            "/api/v1/app/identity/auth/**",
+            "/api/v1/web/identity/auth/**",
             "/actuator/health",
             "/actuator/info"
     ));

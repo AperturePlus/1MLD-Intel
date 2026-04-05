@@ -11,7 +11,7 @@ import {
 } from '../core/mockState'
 
 export const patientExactHandlers = {
-  'GET /api/v1/patients/': async ({ query }) => {
+  'GET /api/v1/web/patients/': async ({ query }) => {
     const keyword = (query.keyword || '').trim()
     const items = loadPatients()
       .filter((item) => !keyword || item.name.includes(keyword) || item.id.includes(keyword))
@@ -27,7 +27,7 @@ export const patientExactHandlers = {
     return { status: 200, data: { items } }
   },
 
-  'POST /api/v1/patient-records/': async ({ data }) => {
+  'POST /api/v1/web/patient-records/': async ({ data }) => {
     const requiredFields = ['name', 'gender', 'age', 'visitDate', 'chiefComplaint', 'diagnosis']
     const errors = {}
 
@@ -90,14 +90,14 @@ export const patientRouteDocs = [
   {
     module: 'patient',
     method: 'GET',
-    path: '/api/v1/patients/',
+    path: '/api/v1/web/patients/',
     kind: 'exact',
     description: '患者列表查询（支持 keyword）。'
   },
   {
     module: 'patient',
     method: 'POST',
-    path: '/api/v1/patient-records/',
+    path: '/api/v1/web/patient-records/',
     kind: 'exact',
     description: '创建病历并在必要时写入新患者。'
   }

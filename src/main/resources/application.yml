@@ -5,12 +5,12 @@ spring:
     group:
       dev-saas: dev,saas
       dev-private: dev,private
-      dev-hybrid: dev,private,hybrid
+      dev-private-bridge: dev,private,private-bridge
   datasource:
     driver-class-name: ${IMLD_DB_DRIVER:org.postgresql.Driver}
     url: ${IMLD_DB_URL:jdbc:postgresql://localhost:5432/imld_core?sslmode=disable&characterEncoding=utf8}
-    username: ${IMLD_DB_USERNAME:postgres}
-    password: ${IMLD_DB_PASSWORD:postgres}
+    username: ${IMLD_DB_USERNAME:imld_user}
+    password: ${IMLD_DB_PASSWORD:imldintel}
   sql:
     init:
       mode: ${IMLD_SQL_INIT_MODE:never}
@@ -25,30 +25,32 @@ spring:
       connect-timeout: ${IMLD_REDIS_CONNECT_TIMEOUT:2s}
       ssl:
         enabled: ${IMLD_REDIS_SSL_ENABLED:false}
-  kafka:
-    bootstrap-servers: ${IMLD_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    client-id: ${IMLD_KAFKA_CLIENT_ID:imld-intelligence}
-    properties:
-      security.protocol: ${IMLD_KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
-      sasl.mechanism: ${IMLD_KAFKA_SASL_MECHANISM:}
-      sasl.jaas.config: ${IMLD_KAFKA_SASL_JAAS_CONFIG:}
-      ssl.endpoint.identification.algorithm: ${IMLD_KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM:https}
-      retries: ${IMLD_KAFKA_RETRIES:3}
-    producer:
-      acks: ${IMLD_KAFKA_PRODUCER_ACKS:all}
-      retries: ${IMLD_KAFKA_RETRIES:3}
-      properties:
-        enable.idempotence: ${IMLD_KAFKA_ENABLE_IDEMPOTENCE:true}
-    consumer:
-      group-id: ${IMLD_KAFKA_CONSUMER_GROUP:imld-intelligence-group}
-      auto-offset-reset: ${IMLD_KAFKA_AUTO_OFFSET_RESET:latest}
-      enable-auto-commit: ${IMLD_KAFKA_ENABLE_AUTO_COMMIT:false}
+  rabbitmq:
+    host: ${IMLD_RABBITMQ_HOST:localhost}
+    port: ${IMLD_RABBITMQ_PORT:5672}
+    username: ${IMLD_RABBITMQ_USERNAME:guest}
+    password: ${IMLD_RABBITMQ_PASSWORD:guest}
+    virtual-host: ${IMLD_RABBITMQ_VHOST:/}
+    ssl:
+      enabled: ${IMLD_RABBITMQ_SSL_ENABLED:false}
+    listener:
+      simple:
+        acknowledge-mode: ${IMLD_RABBITMQ_ACK_MODE:manual}
+        default-requeue-rejected: ${IMLD_RABBITMQ_DEFAULT_REQUEUE_REJECTED:false}
+        prefetch: ${IMLD_RABBITMQ_PREFETCH:20}
+        retry:
+          enabled: ${IMLD_RABBITMQ_CONSUMER_RETRY_ENABLED:true}
+          initial-interval: ${IMLD_RABBITMQ_CONSUMER_RETRY_INITIAL_INTERVAL:500ms}
+          multiplier: ${IMLD_RABBITMQ_CONSUMER_RETRY_MULTIPLIER:2}
+          max-attempts: ${IMLD_RABBITMQ_CONSUMER_RETRY_MAX_ATTEMPTS:3}
+    template:
+      mandatory: ${IMLD_RABBITMQ_TEMPLATE_MANDATORY:true}
+      retry:
+        enabled: ${IMLD_RABBITMQ_PRODUCER_RETRY_ENABLED:true}
+        initial-interval: ${IMLD_RABBITMQ_PRODUCER_RETRY_INITIAL_INTERVAL:500ms}
+        multiplier: ${IMLD_RABBITMQ_PRODUCER_RETRY_MULTIPLIER:2}
+        max-attempts: ${IMLD_RABBITMQ_PRODUCER_RETRY_MAX_ATTEMPTS:3}
 
-mybatis:
-  mapper-locations: classpath*:xenosoft/imldintelligence/module/**/internal/repository/*.xml
-  type-handlers-package: xenosoft.imldintelligence.common.mybatis
-  configuration:
-    map-underscore-to-camel-case: true
 mybatis-plus:
   mapper-locations: classpath*:xenosoft/imldintelligence/module/**/internal/repository/*.xml
   type-handlers-package: xenosoft.imldintelligence.common.mybatis
@@ -85,7 +87,11 @@ imld:
     public-paths:
       - /error
       - /api/v1/auth/**
+      - /api/v1/app/auth/**
+      - /api/v1/web/auth/**
       - /api/v1/identity/auth/**
+      - /api/v1/app/identity/auth/**
+      - /api/v1/web/identity/auth/**
       - /actuator/health
       - /actuator/info
       - /swagger-ui.html
@@ -124,6 +130,7 @@ imld:
       startup-validation-enabled: ${IMLD_PRIVATE_STARTUP_VALIDATION_ENABLED:false}
       activation-required: ${IMLD_ACTIVATION_REQUIRED:true}
       activation-code: ${IMLD_ACTIVATION_CODE:}
+      activation-state-file-path: ${IMLD_ACTIVATION_STATE_FILE_PATH:}
       license-file-path: ${IMLD_LICENSE_FILE_PATH:}
       public-key-file-path: ${IMLD_LICENSE_PUBLIC_KEY_FILE_PATH:}
       machine-binding-enabled: ${IMLD_MACHINE_BINDING_ENABLED:true}
