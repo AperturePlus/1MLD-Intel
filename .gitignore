@@ -47,3 +47,7 @@ docs/
 build-codex/
 
 build/
+scripts/env.sh
+vendors/
+
+*.venv
