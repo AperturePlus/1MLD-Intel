@@ -1,25 +1,67 @@
 export interface LoginRequest {
   username: string
   password: string
+  tenantCode?: string
 }
 
 export interface LoginResponse {
-  key?: string
-  token?: string
-  access?: string
-  access_token?: string
-  username?: string
+  accessToken: string
+  refreshToken: string
+  expiresAt: string
+  user?: AuthenticatedUserItem | null
 }
 
 export interface RegisterRequest {
   username: string
   email: string
-  password1: string
-  password2: string
+  password: string
+  emailCode: string
+  displayName?: string
+  userType?: string
+  tenantCode?: string
 }
 
 export interface RegisterResponse {
-  detail: string
+  accessToken: string
+  refreshToken: string
+  expiresAt: string
+  user?: AuthenticatedUserItem | null
+}
+
+export interface AuthenticatedUserItem {
+  userId: number
+  tenantId: number
+  username: string
+  displayName: string
+  userType: string
+  roleCodes: string[]
+}
+
+export interface SendRegistrationEmailCodeRequest {
+  username: string
+  email: string
+  tenantCode?: string
+}
+
+export interface ForgotPasswordRequest {
+  username: string
+  email: string
+  tenantCode?: string
+}
+
+export interface ResetPasswordRequest {
+  username: string
+  email: string
+  newPassword: string
+  emailCode: string
+  tenantCode?: string
+}
+
+export interface EmailCodeSendResponse {
+  email: string
+  purpose: string
+  expiresAt: string
+  resendAfterSeconds: number
 }
 
 export interface UserDetailResponse {
