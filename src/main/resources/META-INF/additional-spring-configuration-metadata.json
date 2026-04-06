@@ -130,12 +130,14 @@
 		{
 			"name": "imld.inference.imld.model-file-path",
 			"type": "java.lang.String",
-			"description": "Path to Java-loadable XGBoost model file."
+			"description": "Path to Java-loadable XGBoost model file.",
+			"defaultValue": "classpath:models/imld/imld_xgboost_model.deprecated.bin"
 		},
 		{
 			"name": "imld.inference.imld.metadata-file-path",
 			"type": "java.lang.String",
-			"description": "Path to model metadata JSON file."
+			"description": "Path to model metadata JSON file.",
+			"defaultValue": "classpath:models/imld/imld_model_meta.json"
 		},
 		{
 			"name": "imld.inference.imld.model-version-fallback",

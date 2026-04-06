@@ -18,8 +18,6 @@ class ImldInferenceServiceImplTest {
     @BeforeEach
     void setUp() {
         ImldInferenceProperties properties = new ImldInferenceProperties();
-        properties.setModelFilePath("vendors/imld_api_project/artifacts/imld_xgboost_model.deprecated.bin");
-        properties.setMetadataFilePath("vendors/imld_api_project/artifacts/imld_model_meta.json");
         properties.setDesensitizedClinicalEnabled(true);
         inferenceService = new ImldInferenceServiceImpl(properties, new ObjectMapper());
     }

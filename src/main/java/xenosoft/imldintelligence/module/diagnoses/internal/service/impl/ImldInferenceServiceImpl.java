@@ -10,6 +10,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import xenosoft.imldintelligence.module.diagnoses.api.dto.ImldInferenceApiDtos;
 import xenosoft.imldintelligence.module.diagnoses.internal.config.ImldInferenceProperties;
@@ -19,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -88,15 +90,24 @@ public class ImldInferenceServiceImpl implements ImldInferenceService {
 
     private final ImldInferenceProperties properties;
     private final ObjectMapper objectMapper;
+    private final ResourceLoader resourceLoader;
 
     private final ReentrantLock modelLock = new ReentrantLock();
     private volatile Predictor predictor;
-    private volatile Path loadedModelPath;
+    private volatile String loadedModelLocation;
     private volatile ModelMeta modelMeta;
 
-    public ImldInferenceServiceImpl(ImldInferenceProperties properties, ObjectMapper objectMapper) {
+    public ImldInferenceServiceImpl(
+            ImldInferenceProperties properties,
+            ObjectMapper objectMapper,
+            ResourceLoader resourceLoader) {
         this.properties = properties;
         this.objectMapper = objectMapper;
+        this.resourceLoader = resourceLoader;
+    }
+
+    public ImldInferenceServiceImpl(ImldInferenceProperties properties, ObjectMapper objectMapper) {
+        this(properties, objectMapper, new DefaultResourceLoader());
     }
 
     @Override
@@ -445,27 +456,28 @@ public class ImldInferenceServiceImpl implements ImldInferenceService {
     }
 
     private Predictor ensurePredictor() {
-        Path modelPath = resolvePath(properties.getModelFilePath());
+        String modelLocation = resolveResourceLocation(properties.getModelFilePath());
         Predictor local = predictor;
-        if (local != null && modelPath.equals(loadedModelPath)) {
+        if (local != null && modelLocation.equals(loadedModelLocation)) {
             return local;
         }
 
         modelLock.lock();
         try {
-            if (predictor != null && modelPath.equals(loadedModelPath)) {
+            if (predictor != null && modelLocation.equals(loadedModelLocation)) {
                 return predictor;
             }
-            if (!Files.exists(modelPath)) {
-                throw new IllegalStateException("IMLD model file not found: " + modelPath);
+            Resource modelResource = resourceLoader.getResource(modelLocation);
+            if (!modelResource.exists()) {
+                throw new IllegalStateException("IMLD model file not found: " + modelLocation);
             }
-            try (InputStream in = Files.newInputStream(modelPath)) {
+            try (InputStream in = modelResource.getInputStream()) {
                 Predictor loaded = new Predictor(in);
                 predictor = loaded;
-                loadedModelPath = modelPath;
+                loadedModelLocation = modelLocation;
                 return loaded;
             } catch (IOException ex) {
-                throw new IllegalStateException("Failed to load IMLD model file: " + modelPath, ex);
+                throw new IllegalStateException("Failed to load IMLD model file: " + modelLocation, ex);
             }
         } finally {
             modelLock.unlock();
@@ -477,14 +489,18 @@ public class ImldInferenceServiceImpl implements ImldInferenceService {
         if (local != null) {
             return local;
         }
-        Path metadataPath = resolvePath(properties.getMetadataFilePath());
-        if (!Files.exists(metadataPath)) {
+        String metadataLocation = resolveResourceLocation(properties.getMetadataFilePath());
+        Resource metadataResource = resourceLoader.getResource(metadataLocation);
+        if (!metadataResource.exists()) {
             ModelMeta fallback = new ModelMeta(defaultInferenceFeatureColumns(), Map.of(), properties.getModelVersionFallback());
             modelMeta = fallback;
             return fallback;
         }
         try {
-            JsonNode root = objectMapper.readTree(metadataPath.toFile());
+            JsonNode root;
+            try (InputStream inputStream = metadataResource.getInputStream()) {
+                root = objectMapper.readTree(inputStream);
+            }
             List<String> featureColumns = new ArrayList<>();
             JsonNode featureNode = root.path("feature_columns");
             if (featureNode.isArray()) {
@@ -507,7 +523,7 @@ public class ImldInferenceServiceImpl implements ImldInferenceService {
             modelMeta = loaded;
             return loaded;
         } catch (Exception ex) {
-            logger.warn("Failed to parse model metadata, fallback to defaults. metadataPath={}", metadataPath, ex);
+            logger.warn("Failed to parse model metadata, fallback to defaults. metadataLocation={}", metadataLocation, ex);
             ModelMeta fallback = new ModelMeta(defaultInferenceFeatureColumns(), Map.of(), properties.getModelVersionFallback());
             modelMeta = fallback;
             return fallback;
@@ -701,12 +717,22 @@ public class ImldInferenceServiceImpl implements ImldInferenceService {
         return columns;
     }
 
-    private Path resolvePath(String configuredPath) {
-        Path path = Path.of(configuredPath);
-        if (path.isAbsolute()) {
-            return path.normalize();
+    private String resolveResourceLocation(String configuredPath) {
+        if (configuredPath == null || configuredPath.isBlank()) {
+            throw new IllegalArgumentException("configured resource path must not be blank");
         }
-        return Path.of(System.getProperty("user.dir")).resolve(path).normalize();
+        String value = configuredPath.trim();
+        if (value.startsWith("classpath:")
+                || value.startsWith("file:")
+                || value.startsWith("http:")
+                || value.startsWith("https:")) {
+            return value;
+        }
+        Path path = Path.of(value);
+        if (!path.isAbsolute()) {
+            path = Path.of(System.getProperty("user.dir")).resolve(path);
+        }
+        return path.normalize().toUri().toString();
     }
 
     private static String nullIfBlank(String value) {

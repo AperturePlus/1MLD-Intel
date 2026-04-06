@@ -10,7 +10,7 @@ spring:
     driver-class-name: ${IMLD_DB_DRIVER:org.postgresql.Driver}
     url: ${IMLD_DB_URL:jdbc:postgresql://localhost:5432/imld_core?sslmode=disable&characterEncoding=utf8}
     username: ${IMLD_DB_USERNAME:imld_user}
-    password: ${IMLD_DB_PASSWORD:imldintel}
+    password: ${IMLD_DB_PASSWORD:system}
   sql:
     init:
       mode: ${IMLD_SQL_INIT_MODE:never}
@@ -146,8 +146,8 @@ imld:
     imld:
       enabled: ${IMLD_INFERENCE_IMLD_ENABLED:true}
       desensitized-clinical-enabled: ${IMLD_INFERENCE_IMLD_DESENSITIZED_CLINICAL_ENABLED:true}
-      model-file-path: ${IMLD_INFERENCE_IMLD_MODEL_FILE_PATH:vendors/imld_api_project/artifacts/imld_xgboost_model.deprecated.bin}
-      metadata-file-path: ${IMLD_INFERENCE_IMLD_METADATA_FILE_PATH:vendors/imld_api_project/artifacts/imld_model_meta.json}
+      model-file-path: ${IMLD_INFERENCE_IMLD_MODEL_FILE_PATH:classpath:models/imld/imld_xgboost_model.deprecated.bin}
+      metadata-file-path: ${IMLD_INFERENCE_IMLD_METADATA_FILE_PATH:classpath:models/imld/imld_model_meta.json}
       model-version-fallback: ${IMLD_INFERENCE_IMLD_MODEL_VERSION_FALLBACK:v2_gene_clinical_fusion}
       engine: ${IMLD_INFERENCE_IMLD_ENGINE:xgboost-java}
       max-batch-size: ${IMLD_INFERENCE_IMLD_MAX_BATCH_SIZE:100}
