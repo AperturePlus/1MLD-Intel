@@ -50,6 +50,21 @@ spring:
         initial-interval: ${IMLD_RABBITMQ_PRODUCER_RETRY_INITIAL_INTERVAL:500ms}
         multiplier: ${IMLD_RABBITMQ_PRODUCER_RETRY_MULTIPLIER:2}
         max-attempts: ${IMLD_RABBITMQ_PRODUCER_RETRY_MAX_ATTEMPTS:3}
+  mail:
+    host: ${IMLD_SMTP_HOST:}
+    port: ${IMLD_SMTP_PORT:587}
+    username: ${IMLD_SMTP_USERNAME:}
+    password: ${IMLD_SMTP_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${IMLD_SMTP_AUTH:true}
+          starttls:
+            enable: ${IMLD_SMTP_STARTTLS_ENABLED:true}
+            required: ${IMLD_SMTP_STARTTLS_REQUIRED:true}
+          connectiontimeout: ${IMLD_SMTP_CONNECTION_TIMEOUT_MS:5000}
+          timeout: ${IMLD_SMTP_TIMEOUT_MS:5000}
+          writetimeout: ${IMLD_SMTP_WRITE_TIMEOUT_MS:5000}
 
 mybatis-plus:
   mapper-locations: classpath*:xenosoft/imldintelligence/module/**/internal/repository/*.xml
@@ -106,6 +121,14 @@ imld:
       access-token-ttl: ${IMLD_JWT_ACCESS_TOKEN_TTL:15m}
       refresh-token-ttl: ${IMLD_JWT_REFRESH_TOKEN_TTL:7d}
       clock-skew: ${IMLD_JWT_CLOCK_SKEW:30s}
+  identity:
+    verification:
+      code-length: ${IMLD_EMAIL_CODE_LENGTH:6}
+      expires-in: ${IMLD_EMAIL_CODE_EXPIRES_IN:10m}
+      resend-interval: ${IMLD_EMAIL_CODE_RESEND_INTERVAL:60s}
+      max-verify-attempts: ${IMLD_EMAIL_CODE_MAX_VERIFY_ATTEMPTS:5}
+      email-subject-prefix: ${IMLD_EMAIL_SUBJECT_PREFIX:[IMLD]}
+      from-address: ${IMLD_SMTP_FROM:}
   cloud-bridge:
     enabled: ${IMLD_CLOUD_BRIDGE_ENABLED:false}
     scenario-allowlist:
