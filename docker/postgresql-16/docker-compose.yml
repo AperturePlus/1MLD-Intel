@@ -1,0 +1,21 @@
+services:
+  postgresql:
+    image: postgres:16
+    container_name: imld-postgresql-16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: imld_core
+      POSTGRES_USER: imld_user
+      POSTGRES_PASSWORD: system
+      TZ: Asia/Shanghai
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U imld_user -d imld_core"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
