@@ -171,6 +171,9 @@ export interface DiagnosisQueuePatient {
   age: number
   avatar: string
   aiStatus: string
+  encounterId?: number
+  doctorId?: number
+  modelRegistryId?: number
 }
 
 export interface DiagnosisQueueResponse {
@@ -217,6 +220,9 @@ export interface ExpertReport {
   expertConclusion: string
   treatmentPlan: string
   signedAt?: string
+  sessionId?: number
+  resultId?: number
+  doctorId?: number
 }
 
 export interface ExpertReportListResponse {

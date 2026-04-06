@@ -95,6 +95,26 @@
 - 私有化默认单租户可运行，但代码层不得删除多租户能力，只通过配置降级。
 - 租户隔离方案可配置（共享库分租户/独立库），业务代码不得与具体方案强绑定。
 
+## 医生端辅助诊断接口对齐（Web）
+
+- 医生端辅助诊断统一使用 `DiagnosesApi` 契约（复数路径），主路径为：
+  - `GET /api/v1/web/diagnoses/sessions`
+  - `GET /api/v1/web/diagnoses/sessions/{sessionId}`
+  - `POST /api/v1/web/diagnoses/sessions`
+  - `POST /api/v1/web/diagnoses/feedbacks`
+- 所有 `diagnoses` 接口请求必须携带 `X-Tenant-Id`，不得在后端硬编码租户。
+- 辅助诊断“启动会话”必须落库并可审计：
+  - 写入 `diagnosis_session`（含 `input_snapshot`）。
+  - 写入 `diagnosis_result`（含模型证据快照 `evidence_json`）。
+  - 写入 `diagnosis_recommendation`（由模型建议映射）。
+- 医生签发/复核统一走 `submitDoctorFeedback`，不得新增旁路“签发表”绕过审计链路。
+- 模型注册优先复用 `model_registry`；缺省模型仅可自动补齐为本地模型配置，不得引入未授权云模型依赖。
+- 前端开发可保留旧 mock 路径作为回退（`/api/v1/web/diagnosis/*`），但生产联调必须以 `/api/v1/web/diagnoses/*` 为准。
+- 若接口字段或路径变化，必须同步更新：
+  - `Front-Webpage/frontend/src/api/diagnosis.ts`
+  - `Front-Webpage/frontend/src/api/types.ts`
+  - 本文件 `AGENTS.md` 对应章节
+
 ## 变更执行清单（每次任务都要检查）
 
 - 是否仍保持“同一套代码支持 SaaS 与私有化”？
