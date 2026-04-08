@@ -9,7 +9,396 @@ import {
   toAiFinding
 } from '../core/mockState'
 
+const SUCCESS_CODE = 200
+const DEFAULT_PAGE_SIZE = 20
+const MAX_PAGE_SIZE = 200
+const DEFAULT_DOCTOR_ID = 1
+const DEFAULT_MODEL_REGISTRY_ID = 1
+
+const successEnvelope = (data, message = 'success') => ({
+  code: SUCCESS_CODE,
+  message,
+  data
+})
+
+const failEnvelope = (status, message) => ({
+  status,
+  statusText: 'Error',
+  data: {
+    code: status,
+    message,
+    data: null
+  }
+})
+
+const parsePositiveInt = (value, fallback = 0) => {
+  const parsed = Number.parseInt(String(value ?? ''), 10)
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback
+}
+
+const clampPageSize = (value) => {
+  const parsed = parsePositiveInt(value, DEFAULT_PAGE_SIZE)
+  return Math.min(Math.max(parsed, 1), MAX_PAGE_SIZE)
+}
+
+const toPatientNumericId = (patientId = '') => {
+  const digits = String(patientId).replace(/\D/g, '')
+  return parsePositiveInt(digits)
+}
+
+const toEncounterId = (visitId = '') => {
+  const digits = String(visitId).replace(/\D/g, '')
+  return parsePositiveInt(digits)
+}
+
+const toBirthDateByAge = (age = 0) => {
+  const years = Number.isFinite(Number(age)) ? Math.max(0, Number(age)) : 0
+  return `${new Date().getFullYear() - years}-01-01`
+}
+
+const toIsoDayStart = (dateText = '') => {
+  if (typeof dateText === 'string' && dateText.trim()) {
+    return `${dateText.slice(0, 10)}T08:00:00.000Z`
+  }
+  return new Date().toISOString()
+}
+
+const toIsoDayEnd = (dateText = '') => {
+  if (typeof dateText === 'string' && dateText.trim()) {
+    return `${dateText.slice(0, 10)}T08:30:00.000Z`
+  }
+  return new Date().toISOString()
+}
+
+const parseProbability = (value) => {
+  const parsed = Number.parseFloat(String(value ?? '0'))
+  if (!Number.isFinite(parsed)) {
+    return 0.5
+  }
+  const normalized = parsed > 1 ? parsed / 100 : parsed
+  return Math.max(0, Math.min(1, normalized))
+}
+
+const buildSessionId = (report) => {
+  const source = String(report.id || `${report.patientId}_${report.visitId}`)
+  let hash = 0
+  for (let index = 0; index < source.length; index += 1) {
+    hash = (hash * 31 + source.charCodeAt(index)) % 900000
+  }
+  return 100000 + hash
+}
+
+const buildResultId = (sessionId) => sessionId * 10 + 1
+
+const inferDiseaseCode = (diseaseName = '') => {
+  if (diseaseName.includes('Wilson') || diseaseName.includes('肝豆')) {
+    return 'WILSON_DISEASE'
+  }
+  if (diseaseName.includes('血色')) {
+    return 'HEMOCHROMATOSIS'
+  }
+  if (diseaseName.includes('抗胰蛋白酶')) {
+    return 'AAT_DEFICIENCY'
+  }
+  return 'METABOLIC_LIVER_DISEASE'
+}
+
+const inferRiskLevel = (probability) => {
+  if (probability >= 0.85) {
+    return 'HIGH'
+  }
+  if (probability >= 0.6) {
+    return 'MEDIUM'
+  }
+  return 'LOW'
+}
+
+const inferGeneByDisease = (diseaseName = '') => {
+  if (diseaseName.includes('Wilson') || diseaseName.includes('肝豆')) {
+    return 'ATP7B'
+  }
+  if (diseaseName.includes('血色')) {
+    return 'HFE'
+  }
+  if (diseaseName.includes('抗胰蛋白酶')) {
+    return 'SERPINA1'
+  }
+  return 'ATP7B'
+}
+
+const inferClinicalFinding = (report) => {
+  const text = String(report.aiFindings?.biochemical || '')
+  if (!text) {
+    return []
+  }
+
+  return [
+    {
+      feature: text.slice(0, 64),
+      value: 1,
+      normal_range: [0, 1],
+      direction: 'high',
+      severity: report.status === '已签发' ? '高' : '中'
+    }
+  ]
+}
+
+const buildInference = (report) => {
+  const probability = parseProbability(report.aiFindings?.probability)
+  const diseaseName = String(report.aiFindings?.disease || '')
+  return {
+    risk_probability: probability,
+    suggestions: [
+      report.expertConclusion || '建议结合病史、查体和关键化验指标综合判断。',
+      report.treatmentPlan || '建议建立长期随访并动态评估病情变化。'
+    ],
+    clinical_abnormalities: inferClinicalFinding(report),
+    gene_abnormalities: [{ gene: inferGeneByDisease(diseaseName) }]
+  }
+}
+
+const buildRecommendations = (report) => [
+  {
+    recType: 'DIET',
+    content: report.treatmentPlan || '建议低负担、均衡饮食，并避免风险食材。'
+  },
+  {
+    recType: 'GENETIC',
+    content: `建议结合 ${report.aiFindings?.disease || '临床线索'} 进行针对性基因检测。`
+  }
+]
+
+const buildFeedbacks = (report, doctorId) => {
+  if (report.feedbackAction && report.feedbackCreatedAt) {
+    return [
+      {
+        doctorId,
+        action: report.feedbackAction,
+        modifiedValue: report.feedbackModifiedValue || {
+          expertConclusion: report.expertConclusion || '',
+          treatmentPlan: report.treatmentPlan || ''
+        },
+        createdAt: report.feedbackCreatedAt
+      }
+    ]
+  }
+
+  if (report.status !== '已签发') {
+    return []
+  }
+
+  return [
+    {
+      doctorId,
+      action: 'MODIFY',
+      modifiedValue: {
+        expertConclusion: report.expertConclusion || '',
+        treatmentPlan: report.treatmentPlan || ''
+      },
+      createdAt: report.signedAt || toIsoDayEnd(report.date)
+    }
+  ]
+}
+
+const buildSessionFromReport = (report, patient, doctorIdOverride) => {
+  const sessionId = buildSessionId(report)
+  const probability = parseProbability(report.aiFindings?.probability)
+  const diseaseName = String(report.aiFindings?.disease || '遗传代谢性肝病风险提示')
+  const doctorId = parsePositiveInt(doctorIdOverride, parsePositiveInt(report.doctorId, DEFAULT_DOCTOR_ID))
+  const feedbacks = buildFeedbacks(report, doctorId)
+
+  return {
+    id: sessionId,
+    patientId: toPatientNumericId(report.patientId) || toPatientNumericId(patient?.id),
+    encounterId: toEncounterId(report.visitId),
+    doctorId,
+    modelRegistryId: parsePositiveInt(report.modelRegistryId, DEFAULT_MODEL_REGISTRY_ID),
+    status: feedbacks.length > 0 ? 'REVIEWED' : 'COMPLETED',
+    startedAt: toIsoDayStart(report.date),
+    completedAt: report.signedAt || toIsoDayEnd(report.date),
+    results: [
+      {
+        id: buildResultId(sessionId),
+        diseaseCode: inferDiseaseCode(diseaseName),
+        diseaseName,
+        confidence: probability,
+        rankNo: 1,
+        riskLevel: inferRiskLevel(probability),
+        evidenceJson: {
+          inference: buildInference(report)
+        }
+      }
+    ],
+    recommendations: buildRecommendations(report),
+    feedbacks
+  }
+}
+
+const buildSessions = () => {
+  const patients = loadPatients()
+  const patientMap = new Map(patients.map((item) => [item.id, item]))
+
+  return loadReports().map((report) => {
+    const patient = patientMap.get(report.patientId)
+    return buildSessionFromReport(report, patient)
+  })
+}
+
+const sortSessionsByTime = (sessions) => {
+  return [...sessions].sort((left, right) => {
+    const leftTime = new Date(left.completedAt || left.startedAt || 0).getTime()
+    const rightTime = new Date(right.completedAt || right.startedAt || 0).getTime()
+    return rightTime - leftTime
+  })
+}
+
+const upsertDiagnosisReport = (patient, diagnosisPayload, doctorId = DEFAULT_DOCTOR_ID) => {
+  const reports = loadReports()
+  const existed = reports.find((item) => item.patientId === patient.id && item.status === '待签发')
+
+  if (existed) {
+    existed.patientName = patient.name
+    existed.gender = patient.gender
+    existed.age = patient.age
+    existed.date = new Date().toISOString().slice(0, 10)
+    existed.aiFindings = toAiFinding(diagnosisPayload)
+    existed.doctorId = doctorId
+    saveReports(reports)
+    return existed
+  }
+
+  const reportId = `REP-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${String(Math.floor(Math.random() * 900) + 100)}`
+  const created = {
+    id: reportId,
+    patientId: patient.id,
+    visitId: `MZ${Math.floor(Math.random() * 9000000 + 1000000)}`,
+    patientName: patient.name,
+    gender: patient.gender,
+    age: patient.age,
+    date: new Date().toISOString().slice(0, 10),
+    status: '待签发',
+    aiFindings: toAiFinding(diagnosisPayload),
+    expertConclusion: '',
+    treatmentPlan: '',
+    doctorId
+  }
+  reports.unshift(created)
+  saveReports(reports)
+  return created
+}
+
 export const diagnosisExactHandlers = {
+  'GET /api/v1/web/identity/patients': async ({ query }) => {
+    const page = Math.max(parsePositiveInt(query.page), 0)
+    const size = clampPageSize(query.size)
+    const start = page * size
+
+    const all = loadPatients().map((item) => ({
+      id: toPatientNumericId(item.id),
+      patientName: item.name,
+      gender: item.gender,
+      birthDate: toBirthDateByAge(item.age)
+    }))
+
+    return {
+      status: 200,
+      data: successEnvelope({
+        page,
+        size,
+        total: all.length,
+        items: all.slice(start, start + size)
+      })
+    }
+  },
+
+  'GET /api/v1/web/diagnoses/sessions': async ({ query }) => {
+    const page = Math.max(parsePositiveInt(query.page), 0)
+    const size = clampPageSize(query.size)
+    const start = page * size
+    const sessions = sortSessionsByTime(buildSessions())
+
+    return {
+      status: 200,
+      data: successEnvelope({
+        page,
+        size,
+        total: sessions.length,
+        items: sessions.slice(start, start + size)
+      })
+    }
+  },
+
+  'POST /api/v1/web/diagnoses/sessions': async ({ data }) => {
+    const numericPatientId = parsePositiveInt(data.patientId)
+    if (!numericPatientId) {
+      return failEnvelope(400, 'patientId 非法')
+    }
+
+    const patients = loadPatients()
+    const patient = patients.find((item) => toPatientNumericId(item.id) === numericPatientId)
+    if (!patient) {
+      return failEnvelope(404, '患者不存在')
+    }
+
+    const diagnosisPayload = buildDiagnosisPayload(patient)
+    patient.aiStatus = '已诊断'
+    savePatients(patients)
+
+    const doctorId = parsePositiveInt(data.doctorId, DEFAULT_DOCTOR_ID)
+    const report = upsertDiagnosisReport(patient, diagnosisPayload, doctorId)
+    const session = buildSessionFromReport(report, patient, doctorId)
+
+    return {
+      status: 200,
+      data: successEnvelope(session)
+    }
+  },
+
+  'POST /api/v1/web/diagnoses/feedbacks': async ({ data }) => {
+    const sessionId = parsePositiveInt(data.sessionId)
+    if (!sessionId) {
+      return failEnvelope(400, 'sessionId 非法')
+    }
+
+    const reports = loadReports()
+    const report = reports.find((item) => buildSessionId(item) === sessionId)
+    if (!report) {
+      return failEnvelope(404, '诊断会话不存在')
+    }
+
+    const doctorId = parsePositiveInt(data.doctorId, parsePositiveInt(report.doctorId, DEFAULT_DOCTOR_ID))
+    const action = String(data.action || 'MODIFY').toUpperCase()
+    const modifiedValue = data.modifiedValue && typeof data.modifiedValue === 'object'
+      ? data.modifiedValue
+      : {}
+
+    if (typeof modifiedValue.expertConclusion === 'string') {
+      report.expertConclusion = modifiedValue.expertConclusion
+    }
+    if (typeof modifiedValue.treatmentPlan === 'string') {
+      report.treatmentPlan = modifiedValue.treatmentPlan
+    }
+
+    if (action === 'MODIFY' || action === 'ACCEPT') {
+      report.status = '已签发'
+      report.signedAt = new Date().toISOString()
+    }
+
+    report.doctorId = doctorId
+    report.feedbackAction = action
+    report.feedbackModifiedValue = modifiedValue
+    report.feedbackCreatedAt = new Date().toISOString()
+    saveReports(reports)
+
+    const patient = loadPatients().find((item) => item.id === report.patientId)
+    const session = buildSessionFromReport(report, patient, doctorId)
+
+    return {
+      status: 200,
+      data: successEnvelope(session)
+    }
+  },
+
   'GET /api/v1/web/diagnosis/ai-queue/': async () => {
     const items = loadPatients().map((item) => ({
       id: item.id,
@@ -24,9 +413,12 @@ export const diagnosisExactHandlers = {
   },
 
   'POST /api/v1/web/diagnosis/ai-reports/': async ({ data }) => {
-    const patientId = data.patientId
+    const patientId = String(data.patientId || '')
+    const numericPatientId = parsePositiveInt(data.patientId)
     const patients = loadPatients()
-    const patient = patients.find((item) => item.id === patientId)
+    const patient = patients.find(
+      (item) => item.id === patientId || toPatientNumericId(item.id) === numericPatientId
+    )
 
     if (!patient) {
       return { status: 404, statusText: 'Not Found', data: { detail: '患者不存在' } }
@@ -36,25 +428,7 @@ export const diagnosisExactHandlers = {
     patient.aiStatus = '已诊断'
     savePatients(patients)
 
-    const reports = loadReports()
-    const existed = reports.find((item) => item.patientId === patient.id && item.status === '待签发')
-    if (!existed) {
-      const reportId = `REP-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${String(Math.floor(Math.random() * 900) + 100)}`
-      reports.unshift({
-        id: reportId,
-        patientId: patient.id,
-        visitId: `MZ${Math.floor(Math.random() * 9000000 + 1000000)}`,
-        patientName: patient.name,
-        gender: patient.gender,
-        age: patient.age,
-        date: new Date().toISOString().slice(0, 10),
-        status: '待签发',
-        aiFindings: toAiFinding(diagnosisPayload),
-        expertConclusion: '',
-        treatmentPlan: ''
-      })
-      saveReports(reports)
-    }
+    upsertDiagnosisReport(patient, diagnosisPayload)
 
     return { status: 200, data: diagnosisPayload }
   },
@@ -65,6 +439,27 @@ export const diagnosisExactHandlers = {
 }
 
 export const diagnosisDynamicHandlers = [
+  {
+    method: 'GET',
+    pattern: /^\/api\/v1\/web\/diagnoses\/sessions\/([^/]+)$/,
+    buildParams: (match) => ({ sessionId: match[1] }),
+    handler: async ({ params }) => {
+      const sessionId = parsePositiveInt(params.sessionId)
+      if (!sessionId) {
+        return failEnvelope(400, 'sessionId 非法')
+      }
+
+      const session = buildSessions().find((item) => item.id === sessionId)
+      if (!session) {
+        return failEnvelope(404, '诊断会话不存在')
+      }
+
+      return {
+        status: 200,
+        data: successEnvelope(session)
+      }
+    }
+  },
   {
     method: 'POST',
     pattern: /^\/api\/v1\/web\/diagnosis\/expert-reports\/([^/]+)\/sign\/$/,
@@ -92,6 +487,41 @@ export const diagnosisDynamicHandlers = [
 ]
 
 export const diagnosisRouteDocs = [
+  {
+    module: 'diagnosis',
+    method: 'GET',
+    path: '/api/v1/web/identity/patients',
+    kind: 'exact',
+    description: '诊断工作台患者列表（新版契约）。'
+  },
+  {
+    module: 'diagnosis',
+    method: 'GET',
+    path: '/api/v1/web/diagnoses/sessions',
+    kind: 'exact',
+    description: '诊断会话分页列表（新版契约）。'
+  },
+  {
+    module: 'diagnosis',
+    method: 'GET',
+    path: '/api/v1/web/diagnoses/sessions/:sessionId',
+    kind: 'dynamic',
+    description: '诊断会话详情（新版契约）。'
+  },
+  {
+    module: 'diagnosis',
+    method: 'POST',
+    path: '/api/v1/web/diagnoses/sessions',
+    kind: 'exact',
+    description: '启动诊断会话并落库（新版契约）。'
+  },
+  {
+    module: 'diagnosis',
+    method: 'POST',
+    path: '/api/v1/web/diagnoses/feedbacks',
+    kind: 'exact',
+    description: '医生反馈/签发（新版契约）。'
+  },
   {
     module: 'diagnosis',
     method: 'GET',

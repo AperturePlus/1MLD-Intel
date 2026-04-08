@@ -10,6 +10,67 @@ import {
   saveRecords
 } from '../core/mockState'
 
+const REQUIRED_RECORD_FIELDS = [
+  'patientNo',
+  'name',
+  'gender',
+  'age',
+  'visitDate',
+  'occupation',
+  'currentAddress',
+  'nativePlace',
+  'department',
+  'encounterType',
+  'chiefComplaint',
+  'diagnosis'
+]
+
+const toDateOnly = (date = new Date()) => {
+  const yyyy = date.getFullYear()
+  const mm = String(date.getMonth() + 1).padStart(2, '0')
+  const dd = String(date.getDate()).padStart(2, '0')
+  return `${yyyy}-${mm}-${dd}`
+}
+
+const createTraceId = (prefix) => `${prefix}-${Date.now()}`
+
+const buildImportPreview = ({ sourceType, patientNo, name, gender, age, confidence }) => ({
+  sourceType,
+  traceId: createTraceId('IMP'),
+  confidence,
+  patientNo,
+  name,
+  gender,
+  age,
+  visitDate: toDateOnly(),
+  phone: '13800138000',
+  idCard: '510101198601012233',
+  occupation: '教师',
+  currentAddress: '四川省成都市武侯区人民南路三段',
+  nativePlace: '四川成都',
+  department: '肝病医学科',
+  encounterType: 'OUTPATIENT'
+})
+
+const pickSeedByPatientNoOrVisitNo = (data) => {
+  const candidates = loadPatients()
+  const byPatientNo = data.patientNo
+    ? candidates.find((item) => item.id.toLowerCase() === String(data.patientNo).toLowerCase())
+    : null
+  if (byPatientNo) {
+    return byPatientNo
+  }
+
+  if (data.visitNo) {
+    const hash = String(data.visitNo)
+      .split('')
+      .reduce((sum, ch) => sum + ch.charCodeAt(0), 0)
+    return candidates[hash % Math.max(candidates.length, 1)]
+  }
+
+  return candidates[0]
+}
+
 export const patientExactHandlers = {
   'GET /api/v1/web/patients/': async ({ query }) => {
     const keyword = (query.keyword || '').trim()
@@ -28,10 +89,9 @@ export const patientExactHandlers = {
   },
 
   'POST /api/v1/web/patient-records/': async ({ data }) => {
-    const requiredFields = ['name', 'gender', 'age', 'visitDate', 'chiefComplaint', 'diagnosis']
     const errors = {}
 
-    requiredFields.forEach((field) => {
+    REQUIRED_RECORD_FIELDS.forEach((field) => {
       if (!data[field]) {
         errors[field] = [`${field}不能为空`]
       }
@@ -55,11 +115,13 @@ export const patientExactHandlers = {
     })
     saveRecords(records)
 
-    const existing = patients.find((item) => item.name === data.name)
+    const existing = patients.find(
+      (item) => item.id.toLowerCase() === String(data.patientNo).toLowerCase() || item.name === data.name
+    )
     if (!existing) {
       const disease = resolveDiseaseByDiagnosis(data.diagnosis)
       patients.unshift({
-        id: nextPatientId(patients),
+        id: String(data.patientNo || nextPatientId(patients)),
         name: data.name,
         gender: data.gender,
         age: Number(data.age) || 0,
@@ -81,6 +143,79 @@ export const patientExactHandlers = {
         message: '病历归档成功'
       }
     }
+  },
+
+  'POST /api/v1/web/integration/imports/patient/his-lis': async ({ data }) => {
+    if (!data.patientNo && !data.visitNo) {
+      return {
+        status: 400,
+        statusText: 'Bad Request',
+        data: {
+          message: 'patientNo 或 visitNo 至少提供一个'
+        }
+      }
+    }
+
+    const seed = pickSeedByPatientNoOrVisitNo(data)
+    return {
+      status: 200,
+      data: buildImportPreview({
+        sourceType: 'HIS_LIS',
+        patientNo: data.patientNo || seed?.id || `P${Date.now().toString().slice(-5)}`,
+        name: seed?.name || '未知患者',
+        gender: seed?.gender || '男',
+        age: seed?.age ?? 35,
+        confidence: 0.96
+      })
+    }
+  },
+
+  'POST /api/v1/web/integration/imports/patient/image': async ({ data }) => {
+    if (!data.fileName || !data.fileContentBase64) {
+      return {
+        status: 400,
+        statusText: 'Bad Request',
+        data: {
+          message: '图片文件内容不能为空'
+        }
+      }
+    }
+
+    return {
+      status: 200,
+      data: buildImportPreview({
+        sourceType: 'IMAGE_OCR',
+        patientNo: `IMG-${Date.now().toString().slice(-6)}`,
+        name: '图片识别患者',
+        gender: '女',
+        age: 29,
+        confidence: 0.83
+      })
+    }
+  },
+
+  'POST /api/v1/web/integration/imports/patient/pdf': async ({ data }) => {
+    if (!data.fileName || !data.fileContentBase64) {
+      return {
+        status: 400,
+        statusText: 'Bad Request',
+        data: {
+          message: 'PDF 文件内容不能为空'
+        }
+      }
+    }
+
+    return {
+      status: 200,
+      data: buildImportPreview({
+        sourceType: 'PDF_OCR',
+        patientNo: `PDF-${Date.now().toString().slice(-6)}`,
+        name: 'PDF识别患者',
+        gender: '男',
+        age: 47,
+        confidence: 0.88
+      })
+    }
   }
 }
 
@@ -100,5 +235,27 @@ export const patientRouteDocs = [
     path: '/api/v1/web/patient-records/',
     kind: 'exact',
     description: '创建病历并在必要时写入新患者。'
+  },
+  {
+    module: 'patient',
+    method: 'POST',
+    path: '/api/v1/web/integration/imports/patient/his-lis',
+    kind: 'exact',
+    description: '按病人ID号/就诊号从 HIS/LIS 预填病历基础信息。'
+  },
+  {
+    module: 'patient',
+    method: 'POST',
+    path: '/api/v1/web/integration/imports/patient/image',
+    kind: 'exact',
+    description: '图片 OCR 识别并预填病历基础信息。'
+  },
+  {
+    module: 'patient',
+    method: 'POST',
+    path: '/api/v1/web/integration/imports/patient/pdf',
+    kind: 'exact',
+    description: 'PDF OCR 识别并预填病历基础信息。'
   }
 ]
+
