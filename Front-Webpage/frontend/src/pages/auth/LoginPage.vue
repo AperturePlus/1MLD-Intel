@@ -1,9 +1,9 @@
 <template>
   <div class="login-container">
     <div class="page-title">
-      <h1>数智肝循</h1>
-      <h2>遗传代谢性肝病全周期管理平台</h2>
-      <p>面向基层机构与大型医院的一体化临床工作台</p>
+      <h1>{{ BRANDING.shortName }}</h1>
+      <h2>{{ BRANDING.systemName }}</h2>
+      <p>聚焦早期筛查与辅助诊断，服务基层机构与大型医院的一体化临床工作台</p>
     </div>
 
     <div class="mobile-switch">
@@ -152,6 +152,7 @@
 
 <script setup lang="ts">
 import { useAuthPage } from '@/features/auth/composables/useAuthPage'
+import { BRANDING } from '@/constants/branding'
 
 const {
   isLoading,
@@ -177,3 +178,4 @@ const {
 </script>
 
 <style scoped src="@/features/auth/styles/login-page.css"></style>
+
