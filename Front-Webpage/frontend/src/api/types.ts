@@ -87,15 +87,53 @@ export interface PatientListResponse {
   items: PatientSummary[]
 }
 
+export type EncounterType = 'OUTPATIENT' | 'EMERGENCY' | 'INPATIENT'
+
+export type ImportSourceType = 'HIS_LIS' | 'IMAGE_OCR' | 'PDF_OCR'
+
 export interface PatientRecordPayload {
+  patientNo: string
   name: string
   gender: string
   age: number | null
   visitDate: string
+  occupation: string
+  currentAddress: string
+  nativePlace: string
+  department: string
+  encounterType: EncounterType
   chiefComplaint: string
   diagnosis: string
   visitId?: string
   [key: string]: unknown
+}
+
+export interface HisLisPatientImportRequest {
+  patientNo?: string
+  visitNo?: string
+}
+
+export interface OcrPatientImportRequest {
+  fileName: string
+  fileContentBase64: string
+}
+
+export interface PatientImportPreview {
+  sourceType: ImportSourceType
+  traceId: string
+  confidence: number
+  patientNo: string
+  name: string
+  gender: string
+  age: number | null
+  visitDate: string
+  phone: string
+  idCard: string
+  occupation: string
+  currentAddress: string
+  nativePlace: string
+  department: string
+  encounterType: EncounterType
 }
 
 export interface CreatePatientRecordResponse {
