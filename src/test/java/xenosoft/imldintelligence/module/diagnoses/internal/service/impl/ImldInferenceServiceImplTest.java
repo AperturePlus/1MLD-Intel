@@ -79,6 +79,7 @@ class ImldInferenceServiceImplTest {
                 28.5,
                 120.0,
                 1,
+                null,
                 List.of(variant),
                 patientId
         );

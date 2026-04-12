@@ -28,6 +28,8 @@ import xenosoft.imldintelligence.common.dto.PageQueryRequest;
 import xenosoft.imldintelligence.common.dto.PagedResultResponse;
 import xenosoft.imldintelligence.module.clinical.internal.model.GeneticReport;
 import xenosoft.imldintelligence.module.clinical.internal.model.LabResult;
+import xenosoft.imldintelligence.module.clinical.internal.model.ClinicalHistoryEntry;
+import xenosoft.imldintelligence.module.clinical.internal.repository.ClinicalHistoryEntryRepository;
 import xenosoft.imldintelligence.module.clinical.internal.repository.GeneticReportRepository;
 import xenosoft.imldintelligence.module.clinical.internal.repository.GeneticVariantRepository;
 import xenosoft.imldintelligence.module.clinical.internal.repository.LabResultRepository;
@@ -70,6 +72,7 @@ public class DiagnosesController implements DiagnosesControllerContract {
     private final EncounterRepository encounterRepository;
     private final UserAccountRepository userAccountRepository;
     private final LabResultRepository labResultRepository;
+    private final ClinicalHistoryEntryRepository clinicalHistoryEntryRepository;
     private final GeneticReportRepository geneticReportRepository;
     private final GeneticVariantRepository geneticVariantRepository;
     private final ImldInferenceService inferenceService;
@@ -124,8 +127,9 @@ public class DiagnosesController implements DiagnosesControllerContract {
         Encounter encounter = resolveEncounter(tenantId, request.patientId(), request.encounterId());
         Long doctorId = resolveDoctorId(tenantId, request.doctorId(), encounter);
         ModelRegistry model = resolveModel(tenantId, request.modelRegistryId());
+        ObjectNode derivedSourceSnapshot = buildDerivedSourceSnapshot(tenantId, patient, encounter);
         ImldInferenceApiDtos.Request.ImldPredictRequest inferenceRequest =
-                buildInferenceRequest(tenantId, patient, encounter, request.inputSnapshot());
+                buildInferenceRequest(tenantId, patient, encounter, request.inputSnapshot(), derivedSourceSnapshot);
 
         DiagnosisSession session = new DiagnosisSession();
         session.setTenantId(tenantId);
@@ -134,7 +138,7 @@ public class DiagnosesController implements DiagnosesControllerContract {
         session.setDoctorId(doctorId);
         session.setTriggeredBy(normalize(request.triggeredBy(), "MANUAL"));
         session.setModelRegistryId(model.getId());
-        session.setInputSnapshot(buildSnapshot(request.inputSnapshot(), inferenceRequest));
+        session.setInputSnapshot(buildSnapshot(request.inputSnapshot(), inferenceRequest, derivedSourceSnapshot));
         session.setStatus(STATUS_RUNNING);
         session.setStartedAt(now());
         sessionRepository.save(session);
@@ -323,7 +327,7 @@ public class DiagnosesController implements DiagnosesControllerContract {
     }
 
     private ImldInferenceApiDtos.Request.ImldPredictRequest buildInferenceRequest(
-            Long tenantId, Patient patient, Encounter encounter, JsonNode input) {
+            Long tenantId, Patient patient, Encounter encounter, JsonNode input, ObjectNode derivedSourceSnapshot) {
         JsonNode n = input != null && input.has("inference_input") ? input.get("inference_input") : input;
         List<LabResult> labs = encounter != null ? labResultRepository.listByEncounterId(tenantId, encounter.getId())
                 : labResultRepository.listByPatientId(tenantId, patient.getId());
@@ -334,8 +338,9 @@ public class DiagnosesController implements DiagnosesControllerContract {
         double bilirubin = Math.max(0D, doubleOf(n, "bilirubin", "TBIL").orElse(indicatorValue(labs, Set.of("TBIL", "BILIRUBIN")).orElse(21D)));
         double ceruloplasmin = Math.max(0D, doubleOf(n, "ceruloplasmin", "CP").orElse(indicatorValue(labs, Set.of("CERULOPLASMIN", "CP")).orElse(180D)));
         int jaundice = clamp(intOf(n, "jaundice").orElse(0), 0, 1);
+        Integer nasScore = intOf(n, "nasScore", "nas_score").orElseGet(() -> pathologyNasScore(derivedSourceSnapshot));
         List<ImldInferenceApiDtos.Request.GeneVariant> geneVariants = geneVariants(tenantId, patient.getId(), encounter, n);
-        return new ImldInferenceApiDtos.Request.ImldPredictRequest(age, gender, alt, bilirubin, ceruloplasmin, jaundice, geneVariants,
+        return new ImldInferenceApiDtos.Request.ImldPredictRequest(age, gender, alt, bilirubin, ceruloplasmin, jaundice, nasScore, geneVariants,
                 patient.getPatientNo() == null ? String.valueOf(patient.getId()) : patient.getPatientNo());
     }
 
@@ -368,10 +373,74 @@ public class DiagnosesController implements DiagnosesControllerContract {
                 )).toList();
     }
 
-    private JsonNode buildSnapshot(JsonNode input, ImldInferenceApiDtos.Request.ImldPredictRequest inferenceRequest) {
-        if (input != null && input.has("inference_input")) return input;
+    private ObjectNode buildDerivedSourceSnapshot(Long tenantId, Patient patient, Encounter encounter) {
+        ObjectNode derived = objectMapper.createObjectNode();
+        findLatestPathologyEntry(tenantId, patient.getId(), encounter).ifPresent(entry -> {
+            ObjectNode pathology = objectMapper.createObjectNode();
+            JsonNode content = entry.getContentJson();
+            if (content != null && content.get("reportText") != null && !content.get("reportText").isNull()) {
+                pathology.put("reportText", content.get("reportText").asText());
+            }
+            if (content != null && content.get("nasScore") != null && !content.get("nasScore").isNull()) {
+                pathology.put("nasScore", content.get("nasScore").asInt());
+            }
+            if (content != null && content.get("reportedAt") != null && !content.get("reportedAt").isNull()) {
+                pathology.put("reportedAt", content.get("reportedAt").asText());
+            }
+            derived.set("pathology", pathology);
+        });
+        return derived;
+    }
+
+    private Optional<ClinicalHistoryEntry> findLatestPathologyEntry(Long tenantId, Long patientId, Encounter encounter) {
+        List<ClinicalHistoryEntry> entries = encounter != null
+                ? clinicalHistoryEntryRepository.listByEncounterId(tenantId, encounter.getId())
+                : clinicalHistoryEntryRepository.listByPatientId(tenantId, patientId);
+        return entries.stream()
+                .filter(entry -> "PATHOLOGY".equalsIgnoreCase(entry.getHistoryType()))
+                .sorted(Comparator.comparing((ClinicalHistoryEntry entry) -> entry.getRecordedAt() != null ? entry.getRecordedAt() : now()).reversed()
+                        .thenComparing(ClinicalHistoryEntry::getId, Comparator.reverseOrder()))
+                .findFirst();
+    }
+
+    private Integer pathologyNasScore(ObjectNode derivedSourceSnapshot) {
+        if (derivedSourceSnapshot == null || derivedSourceSnapshot.get("pathology") == null) {
+            return null;
+        }
+        JsonNode pathology = derivedSourceSnapshot.get("pathology");
+        return pathology != null && pathology.get("nasScore") != null && !pathology.get("nasScore").isNull()
+                ? pathology.get("nasScore").asInt()
+                : null;
+    }
+
+    private void mergeSourceSnapshot(ObjectNode target, ObjectNode derived) {
+        if (target == null || derived == null) {
+            return;
+        }
+        derived.fields().forEachRemaining(entry -> target.set(entry.getKey(), entry.getValue()));
+    }
+
+    private JsonNode buildSnapshot(JsonNode input,
+                                   ImldInferenceApiDtos.Request.ImldPredictRequest inferenceRequest,
+                                   ObjectNode derivedSourceSnapshot) {
+        if (input != null && input.has("inference_input")) {
+            if (input.isObject() && derivedSourceSnapshot != null && !derivedSourceSnapshot.isEmpty()) {
+                ObjectNode snapshot = ((ObjectNode) input).deepCopy();
+                ObjectNode sourceSnapshot = snapshot.has("source_snapshot") && snapshot.get("source_snapshot").isObject()
+                        ? (ObjectNode) snapshot.get("source_snapshot")
+                        : objectMapper.createObjectNode();
+                mergeSourceSnapshot(sourceSnapshot, derivedSourceSnapshot);
+                snapshot.set("source_snapshot", sourceSnapshot);
+                return snapshot;
+            }
+            return input;
+        }
         ObjectNode node = objectMapper.createObjectNode();
-        if (input != null) node.set("source_snapshot", input);
+        ObjectNode sourceSnapshot = input != null && input.isObject() ? ((ObjectNode) input).deepCopy() : objectMapper.createObjectNode();
+        mergeSourceSnapshot(sourceSnapshot, derivedSourceSnapshot);
+        if (!sourceSnapshot.isEmpty()) {
+            node.set("source_snapshot", sourceSnapshot);
+        }
         node.set("inference_input", objectMapper.valueToTree(inferenceRequest));
         return node;
     }

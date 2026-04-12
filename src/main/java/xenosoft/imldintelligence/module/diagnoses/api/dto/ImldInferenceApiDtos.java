@@ -66,6 +66,9 @@ public final class ImldInferenceApiDtos {
                 @Min(0)
                 @Max(1)
                 Integer jaundice,
+                @Min(0)
+                @Max(8)
+                Integer nasScore,
                 @JsonProperty("gene_variants")
                 List<@Valid GeneVariant> geneVariants,
                 @JsonProperty("patient_id")

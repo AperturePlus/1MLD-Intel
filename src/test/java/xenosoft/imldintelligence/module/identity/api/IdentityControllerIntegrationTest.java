@@ -44,6 +44,7 @@ import xenosoft.imldintelligence.module.identity.internal.repository.UserRoleRel
 import xenosoft.imldintelligence.module.identity.internal.security.IdentityRequestAuthorizationCustomizer;
 import xenosoft.imldintelligence.module.identity.internal.security.IdentitySecurityConfiguration;
 import xenosoft.imldintelligence.module.identity.internal.service.AuthService;
+import xenosoft.imldintelligence.module.identity.internal.service.AccountCredentialService;
 import xenosoft.imldintelligence.module.identity.internal.service.ConsentRecordService;
 import xenosoft.imldintelligence.module.identity.internal.service.PatientService;
 import xenosoft.imldintelligence.module.identity.internal.service.PermissionService;
@@ -380,6 +381,11 @@ class IdentityControllerIntegrationTest {
                                  TokenBlacklistService tokenBlacklistService) {
             return new AuthServiceImpl(userAccountRepository, tenantRepository,
                     permissionService, jwtUtil, passwordEncoder, tokenBlacklistService);
+        }
+
+        @Bean
+        AccountCredentialService accountCredentialService() {
+            return mock(AccountCredentialService.class);
         }
 
         @Bean

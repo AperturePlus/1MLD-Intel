@@ -134,7 +134,7 @@ public class ImldInferenceServiceImpl implements ImldInferenceService {
     public ImldInferenceApiDtos.Response.PredictData predict(ImldInferenceApiDtos.Request.ImldPredictRequest request) {
         Objects.requireNonNull(request, "request must not be null");
         ModelMeta meta = loadModelMeta();
-        FeaturePreparation prepared = buildFeatureRow(request);
+        FeaturePreparation prepared = buildFeatureRow(request, meta.featureColumns());
         float[] aligned = alignFeatures(prepared.featureRow(), meta.featureColumns());
 
         double riskProbability = round4(predictProbability(aligned));
@@ -174,7 +174,7 @@ public class ImldInferenceServiceImpl implements ImldInferenceService {
         List<ImldInferenceApiDtos.Response.BatchPredictItem> results = new ArrayList<>(requests.size());
         int index = 1;
         for (ImldInferenceApiDtos.Request.ImldPredictRequest request : requests) {
-            FeaturePreparation prepared = buildFeatureRow(request);
+            FeaturePreparation prepared = buildFeatureRow(request, meta.featureColumns());
             float[] aligned = alignFeatures(prepared.featureRow(), meta.featureColumns());
             double riskProbability = round4(predictProbability(aligned));
             results.add(new ImldInferenceApiDtos.Response.BatchPredictItem(
@@ -197,9 +197,11 @@ public class ImldInferenceServiceImpl implements ImldInferenceService {
         );
     }
 
-    private FeaturePreparation buildFeatureRow(ImldInferenceApiDtos.Request.ImldPredictRequest payload) {
+    private FeaturePreparation buildFeatureRow(ImldInferenceApiDtos.Request.ImldPredictRequest payload,
+                                               List<String> featureColumns) {
         List<NormalizedVariant> normalizedVariants = normalizeVariants(payload.geneVariants());
-        long seed = stableSeed(payload, normalizedVariants);
+        boolean includeNasScore = featureColumns.contains("nasScore");
+        long seed = stableSeed(payload, normalizedVariants, includeNasScore);
         SplittableRandom random = new SplittableRandom(seed);
 
         boolean useDesensitized = properties.isDesensitizedClinicalEnabled();
@@ -220,6 +222,9 @@ public class ImldInferenceServiceImpl implements ImldInferenceService {
         desensitizedClinical.put("bilirubin", bilirubin);
         desensitizedClinical.put("ceruloplasmin", ceruloplasmin);
         desensitizedClinical.put("jaundice", payload.jaundice());
+        if (includeNasScore && payload.nasScore() != null) {
+            desensitizedClinical.put("nasScore", payload.nasScore());
+        }
 
         EncodedGeneFeatures encodedGene = encodeGeneVariants(normalizedVariants);
 
@@ -230,10 +235,16 @@ public class ImldInferenceServiceImpl implements ImldInferenceService {
         row.put("bilirubin", bilirubin);
         row.put("ceruloplasmin", ceruloplasmin);
         row.put("jaundice", payload.jaundice().doubleValue());
+        if (includeNasScore && payload.nasScore() != null) {
+            row.put("nasScore", payload.nasScore().doubleValue());
+        }
         row.putAll(encodedGene.features());
 
         for (String feature : defaultInferenceFeatureColumns()) {
             row.putIfAbsent(feature, 0.0);
+        }
+        if (includeNasScore) {
+            row.putIfAbsent("nasScore", payload.nasScore() == null ? 0.0 : payload.nasScore().doubleValue());
         }
 
         List<Map<String, Object>> geneVariantsForHash = normalizedVariants.stream()
@@ -665,7 +676,9 @@ public class ImldInferenceServiceImpl implements ImldInferenceService {
         return sha256Hex(text);
     }
 
-    private long stableSeed(ImldInferenceApiDtos.Request.ImldPredictRequest payload, List<NormalizedVariant> variants) {
+    private long stableSeed(ImldInferenceApiDtos.Request.ImldPredictRequest payload,
+                            List<NormalizedVariant> variants,
+                            boolean includeNasScore) {
         String variantFingerprint = variants.stream()
                 .map(v -> String.join("|",
                         v.gene(),
@@ -683,6 +696,7 @@ public class ImldInferenceServiceImpl implements ImldInferenceService {
                 String.valueOf(payload.bilirubin()),
                 String.valueOf(payload.ceruloplasmin()),
                 String.valueOf(payload.jaundice()),
+                includeNasScore ? String.valueOf(payload.nasScore()) : "",
                 nullToEmpty(payload.patientId()),
                 variantFingerprint
         );
