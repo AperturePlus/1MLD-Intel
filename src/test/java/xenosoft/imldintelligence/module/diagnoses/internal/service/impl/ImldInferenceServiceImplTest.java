@@ -1,15 +1,17 @@
 package xenosoft.imldintelligence.module.diagnoses.internal.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import xenosoft.imldintelligence.module.diagnoses.api.dto.ImldInferenceApiDtos;
-import xenosoft.imldintelligence.module.diagnoses.internal.config.ImldInferenceProperties;
-import xenosoft.imldintelligence.module.diagnoses.internal.service.ImldInferenceService;
-
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.core.io.DefaultResourceLoader;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import xenosoft.imldintelligence.module.diagnoses.api.dto.ImldInferenceApiDtos;
+import xenosoft.imldintelligence.module.diagnoses.internal.config.ImldInferenceProperties;
+import xenosoft.imldintelligence.module.diagnoses.internal.service.ImldInferenceService;
 
 class ImldInferenceServiceImplTest {
 
@@ -19,7 +21,7 @@ class ImldInferenceServiceImplTest {
     void setUp() {
         ImldInferenceProperties properties = new ImldInferenceProperties();
         properties.setDesensitizedClinicalEnabled(true);
-        inferenceService = new ImldInferenceServiceImpl(properties, new ObjectMapper());
+        inferenceService = new ImldInferenceServiceImpl(properties, new ObjectMapper(), new DefaultResourceLoader());
     }
 
     @Test

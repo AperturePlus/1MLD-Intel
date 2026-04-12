@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
@@ -104,10 +103,6 @@ public class ImldInferenceServiceImpl implements ImldInferenceService {
         this.properties = properties;
         this.objectMapper = objectMapper;
         this.resourceLoader = resourceLoader;
-    }
-
-    public ImldInferenceServiceImpl(ImldInferenceProperties properties, ObjectMapper objectMapper) {
-        this(properties, objectMapper, new DefaultResourceLoader());
     }
 
     @Override
