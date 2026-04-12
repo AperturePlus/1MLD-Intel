@@ -19,6 +19,16 @@
 			"name": "imld.integration",
 			"type": "java.util.Map<java.lang.String, java.lang.Object>",
 			"description": "Integration channel settings."
+		},
+		{
+			"name": "imld.inference.imld",
+			"type": "java.util.Map<java.lang.String, java.lang.Object>",
+			"description": "IMLD inference engine settings."
+		},
+		{
+			"name": "imld.identity.verification",
+			"type": "java.util.Map<java.lang.String, java.lang.Object>",
+			"description": "Identity email verification and code policy settings."
 		}
 	],
 	"properties": [
@@ -109,6 +119,95 @@
 			"type": "java.lang.String",
 			"description": "AES key used for sensitive data encryption/decryption; must be at least 16 bytes when enabled.",
 			"defaultValue": ""
+		},
+		{
+			"name": "imld.inference.imld.enabled",
+			"type": "java.lang.Boolean",
+			"description": "Enable Java-native IMLD inference APIs.",
+			"defaultValue": true
+		},
+		{
+			"name": "imld.inference.imld.desensitized-clinical-enabled",
+			"type": "java.lang.Boolean",
+			"description": "Enable desensitized clinical feature fuzzification during inference.",
+			"defaultValue": true
+		},
+		{
+			"name": "imld.inference.imld.model-file-path",
+			"type": "java.lang.String",
+			"description": "Path to Java-loadable XGBoost model file.",
+			"defaultValue": "classpath:models/imld/imld_xgboost_model.deprecated.bin"
+		},
+		{
+			"name": "imld.inference.imld.metadata-file-path",
+			"type": "java.lang.String",
+			"description": "Path to model metadata JSON file.",
+			"defaultValue": "classpath:models/imld/imld_model_meta.json"
+		},
+		{
+			"name": "imld.inference.imld.model-version-fallback",
+			"type": "java.lang.String",
+			"description": "Fallback model version when metadata is unavailable.",
+			"defaultValue": "v2_gene_clinical_fusion"
+		},
+		{
+			"name": "imld.inference.imld.engine",
+			"type": "java.lang.String",
+			"description": "Inference engine label exposed by health endpoint.",
+			"defaultValue": "xgboost-java"
+		},
+		{
+			"name": "imld.inference.imld.max-batch-size",
+			"type": "java.lang.Integer",
+			"description": "Maximum records allowed in a single batch inference request.",
+			"defaultValue": 100
+		},
+		{
+			"name": "imld.inference.imld.low-risk-threshold",
+			"type": "java.lang.Double",
+			"description": "Low risk upper threshold.",
+			"defaultValue": 0.2
+		},
+		{
+			"name": "imld.inference.imld.high-risk-threshold",
+			"type": "java.lang.Double",
+			"description": "High risk lower threshold.",
+			"defaultValue": 0.7
+		},
+		{
+			"name": "imld.identity.verification.code-length",
+			"type": "java.lang.Integer",
+			"description": "Digits of email verification code.",
+			"defaultValue": 6
+		},
+		{
+			"name": "imld.identity.verification.expires-in",
+			"type": "java.time.Duration",
+			"description": "Time to live for email verification code.",
+			"defaultValue": "10m"
+		},
+		{
+			"name": "imld.identity.verification.resend-interval",
+			"type": "java.time.Duration",
+			"description": "Minimum interval between code resend requests.",
+			"defaultValue": "60s"
+		},
+		{
+			"name": "imld.identity.verification.max-verify-attempts",
+			"type": "java.lang.Integer",
+			"description": "Maximum allowed code verification attempts before lock.",
+			"defaultValue": 5
+		},
+		{
+			"name": "imld.identity.verification.email-subject-prefix",
+			"type": "java.lang.String",
+			"description": "Email subject prefix for verification messages.",
+			"defaultValue": "[IMLD]"
+		},
+		{
+			"name": "imld.identity.verification.from-address",
+			"type": "java.lang.String",
+			"description": "Optional sender address; when blank, spring.mail.username is used."
 		}
 	],
 	"hints": [
@@ -139,6 +238,14 @@
 			"values": [
 				{
 					"value": "event"
+				}
+			]
+		},
+		{
+			"name": "imld.inference.imld.engine",
+			"values": [
+				{
+					"value": "xgboost-java"
 				}
 			]
 		}

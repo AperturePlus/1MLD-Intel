@@ -51,7 +51,7 @@
   },
   "build": {
     "appId": "io.xenosoft.imld.frontend",
-    "productName": "IMLD Intelligence",
+    "productName": "IMLD Early Screening Assistant",
     "directories": {
       "output": "release"
     },

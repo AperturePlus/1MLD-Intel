@@ -109,8 +109,8 @@
                     :style="{ transform: `scale(${paperScale})`, transformOrigin: 'top left' }"
                   >
                     <div class="paper-header">
-                      <h2>数智肝循中心</h2>
-                      <h1>遗传代谢性肝病 - AI 辅助筛查与专家评估报告</h1>
+                      <h2>{{ BRANDING.institutionName }}</h2>
+                      <h1>{{ BRANDING.systemName }} - AI 辅助评估报告</h1>
                       <div class="header-divider"></div>
                     </div>
 
@@ -162,7 +162,7 @@
 
                     <div class="paper-footer">
                       <div class="footer-row">
-                        <span>报告出具机构：数智肝循医学中心</span>
+                        <span>报告出具机构：{{ BRANDING.institutionName }}</span>
                         <span>报告日期：{{ currentDate }}</span>
                       </div>
                       <div class="footer-row signature-area">
@@ -191,6 +191,7 @@ import {
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import diagnosisApi from '../../api/diagnosis'
+import { BRANDING } from '@/constants/branding'
 import type { ExpertReport } from '../../api/types'
 
 const searchQuery = ref('')
@@ -580,3 +581,4 @@ onMounted(() => {
   color: #303133;
 }
 </style>
+

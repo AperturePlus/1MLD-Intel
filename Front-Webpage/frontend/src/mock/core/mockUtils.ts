@@ -4,8 +4,22 @@ export const MOCK_DELAY_MS = Number(import.meta.env.VITE_MOCK_DELAY_MS ?? 280)
 
 export const parseUrlParts = (input = '') => {
   const url = new URL(input, 'http://mock.local')
-  const path = url.pathname.endsWith('/') ? url.pathname : `${url.pathname}/`
+  const path = url.pathname || '/'
   return { path, query: url.searchParams }
+}
+
+const buildPathCandidates = (path = '/') => {
+  const normalized = path || '/'
+  if (normalized === '/') {
+    return ['/']
+  }
+
+  const withoutTrailingSlash = normalized.endsWith('/')
+    ? normalized.slice(0, -1)
+    : normalized
+  const withTrailingSlash = withoutTrailingSlash ? `${withoutTrailingSlash}/` : '/'
+
+  return [...new Set([normalized, withoutTrailingSlash, withTrailingSlash].filter(Boolean))]
 }
 
 export const parseBody = (data) => {
@@ -50,19 +64,25 @@ export const buildResponse = (config, status, data, statusText = 'OK') => ({
 export const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
 
 export const resolveHandler = (method, path, exactHandlers, dynamicHandlers) => {
-  const routeKey = `${method} ${path}`
-  if (exactHandlers[routeKey]) {
-    return { handler: exactHandlers[routeKey], params: {} }
+  const pathCandidates = buildPathCandidates(path)
+
+  for (const pathCandidate of pathCandidates) {
+    const routeKey = `${method} ${pathCandidate}`
+    if (exactHandlers[routeKey]) {
+      return { handler: exactHandlers[routeKey], params: {} }
+    }
   }
 
   for (const route of dynamicHandlers) {
     if (route.method !== method) continue
 
-    const matched = path.match(route.pattern)
-    if (matched) {
-      return {
-        handler: route.handler,
-        params: route.buildParams ? route.buildParams(matched) : {}
+    for (const pathCandidate of pathCandidates) {
+      const matched = pathCandidate.match(route.pattern)
+      if (matched) {
+        return {
+          handler: route.handler,
+          params: route.buildParams ? route.buildParams(matched) : {}
+        }
       }
     }
   }

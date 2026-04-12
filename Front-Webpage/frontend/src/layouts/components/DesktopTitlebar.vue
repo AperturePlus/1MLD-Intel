@@ -5,8 +5,8 @@
         <span class="brand-mark__dot"></span>
       </span>
       <div class="brand-copy">
-        <span class="brand-copy__eyebrow">IMLD Intelligence</span>
-        <strong class="brand-copy__name">智能医生工作站</strong>
+        <span class="brand-copy__eyebrow">{{ BRANDING.shortName }}</span>
+        <strong class="brand-copy__name">{{ BRANDING.workspaceName }}</strong>
       </div>
     </div>
 
@@ -67,6 +67,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { BRANDING } from '@/constants/branding'
 
 const route = useRoute()
 const router = useRouter()
@@ -400,3 +401,4 @@ watch(
   }
 }
 </style>
+

@@ -2,7 +2,7 @@
   <el-aside :width="isCollapse ? '64px' : '220px'" class="modern-sidebar">
     <div class="sidebar-header">
       <img v-show="!isCollapse" :src="avatarImg" alt="logo" class="logo-img" />
-      <span v-show="!isCollapse" class="product-name">数智肝循</span>
+      <span v-show="!isCollapse" class="product-name">{{ BRANDING.shortName }}</span>
 
       <div
         class="collapse-trigger"
@@ -14,7 +14,7 @@
     </div>
 
     <div v-show="!isCollapse" class="workspace-label">
-      <span>智能医生工作站</span>
+      <span>{{ BRANDING.workspaceName }}</span>
     </div>
 
     <el-scrollbar class="sidebar-scrollbar">
@@ -81,6 +81,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import avatarImg from '@/assets/login.webp'
 import { navigationGroups } from '@/app/router/routeCatalog'
+import { BRANDING } from '@/constants/branding'
 
 const router = useRouter()
 const route = useRoute()
@@ -315,3 +316,4 @@ function handleLogout() {
   background-color: #fef0f0;
 }
 </style>
+

@@ -71,7 +71,7 @@ function createMainWindow() {
     height: 860,
     minWidth: 1024,
     minHeight: 720,
-    title: 'IMLD Intelligence',
+    title: '遗传代谢性肝病（IMLD）早期筛查与辅助诊断系统',
     frame: !isWindows,
     backgroundColor: '#eef3f8',
     autoHideMenuBar: true,

@@ -47,3 +47,9 @@ docs/
 build-codex/
 
 build/
+scripts/env.sh
+vendors/
+
+*.venv
+
+src\main\resources\models\imld\

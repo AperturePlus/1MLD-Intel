@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from '@/App.vue'
 import { registerPlugins } from '@/app/providers/registerPlugins'
 import '@/style.css'
+//import '@/mock/httpMock'
 
 const shellBridge = window.electron?.shell
 if (shellBridge?.frameless) {

@@ -102,6 +102,82 @@ public final class IdentityApiDtos {
         }
 
         /**
+         * Send email verification code for user registration.
+         */
+        public record SendRegistrationEmailCodeCommand(
+                @NotBlank(message = "username must not be blank")
+                @Size(max = 100, message = "username must be at most 100 characters")
+                String username,
+                @NotBlank(message = "email must not be blank")
+                @Size(max = 128, message = "email must be at most 128 characters")
+                String email,
+                @Size(max = 64, message = "tenantCode must be at most 64 characters")
+                String tenantCode
+        ) {
+        }
+
+        /**
+         * Send email verification code for password recovery.
+         */
+        public record ForgotPasswordCommand(
+                @NotBlank(message = "username must not be blank")
+                @Size(max = 100, message = "username must be at most 100 characters")
+                String username,
+                @NotBlank(message = "email must not be blank")
+                @Size(max = 128, message = "email must be at most 128 characters")
+                String email,
+                @Size(max = 64, message = "tenantCode must be at most 64 characters")
+                String tenantCode
+        ) {
+        }
+
+        /**
+         * Register a user account with email verification code.
+         */
+        public record RegisterCommand(
+                @NotBlank(message = "username must not be blank")
+                @Size(max = 100, message = "username must be at most 100 characters")
+                String username,
+                @NotBlank(message = "password must not be blank")
+                @Size(max = 255, message = "password must be at most 255 characters")
+                String password,
+                @NotBlank(message = "email must not be blank")
+                @Size(max = 128, message = "email must be at most 128 characters")
+                String email,
+                @NotBlank(message = "emailCode must not be blank")
+                @Size(max = 16, message = "emailCode must be at most 16 characters")
+                String emailCode,
+                @Size(max = 100, message = "displayName must be at most 100 characters")
+                String displayName,
+                @Size(max = 32, message = "userType must be at most 32 characters")
+                String userType,
+                @Size(max = 64, message = "tenantCode must be at most 64 characters")
+                String tenantCode
+        ) {
+        }
+
+        /**
+         * Reset password using email verification code.
+         */
+        public record ResetPasswordCommand(
+                @NotBlank(message = "username must not be blank")
+                @Size(max = 100, message = "username must be at most 100 characters")
+                String username,
+                @NotBlank(message = "email must not be blank")
+                @Size(max = 128, message = "email must be at most 128 characters")
+                String email,
+                @NotBlank(message = "newPassword must not be blank")
+                @Size(max = 255, message = "newPassword must be at most 255 characters")
+                String newPassword,
+                @NotBlank(message = "emailCode must not be blank")
+                @Size(max = 16, message = "emailCode must be at most 16 characters")
+                String emailCode,
+                @Size(max = 64, message = "tenantCode must be at most 64 characters")
+                String tenantCode
+        ) {
+        }
+
+        /**
          * 新增或补录患者。
          *
          * <p>明文字段只用于边界层接收，后续实现必须完成加密与脱敏。</p>
@@ -221,6 +297,17 @@ public final class IdentityApiDtos {
                 String refreshToken,
                 OffsetDateTime expiresAt,
                 Shared.AuthenticatedUserItem user
+        ) {
+        }
+
+        /**
+         * Result of sending a verification code.
+         */
+        public record EmailCodeSendResponse(
+                String email,
+                String purpose,
+                OffsetDateTime expiresAt,
+                long resendAfterSeconds
         ) {
         }
 

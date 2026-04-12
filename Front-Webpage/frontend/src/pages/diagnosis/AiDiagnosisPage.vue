@@ -42,7 +42,7 @@
           class="right-panel" 
           shadow="never"
           v-loading="isDiagnosing"
-          element-loading-text="数智肝循 AI 正在解析临床表型与多模态数据，请稍候..."
+          element-loading-text="IMLD 早筛诊辅 AI 正在解析临床表型与多模态数据，请稍候..."
           element-loading-background="rgba(255, 255, 255, 0.9)"
         >
           
@@ -470,3 +470,4 @@ onMounted(() => {
   margin-bottom: 16px;
 }
 </style>
+
