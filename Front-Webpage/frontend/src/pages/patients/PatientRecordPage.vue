@@ -136,22 +136,12 @@
               </el-col>
             </el-row>
 
-            <el-divider content-position="left">遗传病史特征</el-divider>
+            <el-divider content-position="left">遗传背景</el-divider>
 
             <el-row :gutter="24">
               <el-col :span="8">
                 <el-form-item label="父母是否近亲婚配">
                   <el-switch v-model="formData.consanguinity" active-text="是" inactive-text="否" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="肝病家族史">
-                  <el-switch v-model="formData.familyHistory" active-text="有" inactive-text="无" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="家族病史详情" v-if="formData.familyHistory">
-                  <el-input v-model="formData.familyHistoryDetail" placeholder="如：父亲患有肝豆状核变性" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -176,101 +166,269 @@
               />
             </el-form-item>
 
-            <el-divider content-position="left">体格检查 (阳性体征筛查)</el-divider>
+            <el-divider content-position="left">既往史</el-divider>
 
             <el-row :gutter="24">
-              <el-col :span="6">
-                <el-form-item label="皮肤/巩膜黄染">
-                  <el-select v-model="formData.jaundice" placeholder="请选择">
-                    <el-option label="无" value="无" />
-                    <el-option label="轻度" value="轻度" />
-                    <el-option label="中重度" value="中重度" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item label="肝脏肿大">
-                  <el-switch v-model="formData.hepatomegaly" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item label="脾脏肿大">
-                  <el-switch v-model="formData.splenomegaly" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item label="角膜 K-F 环" title="肝豆状核变性特征">
-                  <el-select v-model="formData.kfRing" placeholder="裂隙灯检查结果">
-                    <el-option label="未见" value="未见" />
-                    <el-option label="阳性 (+)" value="阳性" />
-                    <el-option label="未查" value="未查" />
+              <el-col v-for="item in diseaseHistoryOptions" :key="item.key" :span="6">
+                <el-form-item :label="item.label" :prop="`history.diseaseHistory.${item.key}`">
+                  <el-select
+                    v-model="formData.history.diseaseHistory[item.key]"
+                    placeholder="请选择"
+                    style="width: 100%;"
+                  >
+                    <el-option
+                      v-for="option in triStateOptions"
+                      :key="option.value"
+                      :label="option.label"
+                      :value="option.value"
+                    />
                   </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
+
             <el-row :gutter="24">
-              <el-col :span="24">
-                <el-form-item label="神经系统症状">
-                  <el-checkbox-group v-model="formData.neuroSymptoms">
-                    <el-checkbox label="震颤" />
-                    <el-checkbox label="肌张力障碍" />
-                    <el-checkbox label="步态异常" />
-                    <el-checkbox label="发音困难" />
-                    <el-checkbox label="精神行为异常" />
-                    <el-checkbox label="无" />
-                  </el-checkbox-group>
+              <el-col :span="12">
+                <el-form-item label="手术史" prop="history.surgeryHistory.status">
+                  <el-select
+                    v-model="formData.history.surgeryHistory.status"
+                    placeholder="请选择"
+                    style="width: 100%;"
+                  >
+                    <el-option
+                      v-for="option in triStateOptions"
+                      :key="option.value"
+                      :label="option.label"
+                      :value="option.value"
+                    />
+                  </el-select>
+                </el-form-item>
+                <el-form-item
+                  v-if="formData.history.surgeryHistory.status === 'YES'"
+                  label="手术史明细"
+                  prop="history.surgeryHistory.detail"
+                >
+                  <el-input
+                    v-model="formData.history.surgeryHistory.detail"
+                    type="textarea"
+                    :rows="3"
+                    placeholder="请填写手术名称、时间及相关说明"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="输血史" prop="history.transfusionHistory.status">
+                  <el-select
+                    v-model="formData.history.transfusionHistory.status"
+                    placeholder="请选择"
+                    style="width: 100%;"
+                  >
+                    <el-option
+                      v-for="option in triStateOptions"
+                      :key="option.value"
+                      :label="option.label"
+                      :value="option.value"
+                    />
+                  </el-select>
+                </el-form-item>
+                <el-form-item
+                  v-if="formData.history.transfusionHistory.status === 'YES'"
+                  label="输血史明细"
+                  prop="history.transfusionHistory.detail"
+                >
+                  <el-input
+                    v-model="formData.history.transfusionHistory.detail"
+                    type="textarea"
+                    :rows="3"
+                    placeholder="请填写输血时间、原因及相关说明"
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+
+            <el-row :gutter="24">
+              <el-col :span="8">
+                <el-form-item label="过敏史" prop="history.allergyHistory">
+                  <el-input
+                    v-model="formData.history.allergyHistory"
+                    type="textarea"
+                    :rows="3"
+                    placeholder="请填写药物、食物或其他过敏史；无可填写“无”"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="用药史" prop="history.medicationHistory">
+                  <el-input
+                    v-model="formData.history.medicationHistory"
+                    type="textarea"
+                    :rows="3"
+                    placeholder="请填写长期用药、近期用药或特殊治疗；无可填写“无”"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="家族史" prop="history.familyHistory">
+                  <el-input
+                    v-model="formData.history.familyHistory"
+                    type="textarea"
+                    :rows="3"
+                    placeholder="请填写家族相关疾病史；无可填写“无”"
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+
+            <el-divider content-position="left">生命体征</el-divider>
+
+            <el-row :gutter="24">
+              <el-col :span="8">
+                <el-form-item label="身高(cm)" prop="physicalExam.heightCm">
+                  <el-input-number
+                    v-model="formData.physicalExam.heightCm"
+                    :min="1"
+                    :precision="1"
+                    style="width: 100%;"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="体重(kg)" prop="physicalExam.weightKg">
+                  <el-input-number
+                    v-model="formData.physicalExam.weightKg"
+                    :min="1"
+                    :precision="1"
+                    style="width: 100%;"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="BMI(kg/m²)" prop="physicalExam.bmi">
+                  <el-input
+                    :model-value="bmiDisplay"
+                    readonly
+                    placeholder="根据身高体重自动计算"
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+
+            <el-row :gutter="24">
+              <el-col :span="6">
+                <el-form-item label="收缩压(mmHg)" prop="physicalExam.bloodPressureSystolic">
+                  <el-input-number
+                    v-model="formData.physicalExam.bloodPressureSystolic"
+                    :min="1"
+                    style="width: 100%;"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="舒张压(mmHg)" prop="physicalExam.bloodPressureDiastolic">
+                  <el-input-number
+                    v-model="formData.physicalExam.bloodPressureDiastolic"
+                    :min="1"
+                    style="width: 100%;"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="呼吸频率(次/分)" prop="physicalExam.respiratoryRate">
+                  <el-input-number
+                    v-model="formData.physicalExam.respiratoryRate"
+                    :min="1"
+                    style="width: 100%;"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="心率(次/分)" prop="physicalExam.heartRate">
+                  <el-input-number
+                    v-model="formData.physicalExam.heartRate"
+                    :min="1"
+                    style="width: 100%;"
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+
+            <el-divider content-position="left">补充体格检查</el-divider>
+
+            <el-row :gutter="24">
+              <el-col v-for="item in supplementalExamOptions" :key="item.key" :span="8">
+                <el-form-item :label="item.label" :prop="`physicalExam.${item.key}`">
+                  <el-select
+                    v-model="formData.physicalExam[item.key]"
+                    placeholder="请选择"
+                    style="width: 100%;"
+                  >
+                    <el-option
+                      v-for="option in triStateOptions"
+                      :key="option.value"
+                      :label="option.label"
+                      :value="option.value"
+                    />
+                  </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
           </el-tab-pane>
 
-          <el-tab-pane label="生化与代谢筛查" name="metabolic">
-            <div class="section-title">常规肝功能</div>
-            <el-row :gutter="24">
-              <el-col :span="8">
-                <el-form-item label="ALT (谷丙转氨酶)">
-                  <el-input v-model="formData.alt" placeholder="0.00"><template #append>U/L</template></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="AST (谷草转氨酶)">
-                  <el-input v-model="formData.ast" placeholder="0.00"><template #append>U/L</template></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="TBIL (总胆红素)">
-                  <el-input v-model="formData.tbil" placeholder="0.00"><template #append>μmol/L</template></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
+          <el-tab-pane label="实验室筛查指标" name="laboratory">
+            <section
+              v-for="group in laboratoryScreeningConfig"
+              :key="group.key"
+              class="laboratory-screening-group"
+            >
+              <el-divider content-position="left">{{ group.title }}</el-divider>
 
-            <div class="section-title">铜代谢 (Wilson病筛查)</div>
-            <el-row :gutter="24">
-              <el-col :span="8">
-                <el-form-item label="血清铜蓝蛋白">
-                  <el-input v-model="formData.ceruloplasmin" placeholder="< 0.2 提示异常"><template #append>g/L</template></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="24h 尿铜">
-                  <el-input v-model="formData.urineCopper" placeholder="> 100 提示异常"><template #append>μg/24h</template></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-
-            <div class="section-title">铁代谢 (血色病筛查)</div>
-            <el-row :gutter="24">
-              <el-col :span="8">
-                <el-form-item label="血清铁蛋白">
-                  <el-input v-model="formData.ferritin" placeholder="0.00"><template #append>ng/mL</template></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="转铁蛋白饱和度">
-                  <el-input v-model="formData.transferrinSat" placeholder="0.00"><template #append>%</template></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
+              <template v-for="section in group.sections" :key="`${group.key}-${section.key}`">
+                <div class="section-title">{{ section.title }}</div>
+                <el-alert
+                  v-if="section.emptyState"
+                  type="info"
+                  :closable="false"
+                  show-icon
+                  :title="section.emptyState"
+                  class="record-flow-alert"
+                />
+                <el-row v-else :gutter="24">
+                  <el-col
+                    v-for="item in section.items"
+                    :key="`${group.key}-${section.key}-${item.key}`"
+                    :xs="24"
+                    :sm="12"
+                    :md="8"
+                    :xl="6"
+                  >
+                    <el-form-item :label="item.label">
+                      <el-select
+                        v-if="item.inputType === 'select'"
+                        :model-value="getLaboratoryFieldValue(group.key, section.key, item.key)"
+                        placeholder="请选择"
+                        style="width: 100%;"
+                        @update:model-value="updateLaboratoryFieldValue(group.key, section.key, item.key, $event)"
+                      >
+                        <el-option
+                          v-for="option in item.options ?? []"
+                          :key="option.value"
+                          :label="option.label"
+                          :value="option.value"
+                        />
+                      </el-select>
+                      <el-input
+                        v-else
+                        :model-value="getLaboratoryFieldValue(group.key, section.key, item.key)"
+                        placeholder="0.00"
+                        @update:model-value="updateLaboratoryFieldValue(group.key, section.key, item.key, $event)"
+                      >
+                        <template v-if="item.unit" #append>{{ item.unit }}</template>
+                      </el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </template>
+            </section>
           </el-tab-pane>
 
           <el-tab-pane label="影像/基因与诊断" name="diagnosis">
@@ -340,7 +498,9 @@
     <div class="action-footer">
       <el-button @click="resetForm" size="large">清空重置</el-button>
       <el-button type="warning" plain size="large" @click="saveDraft">保存草稿</el-button>
-      <el-button type="primary" size="large" @click="submitForm" :icon="Select" :loading="submitting">提交归档</el-button>
+      <el-button type="primary" size="large" @click="submitForm" :icon="Select" :loading="submitting">
+        提交归档
+      </el-button>
     </div>
 
     <el-drawer
@@ -404,7 +564,11 @@ import { useRoute, useRouter } from 'vue-router'
 import { DocumentAdd, Select, UploadFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import patientApi from '@/api/patient'
-import type { ImportSourceType, PatientImportPreview } from '@/api/types'
+import type { ImportSourceType, PatientImportPreview, TernaryFlag } from '@/api/types'
+import {
+  LABORATORY_SCREENING_CONFIG,
+  type LaboratoryGroupConfig
+} from '@/features/patient-record/constants/laboratoryScreening'
 import { usePatientRecordPage } from '@/features/patient-record/composables/usePatientRecordPage'
 
 const route = useRoute()
@@ -442,6 +606,34 @@ const encounterTypeOptions = [
   { label: '住院', value: 'INPATIENT' }
 ] as const
 
+const triStateOptions: Array<{ label: string; value: TernaryFlag }> = [
+  { label: '有', value: 'YES' },
+  { label: '无', value: 'NO' },
+  { label: '未查', value: 'UNKNOWN' }
+]
+
+const diseaseHistoryOptions = [
+  { key: 'smokingHistory', label: '吸烟史' },
+  { key: 'drinkingHistory', label: '饮酒史' },
+  { key: 'diabetesHistory', label: '糖尿病史' },
+  { key: 'hypertensionHistory', label: '高血压史' },
+  { key: 'hyperuricemiaHistory', label: '高尿酸血症史' },
+  { key: 'hyperlipidemiaHistory', label: '高脂血症史' },
+  { key: 'coronaryHeartDiseaseHistory', label: '冠心病史' },
+  { key: 'hepatitisBHistory', label: '乙肝病史' }
+] as const
+
+const supplementalExamOptions = [
+  { key: 'liverFibrosis', label: '肝纤维化' },
+  { key: 'cirrhosis', label: '肝硬化' },
+  { key: 'fattyLiver', label: '脂肪肝' },
+  { key: 'liverFailure', label: '肝衰竭' },
+  { key: 'cholestasis', label: '胆汁淤积' },
+  { key: 'viralHepatitis', label: '病毒性肝炎' }
+] as const
+
+const laboratoryScreeningConfig: readonly LaboratoryGroupConfig[] = LABORATORY_SCREENING_CONFIG
+
 const importSourceLabelMap: Record<ImportSourceType, string> = {
   HIS_LIS: 'HIS/LIS',
   IMAGE_OCR: '图片识别',
@@ -461,6 +653,32 @@ const importConfidenceText = computed(() => {
   }
   return `${Math.round(importMeta.confidence * 100)}%`
 })
+
+const bmiDisplay = computed(() => {
+  if (formData.physicalExam.bmi === null) {
+    return ''
+  }
+  return formData.physicalExam.bmi.toFixed(1)
+})
+
+const getLaboratoryFieldValue = (groupKey: string, sectionKey: string, fieldKey: string): string => {
+  const group = formData.laboratoryScreening[groupKey as keyof typeof formData.laboratoryScreening] as
+    | Record<string, Record<string, string>>
+    | undefined
+  const section = group?.[sectionKey] as Record<string, string> | undefined
+  return section?.[fieldKey] ?? ''
+}
+
+const updateLaboratoryFieldValue = (groupKey: string, sectionKey: string, fieldKey: string, value: string): void => {
+  const group = formData.laboratoryScreening[groupKey as keyof typeof formData.laboratoryScreening] as
+    | Record<string, Record<string, string>>
+    | undefined
+  if (!group || !(sectionKey in group)) {
+    return
+  }
+  const section = group[sectionKey] as Record<string, string>
+  section[fieldKey] = typeof value === 'string' ? value : ''
+}
 
 const imageFileName = computed(() => imageFile.value?.name ?? '')
 const pdfFileName = computed(() => pdfFile.value?.name ?? '')
