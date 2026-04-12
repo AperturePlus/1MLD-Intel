@@ -262,6 +262,60 @@ export interface PatientRecordLaboratoryScreening {
   clinicalMicrobiology: PatientRecordClinicalMicrobiology
 }
 
+export type PatientRecordImagingModality = 'CT' | 'ULTRASOUND' | 'MRI' | 'OTHER'
+
+export type PatientRecordImagingSourceType = 'MANUAL' | 'IMAGE_OCR' | 'PDF_OCR' | 'PACS_IMPORT'
+
+export interface PatientRecordImagingReportItem {
+  modality: PatientRecordImagingModality
+  reportText: string
+  examinedAt?: string
+  fileId?: string | null
+  sourceType: PatientRecordImagingSourceType
+}
+
+export type PatientRecordPathologySourceType = 'MANUAL' | 'IMAGE_OCR' | 'PDF_OCR' | 'PACS_IMPORT'
+
+export interface PatientRecordPathology {
+  performed: boolean
+  reportText: string
+  nasScore: number | null
+  reportedAt?: string
+  fileId?: string | null
+  sourceType: PatientRecordPathologySourceType
+}
+
+export type PatientRecordGeneticSourceType = 'MANUAL' | 'IMAGE_OCR' | 'PDF_OCR' | 'HIS_LIS'
+
+export type PatientRecordGeneticMethod = 'PANEL' | 'WES' | 'WGS' | 'OTHER' | ''
+
+export interface PatientRecordGeneticVariantItem {
+  gene: string
+  hgvsC?: string
+  hgvsP?: string
+  variantType?: string
+  zygosity?: string
+  classification?: string
+  evidence?: string
+}
+
+export interface PatientRecordGeneticSequencing {
+  tested: boolean
+  method: PatientRecordGeneticMethod
+  reportSource: string
+  reportDate?: string
+  summary: string
+  conclusion: string
+  fileId?: string | null
+  sourceType: PatientRecordGeneticSourceType
+  variants: PatientRecordGeneticVariantItem[]
+}
+
+export interface PatientRecordClinicalDecision {
+  diagnosis: string
+  treatmentPlan: string
+}
+
 export interface PatientRecordPayload {
   patientNo: string
   name: string
@@ -281,12 +335,10 @@ export interface PatientRecordPayload {
   history: PatientRecordHistory
   physicalExam: PatientRecordPhysicalExam
   laboratoryScreening: PatientRecordLaboratoryScreening
-  imagingResult: string
-  biopsyResult: string
-  geneticTested: boolean
-  mutatedGene: string
-  diagnosis: string
-  treatmentPlan: string
+  imagingReports: PatientRecordImagingReportItem[]
+  pathology: PatientRecordPathology
+  geneticSequencing: PatientRecordGeneticSequencing
+  clinicalDecision: PatientRecordClinicalDecision
   visitId?: string
   importMeta?: PatientRecordImportMeta
 }

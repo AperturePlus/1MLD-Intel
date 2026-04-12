@@ -50,7 +50,7 @@ const REQUIRED_RECORD_FIELDS = [
   'physicalExam.liverFailure',
   'physicalExam.cholestasis',
   'physicalExam.viralHepatitis',
-  'diagnosis'
+  'clinicalDecision.diagnosis'
 ]
 
 const CONDITIONAL_REQUIRED_FIELDS = [
@@ -96,6 +96,32 @@ const DEFAULT_PHYSICAL_EXAM = {
   liverFailure: 'UNKNOWN',
   cholestasis: 'UNKNOWN',
   viralHepatitis: 'UNKNOWN'
+}
+
+const DEFAULT_PATHOLOGY = {
+  performed: false,
+  reportText: '',
+  nasScore: null,
+  reportedAt: '',
+  fileId: null,
+  sourceType: 'MANUAL'
+}
+
+const DEFAULT_GENETIC_SEQUENCING = {
+  tested: false,
+  method: '',
+  reportSource: '',
+  reportDate: '',
+  summary: '',
+  conclusion: '',
+  fileId: null,
+  sourceType: 'MANUAL',
+  variants: []
+}
+
+const DEFAULT_CLINICAL_DECISION = {
+  diagnosis: '',
+  treatmentPlan: ''
 }
 
 const getValueByPath = (input, path) =>
@@ -147,6 +173,176 @@ const normalizeTriState = (value, fallback = 'UNKNOWN') => {
   return fallback
 }
 
+const normalizeNullableText = (value) => {
+  const text = normalizeText(value)
+  return text || null
+}
+
+const normalizeNasScore = (value) => {
+  const parsed = normalizeNumber(value)
+  if (parsed == null) {
+    return null
+  }
+  return Math.max(0, Math.min(8, Math.round(parsed)))
+}
+
+const normalizeDateOnly = (value) => {
+  const text = normalizeText(value)
+  if (!text) {
+    return ''
+  }
+
+  const parsed = new Date(text)
+  if (Number.isNaN(parsed.getTime())) {
+    return text
+  }
+
+  return parsed.toISOString().slice(0, 10)
+}
+
+const normalizeImagingModality = (value) => {
+  const normalized = normalizeText(value).toUpperCase()
+  if (normalized === 'US' || normalized === 'ULTRASOUND' || normalized === '超声') {
+    return 'ULTRASOUND'
+  }
+  if (normalized === 'CT') {
+    return 'CT'
+  }
+  if (normalized === 'MRI') {
+    return 'MRI'
+  }
+  return normalized === 'OTHER' ? 'OTHER' : 'OTHER'
+}
+
+const normalizeImagingSourceType = (value) => {
+  const normalized = normalizeText(value).toUpperCase()
+  return ['MANUAL', 'IMAGE_OCR', 'PDF_OCR', 'PACS_IMPORT'].includes(normalized) ? normalized : 'MANUAL'
+}
+
+const normalizePathologySourceType = (value) => {
+  const normalized = normalizeText(value).toUpperCase()
+  return ['MANUAL', 'IMAGE_OCR', 'PDF_OCR', 'PACS_IMPORT'].includes(normalized) ? normalized : 'MANUAL'
+}
+
+const normalizeGeneticSourceType = (value) => {
+  const normalized = normalizeText(value).toUpperCase()
+  return ['MANUAL', 'IMAGE_OCR', 'PDF_OCR', 'HIS_LIS'].includes(normalized) ? normalized : 'MANUAL'
+}
+
+const normalizeGeneticMethod = (value) => {
+  const normalized = normalizeText(value).toUpperCase()
+  return ['PANEL', 'WES', 'WGS', 'OTHER'].includes(normalized) ? normalized : ''
+}
+
+const normalizeImagingReports = (value, legacyImagingResult) => {
+  if (Array.isArray(value)) {
+    return value.map((item) => ({
+      modality: normalizeImagingModality(item?.modality),
+      reportText: normalizeText(item?.reportText),
+      examinedAt: normalizeDateOnly(item?.examinedAt),
+      fileId: normalizeNullableText(item?.fileId),
+      sourceType: normalizeImagingSourceType(item?.sourceType)
+    }))
+  }
+
+  const legacyText = normalizeText(legacyImagingResult)
+  if (!legacyText) {
+    return []
+  }
+
+  return [
+    {
+      modality: 'OTHER',
+      reportText: legacyText,
+      examinedAt: '',
+      fileId: null,
+      sourceType: 'MANUAL'
+    }
+  ]
+}
+
+const normalizePathology = (value, legacyBiopsyResult) => {
+  if (value && typeof value === 'object') {
+    const reportText = normalizeText(value.reportText) || normalizeText(legacyBiopsyResult)
+    return {
+      performed: typeof value.performed === 'boolean' ? value.performed : Boolean(reportText),
+      reportText,
+      nasScore: normalizeNasScore(value.nasScore),
+      reportedAt: normalizeDateOnly(value.reportedAt),
+      fileId: normalizeNullableText(value.fileId),
+      sourceType: normalizePathologySourceType(value.sourceType)
+    }
+  }
+
+  const legacyText = normalizeText(legacyBiopsyResult)
+  return {
+    ...DEFAULT_PATHOLOGY,
+    performed: Boolean(legacyText),
+    reportText: legacyText
+  }
+}
+
+const normalizeGeneticVariants = (value) => {
+  if (!Array.isArray(value)) {
+    return []
+  }
+
+  return value.map((item) => ({
+    gene: normalizeText(item?.gene),
+    hgvsC: normalizeText(item?.hgvsC),
+    hgvsP: normalizeText(item?.hgvsP),
+    variantType: normalizeText(item?.variantType),
+    zygosity: normalizeText(item?.zygosity),
+    classification: normalizeText(item?.classification),
+    evidence: normalizeText(item?.evidence)
+  }))
+}
+
+const normalizeGeneticSequencing = (value, legacyGeneticTested, legacyMutatedGene) => {
+  if (value && typeof value === 'object') {
+    const variants = normalizeGeneticVariants(value.variants)
+    const legacyGene = normalizeText(legacyMutatedGene)
+    return {
+      tested:
+        typeof value.tested === 'boolean'
+          ? value.tested
+          : typeof legacyGeneticTested === 'boolean'
+            ? legacyGeneticTested
+            : variants.length > 0,
+      method: normalizeGeneticMethod(value.method),
+      reportSource: normalizeText(value.reportSource),
+      reportDate: normalizeDateOnly(value.reportDate),
+      summary: normalizeText(value.summary),
+      conclusion: normalizeText(value.conclusion) || legacyGene,
+      fileId: normalizeNullableText(value.fileId),
+      sourceType: normalizeGeneticSourceType(value.sourceType),
+      variants: variants.length > 0 ? variants : legacyGene ? [{ gene: legacyGene }] : []
+    }
+  }
+
+  const legacyGene = normalizeText(legacyMutatedGene)
+  return {
+    ...DEFAULT_GENETIC_SEQUENCING,
+    tested: typeof legacyGeneticTested === 'boolean' ? legacyGeneticTested : false,
+    conclusion: legacyGene,
+    variants: legacyGene ? [{ gene: legacyGene }] : []
+  }
+}
+
+const normalizeClinicalDecision = (value, legacyDiagnosis, legacyTreatmentPlan) => {
+  if (value && typeof value === 'object') {
+    return {
+      diagnosis: normalizeText(value.diagnosis) || normalizeText(legacyDiagnosis),
+      treatmentPlan: normalizeText(value.treatmentPlan) || normalizeText(legacyTreatmentPlan)
+    }
+  }
+
+  return {
+    diagnosis: normalizeText(legacyDiagnosis),
+    treatmentPlan: normalizeText(legacyTreatmentPlan)
+  }
+}
+
 const isBlankValue = (value) => {
   if (value == null) {
     return true
@@ -178,6 +374,10 @@ const normalizeStoredRecordPayload = (payload = {}) => {
     ferritin,
     transferrinSat,
     laboratoryScreening,
+    imagingReports,
+    pathology,
+    geneticSequencing,
+    clinicalDecision,
     ...restPayload
   } = payload
   const history = payload.history || {}
@@ -221,6 +421,18 @@ const normalizeStoredRecordPayload = (payload = {}) => {
       cholestasis: normalizeTriState(physicalExam.cholestasis),
       viralHepatitis: normalizeTriState(physicalExam.viralHepatitis)
     },
+    imagingReports: normalizeImagingReports(imagingReports, payload.imagingResult),
+    pathology: normalizePathology(pathology, payload.biopsyResult),
+    geneticSequencing: normalizeGeneticSequencing(
+      geneticSequencing,
+      payload.geneticTested,
+      payload.mutatedGene
+    ),
+    clinicalDecision: normalizeClinicalDecision(
+      clinicalDecision,
+      payload.diagnosis,
+      payload.treatmentPlan
+    ),
     laboratoryScreening: normalizeLaboratoryScreening(laboratoryScreening, {
       alt,
       ast,
@@ -311,6 +523,14 @@ export const patientExactHandlers = {
       }
     })
 
+    if (data?.pathology?.performed && isBlankValue(data?.pathology?.reportText)) {
+      errors['pathology.reportText'] = ['已执行肝穿刺活检时必须填写病理结果']
+    }
+
+    if (data?.geneticSequencing?.tested && isBlankValue(data?.geneticSequencing?.method)) {
+      errors['geneticSequencing.method'] = ['已进行基因检测时必须选择检测方法']
+    }
+
     if (Object.keys(errors).length > 0) {
       return { status: 400, statusText: 'Bad Request', data: errors }
     }
@@ -338,13 +558,13 @@ export const patientExactHandlers = {
         item.id.toLowerCase() === String(normalizedPayload.patientNo).toLowerCase() || item.name === normalizedPayload.name
     )
     if (!existing) {
-      const disease = resolveDiseaseByDiagnosis(normalizedPayload.diagnosis)
+      const disease = resolveDiseaseByDiagnosis(normalizedPayload.clinicalDecision?.diagnosis)
       patients.unshift({
         id: String(normalizedPayload.patientNo || nextPatientId(patients)),
         name: normalizedPayload.name,
         gender: normalizedPayload.gender,
         age: Number(normalizedPayload.age) || 0,
-        riskLevel: resolveRiskByDiagnosis(normalizedPayload.diagnosis),
+        riskLevel: resolveRiskByDiagnosis(normalizedPayload.clinicalDecision?.diagnosis),
         disease,
         compliance: '一般',
         aiStatus: '未诊断',

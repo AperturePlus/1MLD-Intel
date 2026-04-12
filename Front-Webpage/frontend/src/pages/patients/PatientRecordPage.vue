@@ -431,60 +431,344 @@
             </section>
           </el-tab-pane>
 
-          <el-tab-pane label="影像/基因与诊断" name="diagnosis">
-            <el-row :gutter="24">
-              <el-col :span="12">
-                <el-form-item label="影像学表现">
-                  <el-input
-                    v-model="formData.imagingResult"
-                    type="textarea"
-                    :rows="3"
-                    placeholder="录入超声/CT/MRI肝脏及脾脏影像学描述..."
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="肝穿刺活检">
-                  <el-input
-                    v-model="formData.biopsyResult"
-                    type="textarea"
-                    :rows="3"
-                    placeholder="如：肝细胞内大量铜颗粒沉积 / 铁沉积..."
-                  />
-                </el-form-item>
-              </el-col>
-            </el-row>
+          <el-tab-pane label="影像学检查" name="imaging">
+            <el-alert
+              type="info"
+              :closable="false"
+              show-icon
+              class="record-flow-alert"
+              title="已预留影像报告抽取与回填 contract。本轮先由医生校正结构化影像摘要，后续可接院内 PACS/OCR。"
+            />
 
-            <el-divider content-position="left">遗传学检测</el-divider>
+            <div class="tab-toolbar">
+              <el-space wrap>
+                <el-button plain :icon="Plus" @click="addImagingReport('CT')">新增 CT</el-button>
+                <el-button plain :icon="Plus" @click="addImagingReport('ULTRASOUND')">新增超声</el-button>
+                <el-button plain :icon="Plus" @click="addImagingReport('MRI')">新增 MRI</el-button>
+                <el-button plain :icon="Plus" @click="addImagingReport('OTHER')">新增其他影像</el-button>
+              </el-space>
+            </div>
+
+            <el-empty
+              v-if="formData.imagingReports.length === 0"
+              description="暂无影像学报告，请按检查类型新增条目。"
+            />
+
+            <div v-else class="report-stack">
+              <section
+                v-for="(report, index) in formData.imagingReports"
+                :key="report.localId"
+                class="report-card"
+              >
+                <div class="report-card__header">
+                  <div class="report-card__title">
+                    <el-tag size="small" effect="plain">报告 {{ index + 1 }}</el-tag>
+                    <span>影像学检查</span>
+                  </div>
+                  <el-button text type="danger" :icon="Delete" @click="removeImagingReport(report.localId)">
+                    删除
+                  </el-button>
+                </div>
+
+                <el-row :gutter="24">
+                  <el-col :span="6">
+                    <el-form-item label="检查类型">
+                      <el-select v-model="report.modality" placeholder="请选择影像类型">
+                        <el-option
+                          v-for="option in imagingModalityOptions"
+                          :key="option.value"
+                          :label="option.label"
+                          :value="option.value"
+                        />
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="6">
+                    <el-form-item label="报告来源">
+                      <el-select v-model="report.sourceType" placeholder="请选择来源">
+                        <el-option
+                          v-for="option in imagingSourceOptions"
+                          :key="option.value"
+                          :label="option.label"
+                          :value="option.value"
+                        />
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="6">
+                    <el-form-item label="检查日期">
+                      <el-date-picker
+                        v-model="report.examinedAt"
+                        type="date"
+                        placeholder="选择日期"
+                        style="width: 100%;"
+                      />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+
+                <el-form-item :label="`${report.modality === 'ULTRASOUND' ? '超声' : report.modality}影像学表现`">
+                  <el-input
+                    v-model="report.reportText"
+                    type="textarea"
+                    :rows="4"
+                    placeholder="请记录该检查的关键影像学表现、病灶部位、大小、强化或回声特征等。"
+                  />
+                </el-form-item>
+              </section>
+            </div>
+          </el-tab-pane>
+
+          <el-tab-pane label="病理" name="pathology">
+            <el-alert
+              type="info"
+              :closable="false"
+              show-icon
+              class="record-flow-alert"
+              title="病理板块支持肝穿刺活检与 NAS 评分。NAS 未填写时仅作为证据归档，不进入模型特征。"
+            />
+
             <el-row :gutter="24">
               <el-col :span="8">
-                <el-form-item label="是否进行基因检测">
-                  <el-radio-group v-model="formData.geneticTested">
-                    <el-radio :label="true">已测</el-radio>
-                    <el-radio :label="false">未测</el-radio>
+                <el-form-item label="是否完成肝穿刺活检">
+                  <el-radio-group v-model="formData.pathology.performed">
+                    <el-radio :label="true">已完成</el-radio>
+                    <el-radio :label="false">未完成</el-radio>
                   </el-radio-group>
                 </el-form-item>
               </el-col>
-              <el-col :span="8" v-if="formData.geneticTested">
-                <el-form-item label="致病基因突变">
-                  <el-select v-model="formData.mutatedGene" placeholder="选择已知突变基因" filterable allow-create>
-                    <el-option label="ATP7B (肝豆状核变性)" value="ATP7B" />
-                    <el-option label="HFE (遗传性血色病)" value="HFE" />
-                    <el-option label="SERPINA1 (α1-抗胰蛋白酶缺乏)" value="SERPINA1" />
-                    <el-option label="G6PC / SLC37A4 (糖原累积病)" value="G6PC" />
-                    <el-option label="阴性/未发现" value="阴性" />
-                  </el-select>
+            </el-row>
+
+            <el-empty
+              v-if="!formData.pathology.performed"
+              description="未执行肝穿刺活检时，可暂不填写病理板块。"
+            />
+
+            <template v-else>
+              <el-row :gutter="24">
+                <el-col :span="8">
+                  <el-form-item label="报告来源">
+                    <el-select v-model="formData.pathology.sourceType" placeholder="请选择来源">
+                      <el-option
+                        v-for="option in pathologySourceOptions"
+                        :key="option.value"
+                        :label="option.label"
+                        :value="option.value"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="报告日期">
+                    <el-date-picker
+                      v-model="formData.pathology.reportedAt"
+                      type="date"
+                      placeholder="选择日期"
+                      style="width: 100%;"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="NAS 评分">
+                    <el-input-number
+                      v-model="formData.pathology.nasScore"
+                      :min="0"
+                      :max="8"
+                      :step="1"
+                      style="width: 100%;"
+                      placeholder="未填则不纳入模型"
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+
+              <el-form-item label="肝穿刺活检结果" prop="pathology.reportText">
+                <el-input
+                  v-model="formData.pathology.reportText"
+                  type="textarea"
+                  :rows="6"
+                  placeholder="请记录病理诊断、炎症活动度、纤维化、脂肪变性以及关键镜下表现。"
+                />
+              </el-form-item>
+            </template>
+          </el-tab-pane>
+
+          <el-tab-pane label="基因测序结果" name="genetic">
+            <el-alert
+              type="info"
+              :closable="false"
+              show-icon
+              class="record-flow-alert"
+              title="已预留基因报告抽取 contract。本轮支持记录检测方法、摘要/结论和变异列表，后续可接 OCR/HIS-LIS 解析。"
+            />
+
+            <el-row :gutter="24">
+              <el-col :span="8">
+                <el-form-item label="是否进行基因检测">
+                  <el-radio-group v-model="formData.geneticSequencing.tested">
+                    <el-radio :label="true">已检测</el-radio>
+                    <el-radio :label="false">未检测</el-radio>
+                  </el-radio-group>
                 </el-form-item>
               </el-col>
             </el-row>
 
-            <el-divider content-position="left">临床诊断与干预</el-divider>
-            <el-form-item label="初步诊断" prop="diagnosis">
-              <el-input v-model="formData.diagnosis" placeholder="如：肝豆状核变性（Wilson病）、肝硬化代偿期..." />
+            <el-empty
+              v-if="!formData.geneticSequencing.tested"
+              description="未进行基因检测时，可暂不填写方法、报告结果与变异列表。"
+            />
+
+            <template v-else>
+              <el-row :gutter="24">
+                <el-col :span="6">
+                  <el-form-item label="检测方法" prop="geneticSequencing.method">
+                    <el-select v-model="formData.geneticSequencing.method" placeholder="请选择方法">
+                      <el-option
+                        v-for="option in geneticMethodOptions"
+                        :key="option.value"
+                        :label="option.label"
+                        :value="option.value"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item label="报告来源">
+                    <el-select v-model="formData.geneticSequencing.sourceType" placeholder="请选择来源">
+                      <el-option
+                        v-for="option in geneticSourceOptions"
+                        :key="option.value"
+                        :label="option.label"
+                        :value="option.value"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item label="报告日期">
+                    <el-date-picker
+                      v-model="formData.geneticSequencing.reportDate"
+                      type="date"
+                      placeholder="选择日期"
+                      style="width: 100%;"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item label="报告机构/来源系统">
+                    <el-input
+                      v-model="formData.geneticSequencing.reportSource"
+                      placeholder="如：院内分子诊断中心 / 第三方实验室"
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+
+              <el-form-item label="检测结果摘要">
+                <el-input
+                  v-model="formData.geneticSequencing.summary"
+                  type="textarea"
+                  :rows="3"
+                  placeholder="概述本次测序的关键发现、阴阳性结论及临床提示。"
+                />
+              </el-form-item>
+
+              <el-form-item label="检测结论">
+                <el-input
+                  v-model="formData.geneticSequencing.conclusion"
+                  type="textarea"
+                  :rows="3"
+                  placeholder="如：发现 ATP7B 复合杂合致病变异，支持 Wilson 病诊断。"
+                />
+              </el-form-item>
+
+              <div class="tab-toolbar">
+                <el-space wrap>
+                  <el-text tag="b">变异列表</el-text>
+                  <el-button plain :icon="Plus" @click="addGeneticVariant">新增变异</el-button>
+                </el-space>
+              </div>
+
+              <el-empty
+                v-if="formData.geneticSequencing.variants.length === 0"
+                description="暂无变异明细，可仅录入摘要/结论，或新增具体变异。"
+              />
+
+              <div v-else class="report-stack">
+                <section
+                  v-for="(variant, index) in formData.geneticSequencing.variants"
+                  :key="variant.localId"
+                  class="report-card"
+                >
+                  <div class="report-card__header">
+                    <div class="report-card__title">
+                      <el-tag size="small" effect="plain">变异 {{ index + 1 }}</el-tag>
+                      <span>基因变异明细</span>
+                    </div>
+                    <el-button text type="danger" :icon="Delete" @click="removeGeneticVariant(variant.localId)">
+                      删除
+                    </el-button>
+                  </div>
+
+                  <el-row :gutter="24">
+                    <el-col :span="6">
+                      <el-form-item label="基因">
+                        <el-input v-model="variant.gene" placeholder="如：ATP7B" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                      <el-form-item label="HGVS c.">
+                        <el-input v-model="variant.hgvsC" placeholder="如：c.2333G>T" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                      <el-form-item label="HGVS p.">
+                        <el-input v-model="variant.hgvsP" placeholder="如：p.Arg778Leu" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                      <el-form-item label="变异类型">
+                        <el-input v-model="variant.variantType" placeholder="如：missense / CNV" />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+
+                  <el-row :gutter="24">
+                    <el-col :span="8">
+                      <el-form-item label="合子状态">
+                        <el-input v-model="variant.zygosity" placeholder="如：heterozygous" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                      <el-form-item label="临床分级">
+                        <el-input v-model="variant.classification" placeholder="如：pathogenic / VUS" />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+
+                  <el-form-item label="证据说明">
+                    <el-input
+                      v-model="variant.evidence"
+                      type="textarea"
+                      :rows="2"
+                      placeholder="可填写 ACMG 证据条目、家系信息或报告补充说明。"
+                    />
+                  </el-form-item>
+                </section>
+              </div>
+            </template>
+          </el-tab-pane>
+
+          <el-tab-pane label="临床干预与诊断" name="clinicalDecision">
+            <el-form-item label="初步诊断" prop="clinicalDecision.diagnosis">
+              <el-input
+                v-model="formData.clinicalDecision.diagnosis"
+                placeholder="如：肝豆状核变性（Wilson病）、肝硬化代偿期..."
+              />
             </el-form-item>
             <el-form-item label="治疗干预方案">
               <el-input
-                v-model="formData.treatmentPlan"
+                v-model="formData.clinicalDecision.treatmentPlan"
                 type="textarea"
                 :rows="4"
                 placeholder="如：1. 低铜饮食；2. 青霉胺 0.25g tid 驱铜治疗；3. 保肝对症处理..."
@@ -561,10 +845,15 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { DocumentAdd, Select, UploadFilled } from '@element-plus/icons-vue'
+import { Delete, DocumentAdd, Plus, Select, UploadFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import patientApi from '@/api/patient'
-import type { ImportSourceType, PatientImportPreview, TernaryFlag } from '@/api/types'
+import type {
+  ImportSourceType,
+  PatientImportPreview,
+  PatientRecordImagingModality,
+  TernaryFlag
+} from '@/api/types'
 import {
   LABORATORY_SCREENING_CONFIG,
   type LaboratoryGroupConfig
@@ -585,7 +874,11 @@ const {
   saveDraft,
   submitForm,
   resetForm,
-  applyImportPreview
+  applyImportPreview,
+  addImagingReport,
+  removeImagingReport,
+  addGeneticVariant,
+  removeGeneticVariant
 } = usePatientRecordPage()
 
 const importDrawerVisible = ref(false)
@@ -630,6 +923,36 @@ const supplementalExamOptions = [
   { key: 'liverFailure', label: '肝衰竭' },
   { key: 'cholestasis', label: '胆汁淤积' },
   { key: 'viralHepatitis', label: '病毒性肝炎' }
+] as const
+
+const imagingModalityOptions: Array<{ label: string; value: PatientRecordImagingModality }> = [
+  { label: 'CT', value: 'CT' },
+  { label: '超声', value: 'ULTRASOUND' },
+  { label: 'MRI', value: 'MRI' },
+  { label: '其他', value: 'OTHER' }
+]
+
+const imagingSourceOptions = [
+  { label: '医生手工录入', value: 'MANUAL' },
+  { label: '图片识别', value: 'IMAGE_OCR' },
+  { label: 'PDF 识别', value: 'PDF_OCR' },
+  { label: 'PACS 导入', value: 'PACS_IMPORT' }
+] as const
+
+const pathologySourceOptions = imagingSourceOptions
+
+const geneticSourceOptions = [
+  { label: '医生手工录入', value: 'MANUAL' },
+  { label: '图片识别', value: 'IMAGE_OCR' },
+  { label: 'PDF 识别', value: 'PDF_OCR' },
+  { label: 'HIS/LIS 导入', value: 'HIS_LIS' }
+] as const
+
+const geneticMethodOptions = [
+  { label: 'Panel', value: 'PANEL' },
+  { label: 'WES', value: 'WES' },
+  { label: 'WGS', value: 'WGS' },
+  { label: '其他', value: 'OTHER' }
 ] as const
 
 const laboratoryScreeningConfig: readonly LaboratoryGroupConfig[] = LABORATORY_SCREENING_CONFIG
