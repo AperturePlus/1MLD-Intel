@@ -9,6 +9,7 @@ import {
   savePatients,
   saveRecords
 } from '../core/mockState'
+import { normalizeLaboratoryScreening } from '@/features/patient-record/constants/laboratoryScreening'
 
 const REQUIRED_RECORD_FIELDS = [
   'patientNo',
@@ -22,8 +23,215 @@ const REQUIRED_RECORD_FIELDS = [
   'department',
   'encounterType',
   'chiefComplaint',
+  'presentIllness',
+  'history.diseaseHistory.smokingHistory',
+  'history.diseaseHistory.drinkingHistory',
+  'history.diseaseHistory.diabetesHistory',
+  'history.diseaseHistory.hypertensionHistory',
+  'history.diseaseHistory.hyperuricemiaHistory',
+  'history.diseaseHistory.hyperlipidemiaHistory',
+  'history.diseaseHistory.coronaryHeartDiseaseHistory',
+  'history.diseaseHistory.hepatitisBHistory',
+  'history.surgeryHistory.status',
+  'history.transfusionHistory.status',
+  'history.allergyHistory',
+  'history.medicationHistory',
+  'history.familyHistory',
+  'physicalExam.heightCm',
+  'physicalExam.weightKg',
+  'physicalExam.bmi',
+  'physicalExam.bloodPressureSystolic',
+  'physicalExam.bloodPressureDiastolic',
+  'physicalExam.respiratoryRate',
+  'physicalExam.heartRate',
+  'physicalExam.liverFibrosis',
+  'physicalExam.cirrhosis',
+  'physicalExam.fattyLiver',
+  'physicalExam.liverFailure',
+  'physicalExam.cholestasis',
+  'physicalExam.viralHepatitis',
   'diagnosis'
 ]
+
+const CONDITIONAL_REQUIRED_FIELDS = [
+  {
+    statusPath: 'history.surgeryHistory.status',
+    detailPath: 'history.surgeryHistory.detail',
+    label: '手术史'
+  },
+  {
+    statusPath: 'history.transfusionHistory.status',
+    detailPath: 'history.transfusionHistory.detail',
+    label: '输血史'
+  }
+]
+
+const DEFAULT_DISEASE_HISTORY = {
+  smokingHistory: 'UNKNOWN',
+  drinkingHistory: 'UNKNOWN',
+  diabetesHistory: 'UNKNOWN',
+  hypertensionHistory: 'UNKNOWN',
+  hyperuricemiaHistory: 'UNKNOWN',
+  hyperlipidemiaHistory: 'UNKNOWN',
+  coronaryHeartDiseaseHistory: 'UNKNOWN',
+  hepatitisBHistory: 'UNKNOWN'
+}
+
+const DEFAULT_CONDITIONAL_HISTORY = {
+  status: 'UNKNOWN',
+  detail: ''
+}
+
+const DEFAULT_PHYSICAL_EXAM = {
+  heightCm: null,
+  weightKg: null,
+  bmi: null,
+  bloodPressureSystolic: null,
+  bloodPressureDiastolic: null,
+  respiratoryRate: null,
+  heartRate: null,
+  liverFibrosis: 'UNKNOWN',
+  cirrhosis: 'UNKNOWN',
+  fattyLiver: 'UNKNOWN',
+  liverFailure: 'UNKNOWN',
+  cholestasis: 'UNKNOWN',
+  viralHepatitis: 'UNKNOWN'
+}
+
+const getValueByPath = (input, path) =>
+  String(path)
+    .split('.')
+    .reduce((current, segment) => (current == null ? undefined : current[segment]), input)
+
+const normalizeText = (value) => (typeof value === 'string' ? value.trim() : '')
+
+const normalizeNumber = (value) => {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value
+  }
+
+  if (typeof value === 'string' && value.trim()) {
+    const parsed = Number.parseFloat(value)
+    return Number.isFinite(parsed) ? parsed : null
+  }
+
+  return null
+}
+
+const normalizeTriState = (value, fallback = 'UNKNOWN') => {
+  if (value === 'YES' || value === 'NO' || value === 'UNKNOWN') {
+    return value
+  }
+
+  if (value === true) {
+    return 'YES'
+  }
+
+  if (value === false) {
+    return 'NO'
+  }
+
+  if (typeof value === 'string') {
+    const trimmed = value.trim()
+    if (trimmed === '有' || trimmed === '是' || trimmed === '阳性') {
+      return 'YES'
+    }
+    if (trimmed === '无' || trimmed === '否' || trimmed === '阴性' || trimmed === '未见') {
+      return 'NO'
+    }
+    if (trimmed === '未查') {
+      return 'UNKNOWN'
+    }
+  }
+
+  return fallback
+}
+
+const isBlankValue = (value) => {
+  if (value == null) {
+    return true
+  }
+
+  if (typeof value === 'string') {
+    return value.trim() === ''
+  }
+
+  if (typeof value === 'number') {
+    return Number.isNaN(value)
+  }
+
+  return false
+}
+
+const normalizeStoredConditionalHistory = (value) => ({
+  status: normalizeTriState(value?.status),
+  detail: normalizeTriState(value?.status) === 'YES' ? normalizeText(value?.detail) : ''
+})
+
+const normalizeStoredRecordPayload = (payload = {}) => {
+  const {
+    alt,
+    ast,
+    tbil,
+    ceruloplasmin,
+    urineCopper,
+    ferritin,
+    transferrinSat,
+    laboratoryScreening,
+    ...restPayload
+  } = payload
+  const history = payload.history || {}
+  const diseaseHistory = history.diseaseHistory || {}
+  const physicalExam = payload.physicalExam || {}
+
+  return {
+    ...restPayload,
+    presentIllness: normalizeText(payload.presentIllness),
+    history: {
+      diseaseHistory: {
+        ...DEFAULT_DISEASE_HISTORY,
+        smokingHistory: normalizeTriState(diseaseHistory.smokingHistory),
+        drinkingHistory: normalizeTriState(diseaseHistory.drinkingHistory),
+        diabetesHistory: normalizeTriState(diseaseHistory.diabetesHistory),
+        hypertensionHistory: normalizeTriState(diseaseHistory.hypertensionHistory),
+        hyperuricemiaHistory: normalizeTriState(diseaseHistory.hyperuricemiaHistory),
+        hyperlipidemiaHistory: normalizeTriState(diseaseHistory.hyperlipidemiaHistory),
+        coronaryHeartDiseaseHistory: normalizeTriState(diseaseHistory.coronaryHeartDiseaseHistory),
+        hepatitisBHistory: normalizeTriState(diseaseHistory.hepatitisBHistory)
+      },
+      surgeryHistory: normalizeStoredConditionalHistory(history.surgeryHistory),
+      transfusionHistory: normalizeStoredConditionalHistory(history.transfusionHistory),
+      allergyHistory: normalizeText(history.allergyHistory),
+      medicationHistory: normalizeText(history.medicationHistory),
+      familyHistory: normalizeText(history.familyHistory) || normalizeText(payload.familyHistoryDetail)
+    },
+    physicalExam: {
+      ...DEFAULT_PHYSICAL_EXAM,
+      heightCm: normalizeNumber(physicalExam.heightCm),
+      weightKg: normalizeNumber(physicalExam.weightKg),
+      bmi: normalizeNumber(physicalExam.bmi),
+      bloodPressureSystolic: normalizeNumber(physicalExam.bloodPressureSystolic),
+      bloodPressureDiastolic: normalizeNumber(physicalExam.bloodPressureDiastolic),
+      respiratoryRate: normalizeNumber(physicalExam.respiratoryRate),
+      heartRate: normalizeNumber(physicalExam.heartRate),
+      liverFibrosis: normalizeTriState(physicalExam.liverFibrosis),
+      cirrhosis: normalizeTriState(physicalExam.cirrhosis),
+      fattyLiver: normalizeTriState(physicalExam.fattyLiver),
+      liverFailure: normalizeTriState(physicalExam.liverFailure),
+      cholestasis: normalizeTriState(physicalExam.cholestasis),
+      viralHepatitis: normalizeTriState(physicalExam.viralHepatitis)
+    },
+    laboratoryScreening: normalizeLaboratoryScreening(laboratoryScreening, {
+      alt,
+      ast,
+      tbil,
+      ceruloplasmin,
+      urineCopper,
+      ferritin,
+      transferrinSat
+    })
+  }
+}
 
 const toDateOnly = (date = new Date()) => {
   const yyyy = date.getFullYear()
@@ -92,8 +300,14 @@ export const patientExactHandlers = {
     const errors = {}
 
     REQUIRED_RECORD_FIELDS.forEach((field) => {
-      if (!data[field]) {
+      if (isBlankValue(getValueByPath(data, field))) {
         errors[field] = [`${field}不能为空`]
+      }
+    })
+
+    CONDITIONAL_REQUIRED_FIELDS.forEach(({ statusPath, detailPath, label }) => {
+      if (getValueByPath(data, statusPath) === 'YES' && isBlankValue(getValueByPath(data, detailPath))) {
+        errors[detailPath] = [`${label}为“有”时明细不能为空`]
       }
     })
 
@@ -101,35 +315,40 @@ export const patientExactHandlers = {
       return { status: 400, statusText: 'Bad Request', data: errors }
     }
 
-    const records = loadRecords()
+    const normalizedPayload = normalizeStoredRecordPayload(data)
+    const records = loadRecords().map((item) => ({
+      ...item,
+      payload: normalizeStoredRecordPayload(item.payload || {})
+    }))
     const patients = loadPatients()
     const now = Date.now()
     const recordId = `REC-${now}`
-    const visitId = data.visitId || `VISIT-${String(now).slice(-8)}`
+    const visitId = normalizedPayload.visitId || `VISIT-${String(now).slice(-8)}`
 
     records.push({
       id: recordId,
       visitId,
       submittedAt: new Date().toISOString(),
-      payload: data
+      payload: normalizedPayload
     })
     saveRecords(records)
 
     const existing = patients.find(
-      (item) => item.id.toLowerCase() === String(data.patientNo).toLowerCase() || item.name === data.name
+      (item) =>
+        item.id.toLowerCase() === String(normalizedPayload.patientNo).toLowerCase() || item.name === normalizedPayload.name
     )
     if (!existing) {
-      const disease = resolveDiseaseByDiagnosis(data.diagnosis)
+      const disease = resolveDiseaseByDiagnosis(normalizedPayload.diagnosis)
       patients.unshift({
-        id: String(data.patientNo || nextPatientId(patients)),
-        name: data.name,
-        gender: data.gender,
-        age: Number(data.age) || 0,
-        riskLevel: resolveRiskByDiagnosis(data.diagnosis),
+        id: String(normalizedPayload.patientNo || nextPatientId(patients)),
+        name: normalizedPayload.name,
+        gender: normalizedPayload.gender,
+        age: Number(normalizedPayload.age) || 0,
+        riskLevel: resolveRiskByDiagnosis(normalizedPayload.diagnosis),
         disease,
         compliance: '一般',
         aiStatus: '未诊断',
-        avatar: `https://randomuser.me/api/portraits/${data.gender === '女' ? 'women' : 'men'}/${Math.floor(Math.random() * 80) + 10}.jpg`
+        avatar: `https://randomuser.me/api/portraits/${normalizedPayload.gender === '女' ? 'women' : 'men'}/${Math.floor(Math.random() * 80) + 10}.jpg`
       })
       savePatients(patients)
     }
@@ -258,4 +477,3 @@ export const patientRouteDocs = [
     description: 'PDF OCR 识别并预填病历基础信息。'
   }
 ]
-
