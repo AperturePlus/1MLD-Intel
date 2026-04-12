@@ -1,6 +1,9 @@
 package xenosoft.imldintelligence.module.clinical.api.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -73,6 +76,22 @@ public final class ClinicalApiDtos {
         }
 
         /**
+         * 病理报告检索条件。
+         */
+        public record PathologyReportPageQuery(
+                @Positive(message = "patientId must be positive")
+                Long patientId,
+                @Positive(message = "encounterId must be positive")
+                Long encounterId,
+                String sourceType,
+                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                OffsetDateTime reportedFrom,
+                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                OffsetDateTime reportedTo
+        ) {
+        }
+
+        /**
          * 病史条目检索条件。
          */
         public record ClinicalHistoryPageQuery(
@@ -121,6 +140,36 @@ public final class ClinicalApiDtos {
         }
 
         /**
+         * 基因变异写入片段。
+         */
+        public record GeneticVariantWriteItem(
+                @NotBlank(message = "gene must not be blank")
+                @Size(max = 64, message = "gene must be at most 64 characters")
+                String gene,
+                @Size(max = 16, message = "chromosome must be at most 16 characters")
+                String chromosome,
+                Long position,
+                @Size(max = 32, message = "refAllele must be at most 32 characters")
+                String refAllele,
+                @Size(max = 32, message = "altAllele must be at most 32 characters")
+                String altAllele,
+                @Size(max = 32, message = "variantType must be at most 32 characters")
+                String variantType,
+                @Size(max = 32, message = "zygosity must be at most 32 characters")
+                String zygosity,
+                @Size(max = 64, message = "classification must be at most 64 characters")
+                String classification,
+                @Size(max = 255, message = "hgvsC must be at most 255 characters")
+                String hgvsC,
+                @Size(max = 255, message = "hgvsP must be at most 255 characters")
+                String hgvsP,
+                String evidence,
+                @Size(max = 32, message = "sourceType must be at most 32 characters")
+                String sourceType
+        ) {
+        }
+
+        /**
          * 登记基因报告。
          */
         public record RegisterGeneticReportRequest(
@@ -131,10 +180,13 @@ public final class ClinicalApiDtos {
                 @NotBlank(message = "reportSource must not be blank")
                 @Size(max = 128, message = "reportSource must be at most 128 characters")
                 String reportSource,
+                @Size(max = 32, message = "testMethod must be at most 32 characters")
+                String testMethod,
                 LocalDate reportDate,
                 Long fileId,
                 String summary,
-                String conclusion
+                String conclusion,
+                List<@Valid GeneticVariantWriteItem> variants
         ) {
         }
 
@@ -155,6 +207,29 @@ public final class ClinicalApiDtos {
                 String sourceSystem,
                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                 OffsetDateTime examinedAt
+        ) {
+        }
+
+        /**
+         * 记录病理报告。
+         */
+        public record RecordPathologyReportRequest(
+                @Positive(message = "patientId must be positive")
+                Long patientId,
+                @Positive(message = "encounterId must be positive")
+                Long encounterId,
+                @NotBlank(message = "reportText must not be blank")
+                String reportText,
+                @Min(value = 0, message = "nasScore must be at least 0")
+                @Max(value = 8, message = "nasScore must be at most 8")
+                Integer nasScore,
+                Long fileId,
+                @Size(max = 32, message = "sourceType must be at most 32 characters")
+                String sourceType,
+                @Positive(message = "recordedBy must be positive")
+                Long recordedBy,
+                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                OffsetDateTime reportedAt
         ) {
         }
 
@@ -234,6 +309,7 @@ public final class ClinicalApiDtos {
                 Long patientId,
                 Long encounterId,
                 String reportSource,
+                String testMethod,
                 LocalDate reportDate,
                 Long fileId,
                 String parseStatus,
@@ -256,6 +332,23 @@ public final class ClinicalApiDtos {
                 Long fileId,
                 String sourceSystem,
                 OffsetDateTime examinedAt,
+                OffsetDateTime createdAt
+        ) {
+        }
+
+        /**
+         * 病理报告响应。
+         */
+        public record PathologyReportResponse(
+                Long id,
+                Long patientId,
+                Long encounterId,
+                String reportText,
+                Integer nasScore,
+                Long fileId,
+                String sourceType,
+                Long recordedBy,
+                OffsetDateTime reportedAt,
                 OffsetDateTime createdAt
         ) {
         }

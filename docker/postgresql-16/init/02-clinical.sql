@@ -85,6 +85,7 @@ CREATE TABLE IF NOT EXISTS genetic_report (
     patient_id BIGINT NOT NULL,
     encounter_id BIGINT,
     report_source VARCHAR(200),
+    test_method VARCHAR(32),
     report_date DATE,
     file_id BIGINT,
     parse_status VARCHAR(32) NOT NULL DEFAULT 'PENDING',

@@ -93,6 +93,29 @@ public interface ClinicalApi {
     );
 
     /**
+     * 分页查询病理报告。
+     */
+    @GetMapping("/pathology-reports")
+    ApiResponse<PagedResultResponse<ClinicalApiDtos.Response.PathologyReportResponse>> listPathologyReports(
+            @RequestHeader("X-Tenant-Id")
+            @Positive(message = "tenantId must be positive")
+            Long tenantId,
+            @Valid @ModelAttribute ClinicalApiDtos.Query.PathologyReportPageQuery query,
+            @Valid @ModelAttribute PageQueryRequest pageQuery
+    );
+
+    /**
+     * 记录病理报告。
+     */
+    @PostMapping("/pathology-reports")
+    ApiResponse<ClinicalApiDtos.Response.PathologyReportResponse> recordPathologyReport(
+            @RequestHeader("X-Tenant-Id")
+            @Positive(message = "tenantId must be positive")
+            Long tenantId,
+            @Valid @RequestBody ClinicalApiDtos.Request.RecordPathologyReportRequest request
+    );
+
+    /**
      * 分页查询病史条目。
      */
     @GetMapping("/history-entries")

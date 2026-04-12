@@ -259,6 +259,7 @@ COMMENT ON COLUMN genetic_report.tenant_id IS '所属租户 ID。';
 COMMENT ON COLUMN genetic_report.patient_id IS '关联患者 ID。';
 COMMENT ON COLUMN genetic_report.encounter_id IS '关联就诊 ID。';
 COMMENT ON COLUMN genetic_report.report_source IS '报告来源机构。';
+COMMENT ON COLUMN genetic_report.test_method IS '基因检测方法，如 PANEL/WES/WGS。';
 COMMENT ON COLUMN genetic_report.report_date IS '报告日期。';
 COMMENT ON COLUMN genetic_report.file_id IS '报告文件资产 ID。';
 COMMENT ON COLUMN genetic_report.parse_status IS '解析状态。';
