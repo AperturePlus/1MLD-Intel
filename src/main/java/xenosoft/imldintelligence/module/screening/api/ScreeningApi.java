@@ -1,7 +1,5 @@
 package xenosoft.imldintelligence.module.screening.api;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -9,6 +7,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import xenosoft.imldintelligence.common.dto.ApiResponse;
 import xenosoft.imldintelligence.common.dto.PageQueryRequest;
 import xenosoft.imldintelligence.common.dto.PagedResultResponse;
@@ -20,7 +21,7 @@ import xenosoft.imldintelligence.module.screening.api.dto.ScreeningApiDtos;
  * <p>契约按“问卷配置 -> 患者作答 -> 院内转介”主链设计，便于 SaaS 与私有化场景共用。</p>
  */
 @Validated
-@RequestMapping("/api/v1/screening")
+@RequestMapping({"/api/v1/screening", "/api/v1/app/screening", "/api/v1/web/screening"})
 public interface ScreeningApi {
 
     /**

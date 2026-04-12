@@ -14,6 +14,7 @@ public class GeneticReport {
     private Long patientId;
     private Long encounterId;
     private String reportSource;
+    private String testMethod;
     private java.time.LocalDate reportDate;
     private Long fileId;
     private String parseStatus;

@@ -15,6 +15,7 @@ import xenosoft.imldintelligence.module.identity.internal.model.Patient;
 import xenosoft.imldintelligence.module.identity.internal.model.UserAccount;
 import xenosoft.imldintelligence.module.identity.internal.repository.TenantRepository;
 import xenosoft.imldintelligence.module.identity.internal.repository.UserAccountRepository;
+import xenosoft.imldintelligence.module.identity.internal.service.AccountCredentialService;
 import xenosoft.imldintelligence.module.identity.internal.service.AuthService;
 import xenosoft.imldintelligence.module.identity.internal.service.ConsentRecordService;
 import xenosoft.imldintelligence.module.identity.internal.service.PatientService;
@@ -32,6 +33,7 @@ import java.util.Set;
 public class IdentityController implements IdentityControllerContract {
 
     private final AuthService authService;
+    private final AccountCredentialService accountCredentialService;
     private final PatientService patientService;
     private final UserManagementService userManagementService;
     private final ConsentRecordService consentRecordService;
@@ -50,26 +52,7 @@ public class IdentityController implements IdentityControllerContract {
                 request.username(), request.password(), request.tenantCode());
 
         AuthToken token = authService.login(loginReq);
-
-        // Load user info for response
-        var tenant = resolveTenant(request.tenantCode());
-        UserAccount user = userAccountRepository
-                .findByUsername(tenant.getId(), request.username())
-                .orElse(null);
-
-        Set<String> roleCodes = user != null
-                ? permissionService.getEffectiveRoleCodes(tenant.getId(), user.getId())
-                : Set.of();
-
-        IdentityApiDtos.Shared.AuthenticatedUserItem userItem = user != null
-                ? assembler.toAuthenticatedUserItem(user, roleCodes)
-                : null;
-
-        OffsetDateTime expiresAt = OffsetDateTime.now(ZoneOffset.UTC)
-                .plusSeconds(token.expiresIn());
-
-        return ApiResponse.success(new IdentityApiDtos.Response.AuthSessionResponse(
-                token.accessToken(), token.refreshToken(), expiresAt, userItem));
+        return ApiResponse.success(buildAuthSessionResponse(token, request.tenantCode(), request.username()));
     }
 
     @Override
@@ -87,6 +70,31 @@ public class IdentityController implements IdentityControllerContract {
     @Override
     public ApiResponse<Void> logout(IdentityApiDtos.Request.LogoutCommand request) {
         authService.logout(request.refreshToken());
+        return ApiResponse.success();
+    }
+
+    @Override
+    public ApiResponse<IdentityApiDtos.Response.EmailCodeSendResponse> sendRegistrationEmailCode(
+            IdentityApiDtos.Request.SendRegistrationEmailCodeCommand request) {
+        return ApiResponse.success(accountCredentialService.sendRegistrationEmailCode(request));
+    }
+
+    @Override
+    public ApiResponse<IdentityApiDtos.Response.AuthSessionResponse> register(
+            IdentityApiDtos.Request.RegisterCommand request) {
+        AuthToken token = accountCredentialService.register(request);
+        return ApiResponse.success(buildAuthSessionResponse(token, request.tenantCode(), request.username()));
+    }
+
+    @Override
+    public ApiResponse<IdentityApiDtos.Response.EmailCodeSendResponse> sendPasswordResetEmailCode(
+            IdentityApiDtos.Request.ForgotPasswordCommand request) {
+        return ApiResponse.success(accountCredentialService.sendPasswordResetEmailCode(request));
+    }
+
+    @Override
+    public ApiResponse<Void> resetPassword(IdentityApiDtos.Request.ResetPasswordCommand request) {
+        accountCredentialService.resetPassword(request);
         return ApiResponse.success();
     }
 
@@ -218,5 +226,25 @@ public class IdentityController implements IdentityControllerContract {
                 .filter(t -> "ACTIVE".equalsIgnoreCase(t.getStatus()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No active tenant available"));
+    }
+
+    private IdentityApiDtos.Response.AuthSessionResponse buildAuthSessionResponse(AuthToken token,
+                                                                                  String tenantCode,
+                                                                                  String username) {
+        var tenant = resolveTenant(tenantCode);
+        UserAccount user = userAccountRepository.findByUsername(tenant.getId(), username).orElse(null);
+        Set<String> roleCodes = user != null
+                ? permissionService.getEffectiveRoleCodes(tenant.getId(), user.getId())
+                : Set.of();
+        IdentityApiDtos.Shared.AuthenticatedUserItem userItem = user != null
+                ? assembler.toAuthenticatedUserItem(user, roleCodes)
+                : null;
+        OffsetDateTime expiresAt = OffsetDateTime.now(ZoneOffset.UTC).plusSeconds(token.expiresIn());
+        return new IdentityApiDtos.Response.AuthSessionResponse(
+                token.accessToken(),
+                token.refreshToken(),
+                expiresAt,
+                userItem
+        );
     }
 }

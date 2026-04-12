@@ -3,8 +3,6 @@ package xenosoft.imldintelligence.module.identity.api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -30,7 +28,7 @@ import xenosoft.imldintelligence.module.identity.api.dto.IdentityApiDtos;
  * 并在响应中优先返回脱敏后的身份数据。</p>
  */
 @Validated
-@RequestMapping("/api/v1/identity")
+@RequestMapping({"/api/v1/identity", "/api/v1/app/identity", "/api/v1/web/identity"})
 @Tag(name = "Identity & Access Management", description = "用户认证、患者管理、权限控制与知情同意管理 APIs")
 public interface IdentityApi {
 
@@ -84,6 +82,76 @@ public interface IdentityApi {
     })
     xenosoft.imldintelligence.common.dto.ApiResponse<Void> logout(
             @Valid @RequestBody IdentityApiDtos.Request.LogoutCommand request
+    );
+
+    /**
+     * Send registration email verification code.
+     */
+    @PostMapping("/auth/register/email-code")
+    @Operation(
+            summary = "Send registration email code",
+            description = "Send a one-time verification code to the registration email address",
+            security = {}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Code sent"),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "409", description = "Username or email already exists")
+    })
+    xenosoft.imldintelligence.common.dto.ApiResponse<IdentityApiDtos.Response.EmailCodeSendResponse> sendRegistrationEmailCode(
+            @Valid @RequestBody IdentityApiDtos.Request.SendRegistrationEmailCodeCommand request
+    );
+
+    /**
+     * Register account with email verification code.
+     */
+    @PostMapping("/auth/register")
+    @Operation(
+            summary = "Register account",
+            description = "Create account by validating email verification code and return login session",
+            security = {}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Registration successful"),
+            @ApiResponse(responseCode = "400", description = "Invalid request or verification code"),
+            @ApiResponse(responseCode = "409", description = "Username or email already exists")
+    })
+    xenosoft.imldintelligence.common.dto.ApiResponse<IdentityApiDtos.Response.AuthSessionResponse> register(
+            @Valid @RequestBody IdentityApiDtos.Request.RegisterCommand request
+    );
+
+    /**
+     * Send password reset email verification code.
+     */
+    @PostMapping("/auth/password/forgot")
+    @Operation(
+            summary = "Send password reset code",
+            description = "Send a one-time verification code to the account email for password reset",
+            security = {}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Code sent"),
+            @ApiResponse(responseCode = "400", description = "Invalid request")
+    })
+    xenosoft.imldintelligence.common.dto.ApiResponse<IdentityApiDtos.Response.EmailCodeSendResponse> sendPasswordResetEmailCode(
+            @Valid @RequestBody IdentityApiDtos.Request.ForgotPasswordCommand request
+    );
+
+    /**
+     * Reset password with email verification code.
+     */
+    @PostMapping("/auth/password/reset")
+    @Operation(
+            summary = "Reset password",
+            description = "Reset account password with email verification code",
+            security = {}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Password reset successful"),
+            @ApiResponse(responseCode = "400", description = "Invalid request or verification code")
+    })
+    xenosoft.imldintelligence.common.dto.ApiResponse<Void> resetPassword(
+            @Valid @RequestBody IdentityApiDtos.Request.ResetPasswordCommand request
     );
 
     /**

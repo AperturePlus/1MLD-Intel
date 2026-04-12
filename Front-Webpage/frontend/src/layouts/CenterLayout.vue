@@ -14,13 +14,13 @@ import AppSidebar from '@/layouts/components/AppSidebar.vue'
 <style scoped>
 .center-layout {
   display: flex;
-  min-height: 100vh;
+  min-height: calc(100vh - var(--electron-titlebar-safe-top));
   background: #0f1f2c;
 }
 
 .center-main {
   flex: 1;
-  min-height: 100vh;
+  min-height: calc(100vh - var(--electron-titlebar-safe-top));
   overflow-y: auto;
   background:
     radial-gradient(circle at 2% 2%, rgba(34, 163, 159, 0.14), transparent 32%),

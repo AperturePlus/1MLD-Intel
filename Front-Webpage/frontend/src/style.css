@@ -7,6 +7,10 @@
   --surface-card: #ffffff;
   --text-main: #1f2a37;
   --text-secondary: #526174;
+  --electron-titlebar-bg: rgba(244, 247, 250, 0.92);
+  --electron-titlebar-border: rgba(142, 156, 178, 0.28);
+  --electron-titlebar-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  --electron-titlebar-safe-top: 0px;
 }
 
 *,
@@ -31,6 +35,15 @@ body {
     radial-gradient(circle at 12% 18%, rgba(34, 163, 159, 0.2), transparent 48%),
     radial-gradient(circle at 92% 8%, rgba(15, 109, 141, 0.22), transparent 42%),
     var(--surface-bg);
+}
+
+html.electron-shell-maximized {
+  --electron-titlebar-shadow: none;
+}
+
+body.electron-shell #app {
+  padding-top: var(--electron-titlebar-safe-top);
+  min-height: calc(100vh - var(--electron-titlebar-safe-top));
 }
 
 a {

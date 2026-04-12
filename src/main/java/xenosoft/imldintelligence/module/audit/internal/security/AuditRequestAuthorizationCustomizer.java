@@ -26,9 +26,10 @@ public class AuditRequestAuthorizationCustomizer implements ModuleRequestAuthori
     public void customize(org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer<org.springframework.security.config.annotation.web.builders.HttpSecurity>.AuthorizationManagerRequestMatcherRegistry requests) {
         Set<String> allowedAuthorities = RoleAuthorityUtils.expandAuthorityNames(auditProperties.getQueryRoleAllowlist());
         if (allowedAuthorities.isEmpty()) {
-            requests.requestMatchers("/api/v1/audit/**").denyAll();
+            requests.requestMatchers("/api/v1/audit/**", "/api/v1/app/audit/**", "/api/v1/web/audit/**").denyAll();
             return;
         }
-        requests.requestMatchers("/api/v1/audit/**").hasAnyAuthority(allowedAuthorities.toArray(String[]::new));
+        requests.requestMatchers("/api/v1/audit/**", "/api/v1/app/audit/**", "/api/v1/web/audit/**")
+                .hasAnyAuthority(allowedAuthorities.toArray(String[]::new));
     }
 }

@@ -18,6 +18,23 @@
   - 面向在院就诊患者的 `VIP` 订阅权益联动。
 - 架构约束：无论 `SaaS` 还是私有化，必须基于同一代码仓、同一模块边界、同一主干演进。
 
+## 启动指令基线（开发与交付）
+
+- 开发联调统一使用 `spring.profiles.active` 组：
+  - `dev-saas`：`.\gradlew.bat bootRun --args="--spring.profiles.active=dev-saas"`
+  - `dev-private`：`.\gradlew.bat bootRun --args="--spring.profiles.active=dev-private"`
+  - `dev-private-bridge`：`.\gradlew.bat bootRun --args="--spring.profiles.active=dev-private-bridge"`
+- 交付环境建议使用部署形态 profile：
+  - `saas`
+  - `private`
+  - `private,private-bridge`
+- `private` 与 `private-bridge` 默认要求签名许可证校验；上线前必须明确：
+  - `IMLD_LICENSE_FILE_PATH`
+  - `IMLD_LICENSE_PUBLIC_KEY_FILE_PATH`
+  - `IMLD_ACTIVATION_STATE_FILE_PATH`
+- 若仅用于本地联调且不做授权验签，可临时设置 `IMLD_PRIVATE_STARTUP_VALIDATION_ENABLED=false`，但不得作为生产配置。
+- 当 profile 名称、激活参数、启动方式变更时，必须同时更新 `README.md` 启动命令章节与本节内容。
+
 ## 工作总原则
 
 - 单代码基线：通过配置、策略、适配器区分部署形态，禁止维护两套功能等价系统。
@@ -77,6 +94,26 @@
 - `SaaS` 默认多租户，所有租户数据访问必须显式携带租户上下文。
 - 私有化默认单租户可运行，但代码层不得删除多租户能力，只通过配置降级。
 - 租户隔离方案可配置（共享库分租户/独立库），业务代码不得与具体方案强绑定。
+
+## 医生端辅助诊断接口对齐（Web）
+
+- 医生端辅助诊断统一使用 `DiagnosesApi` 契约（复数路径），主路径为：
+  - `GET /api/v1/web/diagnoses/sessions`
+  - `GET /api/v1/web/diagnoses/sessions/{sessionId}`
+  - `POST /api/v1/web/diagnoses/sessions`
+  - `POST /api/v1/web/diagnoses/feedbacks`
+- 所有 `diagnoses` 接口请求必须携带 `X-Tenant-Id`，不得在后端硬编码租户。
+- 辅助诊断“启动会话”必须落库并可审计：
+  - 写入 `diagnosis_session`（含 `input_snapshot`）。
+  - 写入 `diagnosis_result`（含模型证据快照 `evidence_json`）。
+  - 写入 `diagnosis_recommendation`（由模型建议映射）。
+- 医生签发/复核统一走 `submitDoctorFeedback`，不得新增旁路“签发表”绕过审计链路。
+- 模型注册优先复用 `model_registry`；缺省模型仅可自动补齐为本地模型配置，不得引入未授权云模型依赖。
+- 前端开发可保留旧 mock 路径作为回退（`/api/v1/web/diagnosis/*`），但生产联调必须以 `/api/v1/web/diagnoses/*` 为准。
+- 若接口字段或路径变化，必须同步更新：
+  - `Front-Webpage/frontend/src/api/diagnosis.ts`
+  - `Front-Webpage/frontend/src/api/types.ts`
+  - 本文件 `AGENTS.md` 对应章节
 
 ## 变更执行清单（每次任务都要检查）
 

@@ -42,14 +42,14 @@ export const mockRouteCatalog = createMockRouteCatalog([
     {
       module: 'system',
       method: 'GET',
-      path: '/api/v1/mock/routes/',
+      path: '/api/v1/web/mock/routes/',
       kind: 'exact',
       description: '返回 mock 路由注册表（JSON）。'
     },
     {
       module: 'system',
       method: 'GET',
-      path: '/api/v1/mock/routes/markdown/',
+      path: '/api/v1/web/mock/routes/markdown/',
       kind: 'exact',
       description: '返回 mock 路由文档（Markdown 文本）。'
     }
@@ -61,14 +61,14 @@ export const getMockRouteMarkdown = () => toMockRouteMarkdown(mockRouteCatalog)
 
 const exactHandlers = {
   ...domainExactHandlers,
-  'GET /api/v1/mock/routes/': async () => ({
+  'GET /api/v1/web/mock/routes/': async () => ({
     status: 200,
     data: {
       total: mockRouteCatalog.length,
       items: mockRouteCatalog
     }
   }),
-  'GET /api/v1/mock/routes/markdown/': async () => ({
+  'GET /api/v1/web/mock/routes/markdown/': async () => ({
     status: 200,
     data: {
       markdown: getMockRouteMarkdown()

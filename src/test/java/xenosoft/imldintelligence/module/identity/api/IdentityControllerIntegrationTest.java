@@ -13,7 +13,7 @@ import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoCo
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
-import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
+import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
@@ -44,6 +44,7 @@ import xenosoft.imldintelligence.module.identity.internal.repository.UserRoleRel
 import xenosoft.imldintelligence.module.identity.internal.security.IdentityRequestAuthorizationCustomizer;
 import xenosoft.imldintelligence.module.identity.internal.security.IdentitySecurityConfiguration;
 import xenosoft.imldintelligence.module.identity.internal.service.AuthService;
+import xenosoft.imldintelligence.module.identity.internal.service.AccountCredentialService;
 import xenosoft.imldintelligence.module.identity.internal.service.ConsentRecordService;
 import xenosoft.imldintelligence.module.identity.internal.service.PatientService;
 import xenosoft.imldintelligence.module.identity.internal.service.PermissionService;
@@ -230,7 +231,7 @@ class IdentityControllerIntegrationTest {
             RedisAutoConfiguration.class,
             RedisReactiveAutoConfiguration.class,
             RedisRepositoriesAutoConfiguration.class,
-            KafkaAutoConfiguration.class
+            RabbitAutoConfiguration.class
     })
     @Import({
             IdentitySecurityConfiguration.class,
@@ -380,6 +381,11 @@ class IdentityControllerIntegrationTest {
                                  TokenBlacklistService tokenBlacklistService) {
             return new AuthServiceImpl(userAccountRepository, tenantRepository,
                     permissionService, jwtUtil, passwordEncoder, tokenBlacklistService);
+        }
+
+        @Bean
+        AccountCredentialService accountCredentialService() {
+            return mock(AccountCredentialService.class);
         }
 
         @Bean

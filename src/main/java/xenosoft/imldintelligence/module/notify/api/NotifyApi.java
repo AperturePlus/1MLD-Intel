@@ -20,7 +20,7 @@ import xenosoft.imldintelligence.module.notify.api.dto.NotifyApiDtos;
  * <p>接口聚焦消息编排和送达追踪，不约束具体通知渠道实现。</p>
  */
 @Validated
-@RequestMapping("/api/v1/notify")
+@RequestMapping({"/api/v1/notify", "/api/v1/app/notify", "/api/v1/web/notify"})
 public interface NotifyApi {
 
     /**

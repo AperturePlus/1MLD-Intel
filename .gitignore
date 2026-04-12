@@ -43,3 +43,13 @@ failures/
 plans/
 docs/
 .claude/
+
+build-codex/
+
+build/
+scripts/env.sh
+vendors/
+
+*.venv
+
+src\main\resources\models\imld\

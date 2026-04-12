@@ -1,4 +1,10 @@
+import config from '@/config'
 import request from '@/utils/request'
+
+export interface AppealContactInfo {
+  phone: string
+  email: string
+}
 
 export function login(username: string, password: string, code: string, uuid: string, role: string): Promise<any> {
   const data = {
@@ -61,4 +67,34 @@ export function getCodeImg(): Promise<any> {
     method: 'get',
     timeout: 20000
   })
+}
+
+export async function getAppealContact(): Promise<AppealContactInfo | null> {
+  try {
+    const [error, res]: [any, any] = await uni.request({
+      url: `${config.baseUrl}/api/v1/app/identity/auth/appeal-contact`,
+      method: 'GET',
+      timeout: 5000
+    })
+
+    if (error) {
+      return null
+    }
+
+    const responseData = (res && res.data) || {}
+    const payload = responseData.data || responseData
+    const phone = typeof payload.phone === 'string' ? payload.phone.trim() : ''
+    const email = typeof payload.email === 'string' ? payload.email.trim() : ''
+
+    if (!phone || !email) {
+      return null
+    }
+
+    return {
+      phone,
+      email
+    }
+  } catch (_error) {
+    return null
+  }
 }

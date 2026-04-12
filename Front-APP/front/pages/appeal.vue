@@ -13,20 +13,35 @@
 
         <view class="appeal-content">
             <text class="appeal-text">如果想对账号封禁进行申诉，请联系我们</text>
-            <text class="contact-text">联系电话：028-12345678</text>
-            <text class="contact-text">联系邮箱：yanling@gmail.com</text>
+            <text class="contact-text">联系电话：{{ contactPhone }}</text>
+            <text class="contact-text">联系邮箱：{{ contactEmail }}</text>
         </view>
     </view>
 </template>
 
 <script>
+import { getAppealContact } from '@/api/login'
+
 export default {
     data() {
         return {
-            // 无需数据
+            contactPhone: '028-12345678',
+            contactEmail: 'yanling@gmail.com'
         }
     },
+    created() {
+        this.loadAppealContact()
+    },
     methods: {
+        async loadAppealContact() {
+            const contact = await getAppealContact()
+            if (!contact) {
+                return
+            }
+
+            this.contactPhone = contact.phone
+            this.contactEmail = contact.email
+        },
         goBack() {
             uni.navigateBack({
                 delta: 1

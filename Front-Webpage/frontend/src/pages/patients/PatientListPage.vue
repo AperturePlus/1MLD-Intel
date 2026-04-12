@@ -23,7 +23,11 @@
       <el-col
         v-for="patient in filteredPatients"
         :key="patient.id"
-        :xs="24" :sm="12" :md="12" :lg="8" :xl="6"
+        :xs="24"
+        :sm="12"
+        :md="12"
+        :lg="8"
+        :xl="6"
         style="margin-bottom: 20px;"
       >
         <el-card shadow="hover" :body-style="{ padding: '24px 20px' }">
@@ -46,11 +50,7 @@
                 <el-text type="info" style="margin-right: 8px; font-size: 14px;">
                   遗传代谢性肝病风险:
                 </el-text>
-                <el-tag
-                  :type="getRiskTagType(patient.riskLevel)"
-                  effect="light"
-                  round
-                >
+                <el-tag :type="getRiskTagType(patient.riskLevel)" effect="light" round>
                   {{ patient.riskLevel }}风险
                 </el-tag>
               </div>
@@ -73,11 +73,13 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { Search, Plus } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import patientApi from '../../api/patient'
 import type { PatientSummary } from '../../api/types'
 
+const router = useRouter()
 const searchQuery = ref('')
 const loading = ref(false)
 const patients = ref<PatientSummary[]>([])
@@ -111,11 +113,14 @@ const getRiskTagType = (level: string): RiskTagType => {
 }
 
 const handleExternalAdd = () => {
-  ElMessage({
-    message: '正在拉起外部医疗数据库检索模块...',
-    type: 'success',
-    duration: 2000
+  router.push({
+    path: '/center/patient-record',
+    query: {
+      openImport: '1',
+      importTab: 'hisLis'
+    }
   })
+  ElMessage.info('已跳转至病历录入页，请先导入基础信息后再补录临床字段')
 }
 
 watch(searchQuery, () => {
@@ -141,3 +146,4 @@ onUnmounted(() => {
 <style scoped>
 /* 全部交由 Element Plus 处理，零 CSS 负担 */
 </style>
+

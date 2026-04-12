@@ -20,7 +20,7 @@ import xenosoft.imldintelligence.module.clinical.api.dto.ClinicalApiDtos;
  * <p>接口围绕证据采集与标准化设计，不暴露仓储模型，也不在边界层扩散解析实现细节。</p>
  */
 @Validated
-@RequestMapping("/api/v1/clinical")
+@RequestMapping({"/api/v1/clinical", "/api/v1/app/clinical", "/api/v1/web/clinical"})
 public interface ClinicalApi {
 
     /**
@@ -90,6 +90,29 @@ public interface ClinicalApi {
             @Positive(message = "tenantId must be positive")
             Long tenantId,
             @Valid @RequestBody ClinicalApiDtos.Request.UpsertImagingReportRequest request
+    );
+
+    /**
+     * 分页查询病理报告。
+     */
+    @GetMapping("/pathology-reports")
+    ApiResponse<PagedResultResponse<ClinicalApiDtos.Response.PathologyReportResponse>> listPathologyReports(
+            @RequestHeader("X-Tenant-Id")
+            @Positive(message = "tenantId must be positive")
+            Long tenantId,
+            @Valid @ModelAttribute ClinicalApiDtos.Query.PathologyReportPageQuery query,
+            @Valid @ModelAttribute PageQueryRequest pageQuery
+    );
+
+    /**
+     * 记录病理报告。
+     */
+    @PostMapping("/pathology-reports")
+    ApiResponse<ClinicalApiDtos.Response.PathologyReportResponse> recordPathologyReport(
+            @RequestHeader("X-Tenant-Id")
+            @Positive(message = "tenantId must be positive")
+            Long tenantId,
+            @Valid @RequestBody ClinicalApiDtos.Request.RecordPathologyReportRequest request
     );
 
     /**

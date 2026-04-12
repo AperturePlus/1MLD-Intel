@@ -36,6 +36,8 @@ public interface UserAccountRepository {
      */
     Optional<UserAccount> findByUsername(Long tenantId, String username);
 
+    Optional<UserAccount> findByEmail(Long tenantId, String email);
+
     /**
      * 查询租户下全部用户账号。
      *

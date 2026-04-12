@@ -6,6 +6,7 @@ const MOCK_PATIENTS_KEY = '__imld_mock_patients__'
 const MOCK_RECORDS_KEY = '__imld_mock_records__'
 const MOCK_REPORTS_KEY = '__imld_mock_reports__'
 const MOCK_DIET_OVERRIDES_KEY = '__imld_mock_diet_overrides__'
+const MOCK_EMAIL_CODES_KEY = '__imld_mock_email_codes__'
 
 const DEFAULT_MOCK_USERS = [
   {
@@ -212,6 +213,9 @@ export const saveReports = (items) => safeWrite(MOCK_REPORTS_KEY, items)
 export const loadDietOverrides = () => safeRead(MOCK_DIET_OVERRIDES_KEY, {})
 export const saveDietOverrides = (items) => safeWrite(MOCK_DIET_OVERRIDES_KEY, items)
 
+export const loadEmailCodes = () => safeRead(MOCK_EMAIL_CODES_KEY, {})
+export const saveEmailCodes = (items) => safeWrite(MOCK_EMAIL_CODES_KEY, items)
+
 export const createToken = (username) => `mock_${username}_${Math.random().toString(36).slice(2, 11)}`
 
 export const readAuthorizationToken = (headers = {}) => {
@@ -223,6 +227,7 @@ export const readAuthorizationToken = (headers = {}) => {
 
   if (typeof value !== 'string') return ''
   if (value.startsWith('Token ')) return value.slice(6)
+  if (value.startsWith('Bearer ')) return value.slice(7)
   return value
 }
 

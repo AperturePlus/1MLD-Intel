@@ -17,7 +17,7 @@ service.interceptors.request.use(
         config.headers instanceof AxiosHeaders
           ? config.headers
           : new AxiosHeaders(config.headers)
-      headers.set('Authorization', `Token ${token}`)
+      headers.set('Authorization', `Bearer ${token}`)
       config.headers = headers
     }
 

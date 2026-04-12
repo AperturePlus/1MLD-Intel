@@ -42,6 +42,13 @@ public class UserAccountRepositoryImpl implements UserAccountRepository {
     }
 
     @Override
+    public Optional<UserAccount> findByEmail(Long tenantId, String email) {
+        return Optional.ofNullable(userAccountMapper.selectOne(new LambdaQueryWrapper<UserAccount>()
+                .eq(UserAccount::getTenantId, tenantId)
+                .eq(UserAccount::getEmail, email)));
+    }
+
+    @Override
     public List<UserAccount> listByTenantId(Long tenantId) {
         return userAccountMapper.selectList(new LambdaQueryWrapper<UserAccount>()
                 .eq(UserAccount::getTenantId, tenantId)
