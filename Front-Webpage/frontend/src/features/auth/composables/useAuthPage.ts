@@ -38,6 +38,22 @@ const DEFAULT_RESEND_SECONDS = 60
 const hasText = (value: string | null | undefined): value is string =>
   typeof value === 'string' && value.trim().length > 0
 
+type LoginUserWithAvatar = NonNullable<LoginResponse['user']> & {
+  avatar?: string | null
+  avatarUrl?: string | null
+  doctorAvatar?: string | null
+}
+
+const resolveUserAvatar = (user: LoginResponse['user'] | null | undefined): string => {
+  if (!user) {
+    return ''
+  }
+
+  const withAvatar = user as LoginUserWithAvatar
+  const candidate = withAvatar.avatar ?? withAvatar.avatarUrl ?? withAvatar.doctorAvatar ?? ''
+  return hasText(candidate) ? candidate.trim() : ''
+}
+
 const resolveTenantCode = (): string | undefined => {
   const fromStorage = localStorage.getItem('tenantCode')
   if (hasText(fromStorage)) {
@@ -187,6 +203,12 @@ export const useAuthPage = () => {
     localStorage.setItem('token', session.accessToken)
     localStorage.setItem('refreshToken', session.refreshToken ?? '')
     localStorage.setItem('username', session.user?.username || fallbackUsername)
+    const avatar = resolveUserAvatar(session.user)
+    if (avatar) {
+      localStorage.setItem('userAvatar', avatar)
+    } else {
+      localStorage.removeItem('userAvatar')
+    }
     if (session.user?.tenantId) {
       localStorage.setItem('tenantId', String(session.user.tenantId))
     }

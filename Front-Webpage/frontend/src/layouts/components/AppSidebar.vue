@@ -1,8 +1,8 @@
 <template>
   <el-aside :width="isCollapse ? '64px' : '220px'" class="modern-sidebar">
     <div class="sidebar-header">
-      <img v-show="!isCollapse" :src="avatarImg" alt="logo" class="logo-img" />
-      <span v-show="!isCollapse" class="product-name">{{ BRANDING.shortName }}</span>
+      <img v-show="!isCollapse" :src="logoImg" alt="logo" class="logo-img" />
+      <span v-show="!isCollapse" class="product-name">{{ BRANDING.sidebarTitle }}</span>
 
       <div
         class="collapse-trigger"
@@ -53,7 +53,7 @@
     <div class="sidebar-footer">
       <el-dropdown placement="top" trigger="click" class="user-dropdown">
         <div class="user-profile-card" :class="{ 'is-collapsed': isCollapse }">
-          <el-avatar :size="32" :src="avatarImg" class="user-avatar" />
+          <el-avatar :size="32" :src="doctorAvatar" class="user-avatar" />
           <div v-show="!isCollapse" class="user-info">
             <div class="user-name">李医生</div>
             <div class="user-role">主任医师</div>
@@ -76,10 +76,11 @@
 </template>
 
 <script setup lang="ts">
-import { provide, ref, watchEffect } from 'vue'
+import { computed, provide, ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import avatarImg from '@/assets/logo.svg'
+import logoImg from '@/assets/logo.svg'
+import defaultDoctorAvatar from '@/assets/default-doctor.svg'
 import { navigationGroups } from '@/app/router/routeCatalog'
 import { BRANDING } from '@/constants/branding'
 
@@ -89,6 +90,14 @@ const isCollapse = ref(false)
 provide('isCollapse', isCollapse)
 
 const activeMenu = ref('/center/patient-list')
+
+const doctorAvatar = computed(() => {
+  const storedAvatar = localStorage.getItem('userAvatar')
+  if (typeof storedAvatar === 'string' && storedAvatar.trim()) {
+    return storedAvatar.trim()
+  }
+  return defaultDoctorAvatar
+})
 
 watchEffect(() => {
   activeMenu.value = route.path
@@ -100,6 +109,7 @@ function toggleCollapse() {
 
 function handleLogout() {
   localStorage.removeItem('token')
+  localStorage.removeItem('userAvatar')
   ElMessage({
     message: '您已成功退出！',
     type: 'success',

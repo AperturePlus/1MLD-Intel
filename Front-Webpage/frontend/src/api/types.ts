@@ -35,6 +35,8 @@ export interface AuthenticatedUserItem {
   displayName: string
   userType: string
   roleCodes: string[]
+  avatar?: string
+  avatarUrl?: string
 }
 
 export interface SendRegistrationEmailCodeRequest {

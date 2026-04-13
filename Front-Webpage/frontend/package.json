@@ -51,7 +51,7 @@
   },
   "build": {
     "appId": "io.xenosoft.imld.frontend",
-    "productName": "IMLD Early Screening Assistant",
+    "productName": "IMLD Intelligence",
     "directories": {
       "output": "release"
     },
@@ -60,10 +60,17 @@
       "electron/**/*",
       "package.json"
     ],
+    "extraResources": [
+      {
+        "from": "src/assets/imld-icon.png",
+        "to": "icon.png"
+      }
+    ],
     "extraMetadata": {
       "main": "electron/main.cjs"
     },
     "win": {
+      "icon": "src/assets/imld-icon.png",
       "target": [
         {
           "target": "nsis",

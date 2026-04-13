@@ -10,6 +10,7 @@ import {
   saveTokens,
   saveUsers
 } from '../core/mockState'
+import defaultDoctorAvatar from '@/assets/default-doctor.svg'
 
 const SUCCESS_CODE = 200
 const EMAIL_CODE_EXPIRES_MS = 10 * 60 * 1000
@@ -54,7 +55,8 @@ const buildAuthSession = (user, token, userIndex) => ({
     username: user.username,
     displayName: user.username,
     userType: 'DOCTOR',
-    roleCodes: resolveRoleCodes(user.role)
+    roleCodes: resolveRoleCodes(user.role),
+    avatar: defaultDoctorAvatar
   }
 })
 

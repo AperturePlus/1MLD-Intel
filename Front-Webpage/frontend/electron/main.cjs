@@ -1,8 +1,10 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
+const fs = require('fs')
 const path = require('path')
 
 const isDev = !app.isPackaged
 const isWindows = process.platform === 'win32'
+const APP_USER_MODEL_ID = 'io.xenosoft.imld.frontend'
 const SHELL_CHANNELS = {
   minimize: 'shell:minimize',
   toggleMaximize: 'shell:toggle-maximize',
@@ -65,13 +67,35 @@ function registerShellIpc() {
   )
 }
 
+function resolveWindowIconPath() {
+  const candidatePaths = app.isPackaged
+    ? [
+        path.join(process.resourcesPath, 'icon.png'),
+        path.join(process.resourcesPath, 'icon.ico')
+      ]
+    : [
+        path.join(__dirname, '../src/assets/imld-icon.png'),
+        path.join(__dirname, '../build/icon.ico')
+      ]
+
+  for (const candidatePath of candidatePaths) {
+    if (fs.existsSync(candidatePath)) {
+      return candidatePath
+    }
+  }
+
+  return undefined
+}
+
 function createMainWindow() {
+  const iconPath = resolveWindowIconPath()
   const win = new BrowserWindow({
     width: 1366,
     height: 860,
     minWidth: 1024,
     minHeight: 720,
     title: '遗传代谢性肝病（IMLD）早期筛查与辅助诊断系统',
+    icon: iconPath,
     frame: !isWindows,
     backgroundColor: '#eef3f8',
     autoHideMenuBar: true,
@@ -97,6 +121,9 @@ function createMainWindow() {
 }
 
 app.whenReady().then(() => {
+  if (isWindows) {
+    app.setAppUserModelId(APP_USER_MODEL_ID)
+  }
   registerShellIpc()
   createMainWindow()
 
