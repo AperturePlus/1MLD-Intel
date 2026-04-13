@@ -79,7 +79,7 @@
 import { provide, ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import avatarImg from '@/assets/login.webp'
+import avatarImg from '@/assets/logo.svg'
 import { navigationGroups } from '@/app/router/routeCatalog'
 import { BRANDING } from '@/constants/branding'
 

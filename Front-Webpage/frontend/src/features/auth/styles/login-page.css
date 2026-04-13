@@ -7,9 +7,7 @@
   min-height: calc(100vh - var(--electron-titlebar-safe-top));
   padding: 26px 20px 78px;
   overflow: hidden;
-  background:
-    linear-gradient(135deg, rgba(9, 40, 52, 0.88), rgba(7, 63, 78, 0.86)),
-    url('../../../assets/login.webp') center / cover no-repeat;
+  background: linear-gradient(135deg, rgba(9, 40, 52, 0.88), rgba(7, 63, 78, 0.86));
 }
 
 .login-container::before,
@@ -144,9 +142,7 @@
   width: 200%;
   height: 100%;
   color: #f8fbff;
-  background:
-    linear-gradient(145deg, rgba(15, 109, 141, 0.9), rgba(34, 163, 159, 0.88)),
-    url('../../../assets/login.webp') center / cover no-repeat;
+  background: linear-gradient(145deg, rgba(15, 109, 141, 0.9), rgba(34, 163, 159, 0.88));
   transform: translateX(0);
   transition: transform 0.65s cubic-bezier(0.2, 0.6, 0.2, 1);
 }
