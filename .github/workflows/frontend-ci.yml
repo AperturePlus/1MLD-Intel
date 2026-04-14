@@ -3,26 +3,26 @@ name: Frontend CI
 on:
   pull_request:
     paths:
-      - 'Front-Webpage/frontend/**'
+      - 'web/**'
       - '.github/workflows/frontend-ci.yml'
   push:
     branches:
       - main
       - develop
     paths:
-      - 'Front-Webpage/frontend/**'
+      - 'web/**'
       - '.github/workflows/frontend-ci.yml'
   workflow_dispatch:
 
 jobs:
   web-frontend:
-    name: Build Front-Webpage
+    name: Build Web
     runs-on: ubuntu-latest
     permissions:
       contents: read
     defaults:
       run:
-        working-directory: Front-Webpage/frontend
+        working-directory: web
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -45,5 +45,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: front-webpage-dist
-          path: Front-Webpage/frontend/dist
+          name: web-dist
+          path: web/dist
