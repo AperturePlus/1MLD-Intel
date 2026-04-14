@@ -40,7 +40,7 @@
       </view>
       <view class="info-item">
         <text>合并症：</text>
-        <text>{{ user.hebingzheng }}</text>
+        <text>{{ user.comorbidity }}</text>
       </view>
       <view class="info-item">
         <text>肾病分期（GFR值）：</text>

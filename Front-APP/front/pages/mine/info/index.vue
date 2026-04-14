@@ -27,8 +27,8 @@
       getUser() {
         getUserProfile().then(response => {
           const user = response.data
-          this.phone = data.phone
-          this.nickname = data.nickname
+          this.phone = user.phone
+          this.nickname = user.nickname
         })
       }
     }

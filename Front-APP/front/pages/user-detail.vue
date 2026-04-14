@@ -51,29 +51,57 @@
 </template>
 
 <script>
+import config from '@/config'
+import { getUserByNickname } from '@/api/system/user'
+import { listReceivedUserEvaluations } from '@/api/system/report'
+
 export default {
   data() {
     return {
-      user: {
-        avatarUrl: '/static/avatar.png',
-        nickname: '爱笑的',
-        alias: 'Cheems',
-        age: 21,
-        gender: '女',
-        tags: ['婚恋', '计算机', '四川大学'],
-        price: '40元/小时',
-        description: [
-          '考研进四川大学黄彦辉老师的研究生',
-          '有过一段因为性格不合而分手的恋爱，并花了很长时间走不出来',
-          '比较自卑，有从自卑到自信的经历'
-        ]
-      },
-      comments: [
-        { name: '爱笑的Cheems', content: 'abcdefgadsaadcaefwg', avatarUrl: '/static/avatar.png' },
-        { name: '爱笑的Cheems', content: 'abcdefgadsaadcaefwg', avatarUrl: '/static/avatar.png' },
-        { name: '爱笑的Cheems', content: 'abcdefgadsaadcaefwg', avatarUrl: '/static/avatar.png' }
-      ]
+      user: null,
+      comments: []
     };
+  },
+  onLoad(options) {
+    const nickname = options.nickname ? decodeURIComponent(options.nickname) : ''
+    if (nickname) {
+      this.loadUser(nickname)
+      this.loadComments(nickname)
+    }
+  },
+  methods: {
+    getImagePath(filename) {
+      return config.baseUrl + '/userinfo/' + filename
+    },
+    async loadUser(nickname) {
+      try {
+        const res = await getUserByNickname(nickname)
+        const data = (res && res.data) || null
+        if (!data) return
+        if (data.tags && typeof data.tags === 'string') {
+          data.tags = data.tags.split(',').map(tag => tag.trim())
+        } else {
+          data.tags = data.tags || []
+        }
+        data.avatarUrl = data.imageUrl ? this.getImagePath(data.imageUrl) : '/static/images/default-avatar.png'
+        data.description = data.content ? [data.content] : []
+        this.user = data
+      } catch (_error) {
+        // keep default null
+      }
+    },
+    async loadComments(nickname) {
+      try {
+        const res = await listReceivedUserEvaluations(nickname)
+        this.comments = ((res && res.data) || []).map(item => ({
+          name: item.reporternickname || '',
+          content: item.content || item.title || '',
+          avatarUrl: '/static/images/default-avatar.png'
+        }))
+      } catch (_error) {
+        this.comments = []
+      }
+    }
   }
 }
 </script>

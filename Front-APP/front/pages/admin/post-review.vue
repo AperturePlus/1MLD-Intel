@@ -29,7 +29,7 @@
 
 <script>
 import config from '@/config'
-import { getPendingPosts, reviewPostById } from '@/api/system/post'
+import { listPendingPosts, reviewPostById } from '@/api/system/post'
 
 export default {
   data() {
@@ -42,7 +42,7 @@ export default {
   },
   methods: {
     loadData() {
-      getPendingPosts().then(res => {
+      listPendingPosts().then(res => {
         this.postlist = res.data.map(item => {
           item.tags = item.tags?.split(',') || []
           return item

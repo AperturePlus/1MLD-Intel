@@ -1,24 +1,21 @@
 <template>
   <view class="container">
-	  <view class="back-button" @tap="goBack">
-	      <text class="back-icon">| </text>
-	      <text class="back-text">返回</text>
-	  </view>
+    <view class="back-button" @tap="goBack">
+      <text class="back-icon">◁</text>
+      <text class="back-text">返回</text>
+    </view>
     <view class="title">发布资讯</view>
 
-    <!-- 资讯题目 -->
     <view class="form-item">
       <text class="label">资讯题目：</text>
       <input class="input" v-model="form.title" placeholder="请输入题目" />
     </view>
 
-    <!-- 资讯内容 -->
     <view class="form-item">
       <text class="label">资讯内容：</text>
       <textarea class="textarea" v-model="form.solution" placeholder="请输入内容"></textarea>
     </view>
 
-    <!-- 单图上传 -->
     <view class="form-item">
       <text class="label">上传图片：</text>
       <view class="images">
@@ -30,7 +27,6 @@
       </view>
     </view>
 
-    <!-- 提交按钮 -->
     <view class="submit-wrapper">
       <button class="submit-btn" :loading="isSubmitting" @tap="submitForm">提交</button>
     </view>
@@ -38,8 +34,8 @@
 </template>
 
 <script>
-import config from '@/config'
 import upload from '@/utils/upload'
+import { createArticle } from '@/api/system/advice'
 
 export default {
   data() {
@@ -49,8 +45,8 @@ export default {
         solution: '',
         imageUrl: ''
       },
-      localImagePath: '', // 本地预览用
-      localFilePath: '',  // 真实路径，用于上传
+      localImagePath: '',
+      localFilePath: '',
       isSubmitting: false
     }
   },
@@ -61,89 +57,54 @@ export default {
         success: (res) => {
           this.localFilePath = res.tempFilePaths[0]
           this.localImagePath = this.localFilePath
-		  console.log("当前图片路径：", this.localFilePath)
         }
       })
     },
-	goBack() {
-	    uni.navigateBack({
-	        delta: 1
-	    });
-	},
+    goBack() {
+      uni.navigateBack({
+        delta: 1
+      })
+    },
     removeImage() {
       this.localFilePath = ''
       this.localImagePath = ''
       this.form.imageUrl = ''
     },
-    async uploadImage() {
+    uploadImage() {
       if (!this.localFilePath) {
-        throw new Error('未选择图片')
+        return Promise.reject(new Error('未选择图片'))
       }
-      console.log("开始上传图片，路径：", this.localFilePath)
-      return new Promise((resolve, reject) => {
-        uni.uploadFile({
-          url: config.baseUrl + '/upload/advice', // 拼接完整后端接口
-          filePath: this.localFilePath,
-          name: 'file', // 后端用 @RequestParam("file") 对应的字段
-          success: (res) => {
-            console.log("uploadFile 返回：", res)
-            try {
-              const result = JSON.parse(res.data)
-              if (result.code === 200) {
-                console.log("文件名：", result.fileName)
-                resolve(result.fileName)
-              } else {
-                uni.showToast({ title: result.msg || '上传失败', icon: 'none' })
-                reject(result)
-              }
-            } catch (e) {
-              console.error("JSON 解析失败：", res.data)
-              reject(e)
-            }
-          },
-          fail: (err) => {
-            console.error("上传失败：", err)
-            uni.showToast({ title: '图片上传失败', icon: 'none' })
-            reject(err)
-          }
-        })
-      })
+      return upload({
+        url: '/upload/advice',
+        filePath: this.localFilePath,
+        name: 'file'
+      }).then((result) => (result.data && result.data.fileName) || result.fileName || '')
     },
-	
-    async submitForm() {
+    submitForm() {
       if (!this.form.solution || !this.form.title) {
-        return uni.showToast({ title: '请填写完整信息', icon: 'none' })
+        uni.showToast({ title: '请填写完整信息', icon: 'none' })
+        return
       }
       if (!this.localFilePath) {
-        return uni.showToast({ title: '请先选择图片', icon: 'none' })
+        uni.showToast({ title: '请先选择图片', icon: 'none' })
+        return
       }
 
       this.isSubmitting = true
-
-      try {
-        // 上传图片并获取文件名
-        const fileName = await this.uploadImage()
-        this.form.imageUrl = fileName
-        console.log("提交的数据：", this.form)
-        // 提交表单数据
-        await uni.request({
-          url: config.baseUrl + '/advice/add',
-          method: 'POST',
-          data: this.form,
-          header: { 'Content-Type': 'application/json' }
+      this.uploadImage()
+        .then((fileName) => {
+          this.form.imageUrl = fileName
+          return createArticle(this.form)
         })
-
-        uni.showToast({ title: '发布成功', icon: 'success' })
-
-        // 重置表单
-        this.form = { title: '', solution: '', imageUrl: '' }
-        this.localImagePath = ''
-        this.localFilePath = ''
-      } catch (err) {
-        uni.showToast({ title: '发布失败', icon: 'none' })
-      } finally {
-        this.isSubmitting = false
-      }
+        .then(() => {
+          uni.showToast({ title: '发布成功', icon: 'success' })
+          this.form = { title: '', solution: '', imageUrl: '' }
+          this.localImagePath = ''
+          this.localFilePath = ''
+        })
+        .finally(() => {
+          this.isSubmitting = false
+        })
     }
   }
 }

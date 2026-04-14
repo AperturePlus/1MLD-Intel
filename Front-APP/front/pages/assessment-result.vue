@@ -85,37 +85,23 @@
 </template>
 
 <script>
+import { fetchAssessmentResult } from '@/api/assessment'
+
 export default {
   data() {
     return {
       currentDate: '',
-      // 模拟后端算法层返回的预测结果数据
       resultData: {
-        probability: 88.5, // 患病概率
-        riskLevel: '高风险', // 风险等级
-        riskDescription: '您的各项生化指标与基因特征融合分析显示，存在较高的遗传代谢性肝病风险，建议立即进行专科干预。',
-        suspectedDisease: {
-          name: '肝豆状核变性 (Wilson病)',
-          gene: 'ATP7B 基因突变'
-        },
-        // 特征重要性排序（XGBoost 输出）
-        keyFactors: [
-          { name: '谷丙转氨酶 (ALT)', value: '85 U/L', contribution: 35.2, color: '#fa3534', remark: '指标显著高于正常区间' },
-          { name: '铜蓝蛋白 (CER)', value: '0.12 g/L', contribution: 28.7, color: '#ff9900', remark: '数值偏低，是该病种核心特征' },
-          { name: '总胆红素 (TBIL)', value: '25.4 μmol/L', contribution: 21.0, color: '#ff9900', remark: '存在轻度黄疸倾向' }
-        ],
-        // 诊疗推荐
-        advices: [
-          '建议携带本次评估结果，尽快前往三甲医院【消化内科】或【肝病专科】就诊。',
-          '医生可能会建议您进行24小时尿铜检测及角膜K-F环裂隙灯检查以进一步确诊。',
-          '日常饮食请严格限制高铜食物（如动物内脏、坚果、巧克力、海鲜等）的摄入。',
-          '系统已为您生成初步的专属随访计划，请注意接收后续的复查提醒。'
-        ]
+        probability: 0,
+        riskLevel: '',
+        riskDescription: '',
+        suspectedDisease: null,
+        keyFactors: [],
+        advices: []
       }
     };
   },
   computed: {
-    // 根据风险等级动态计算主题色
     riskColorClass() {
       if (this.resultData.riskLevel === '高风险') return 'theme-danger';
       if (this.resultData.riskLevel === '中风险') return 'theme-warning';
@@ -124,23 +110,31 @@ export default {
   },
   onLoad() {
     this.initDate();
-    // 实际项目中这里应调用接口获取 AI 诊断结果
-    // this.fetchAIResult();
+    this.loadAssessmentResult();
   },
   methods: {
     initDate() {
       const date = new Date();
-      this.currentDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      this.currentDate = `${year}-${month}-${day}`
+    },
+    loadAssessmentResult() {
+      fetchAssessmentResult().then((res) => {
+        this.resultData = (res && res.data) || this.resultData;
+      });
     },
     goBack() {
-      uni.navigateBack();
+      uni.switchTab({
+        url: '/pages/index'
+      });
     },
     bookAppointment() {
       uni.showToast({
-        title: '正在跳转预约系统...',
-        icon: 'loading'
+        title: '预约入口开发中',
+        icon: 'none'
       });
-      // TODO: 混合云模式下，跳转至院内 HIS 挂号系统或受控云端转介页面
     }
   }
 };

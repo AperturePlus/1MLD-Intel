@@ -36,7 +36,7 @@
 
 
 <script>
-  import { getCodeImg,register } from '@/api/system/user'
+  import { fetchCaptchaImage, registerAccount } from '@/api/auth'
   export default {
     data() {
       return {
@@ -63,7 +63,7 @@
       },
       // 获取图形验证码
       getCode() {
-      	getCodeImg().then(res => {
+        fetchCaptchaImage().then(res => {
 			//promise对象的写法，如果getCodeImg()成功执行，则执行then（）括号中的内容
 			//res=>{}是函数的简写方法，没有函数名，只有一个res的参数，函数体的实现在{}中
       		this.captchaEnabled = res.captchaEnabled === undefined ? true : res.captchaEnabled
@@ -93,9 +93,7 @@
       // 调用注册接口
       async registerUser() {
         try {
-		  console.log("Register Form Data:", this.registerForm); // 打印注册表单数据
-          const response = await register(this.registerForm);
-		  console.log("Register Response:", response);
+		  await registerAccount(this.registerForm);
           this.$modal.closeLoading();
           this.$modal.msgSuccess("注册成功");
           // 注册成功后跳转到登录页面

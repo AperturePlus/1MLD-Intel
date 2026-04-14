@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import { sendPasswordResetCode, verifyPasswordResetCode } from '@/api/auth'
+
 export default {
   data() {
     return {
@@ -51,10 +53,16 @@ export default {
         return
       }
       this.$modal.loading('发送验证码中...')
-      setTimeout(() => {
-        this.$modal.msgSuccess('验证码已发送')
-        this.$modal.closeLoading()
-      }, 1000)
+      sendPasswordResetCode(this.forgetForm.phone)
+        .then(() => {
+          this.$modal.msgSuccess('验证码已发送')
+        })
+        .catch(() => {
+          this.$modal.msgError('验证码发送失败')
+        })
+        .finally(() => {
+          this.$modal.closeLoading()
+        })
     },
     handleForgetPassword() {
       if (this.forgetForm.phone === '') {
@@ -65,7 +73,17 @@ export default {
         this.$modal.msgError('请输入验证码')
         return
       }
-      this.$tab.navigateTo('/pages/reset_password')
+      this.$modal.loading('验证码校验中...')
+      verifyPasswordResetCode(this.forgetForm.phone, this.forgetForm.code)
+        .then(() => {
+          this.$tab.navigateTo(`/pages/reset-password?phone=${encodeURIComponent(this.forgetForm.phone)}&code=${encodeURIComponent(this.forgetForm.code)}`)
+        })
+        .catch(() => {
+          this.$modal.msgError('验证码错误或已过期')
+        })
+        .finally(() => {
+          this.$modal.closeLoading()
+        })
     }
   }
 }

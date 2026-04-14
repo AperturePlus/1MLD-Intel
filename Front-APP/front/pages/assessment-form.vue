@@ -196,6 +196,7 @@
 </template>
 
 <script>
+import { submitAssessmentForm } from '@/api/assessment'
 export default {
   data() {
     return {
@@ -268,13 +269,17 @@ export default {
         return;
       }
 
-      uni.showLoading({ title: '正在处理脱敏...' });
-      
-      setTimeout(() => {
-        uni.hideLoading();
-        console.log('前端完成初步脱敏打包准备流转的数据:', this.formData);
-        uni.showToast({ title: '数据提交成功', icon: 'success' });
-      }, 1500);
+      uni.showLoading({ title: '提交中...' });
+
+      submitAssessmentForm(this.formData)
+        .then(() => {
+          uni.hideLoading();
+          uni.showToast({ title: '数据提交成功', icon: 'success' });
+        })
+        .catch(() => {
+          uni.hideLoading();
+          uni.showToast({ title: '数据提交失败', icon: 'none' });
+        });
     }
   }
 };

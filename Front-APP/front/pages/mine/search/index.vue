@@ -32,8 +32,8 @@
           <button 
             class="btn btn-follow" 
             @tap="toggleFollow(item)"
-            :class="{ disabled: item.nickname === followship.follower }"
-            :disabled="item.nickname === followship.follower"
+            :class="{ disabled: item.nickname === followRelation.follower }"
+            :disabled="item.nickname === followRelation.follower"
           >
             {{ isFollowing(item) ? '已关注' : '关注' }}
           </button>
@@ -45,9 +45,9 @@
 
 <script>
 import config from '@/config'
-import { getUser } from '@/api/system/user'
+import { queryUsers } from '@/api/system/user'
 import { getUserProfile } from '@/api/system/user'
-import { AddFollowship, GetFollowships, DeleteFollowship } from '@/api/system/follow'
+import { addFollowRelation, listFollowRelations, removeFollowRelation } from '@/api/system/follow'
 
 
 export default {
@@ -56,7 +56,7 @@ export default {
       userlist: [],
       searchKeyword: '',
       filteredUserList: [],
-      followship: {
+      followRelation: {
         follower: '',
         follower_image_url: '',
         followee: '',
@@ -74,7 +74,7 @@ export default {
   methods: {
     async loadData() {
       try {
-        const res = await getUser()
+        const res = await queryUsers({})
         const processed = res.data.map(item => {
           if (item.tags && typeof item.tags === 'string') {
             item.tags = item.tags.split(',').map(tag => tag.trim())
@@ -93,8 +93,8 @@ export default {
     async getUser() {
       try {
         const response = await getUserProfile()
-        this.followship.follower = response.data.nickname
-        this.followship.follower_image_url = response.data.imageUrl
+        this.followRelation.follower = response.data.nickname
+        this.followRelation.follower_image_url = response.data.imageUrl
       } catch (error) {
         console.error('获取用户信息失败:', error)
       }
@@ -103,7 +103,7 @@ export default {
     async loadFollowingList() {
       try {
         await this.getUser() // 确保有 follower 信息
-        const response = await GetFollowships({ follower: this.followship.follower })
+        const response = await listFollowRelations({ follower: this.followRelation.follower })
         if (response.code === 200) {
           this.followingList = response.data.map(item => item.followee)
         }
@@ -157,7 +157,7 @@ export default {
    
        if (this.isFollowing(item)) {
          // 如果已关注，执行取消关注逻辑
-         const res = await DeleteFollowship({
+         const res = await removeFollowRelation({
            follower,
            followee: item.nickname
          })
@@ -177,7 +177,7 @@ export default {
            followee_image_url: item.imageUrl
          }
    
-         const response = await AddFollowship(followData)
+         const response = await addFollowRelation(followData)
    
          if (response.code === 200) {
            uni.showToast({ title: '关注成功', icon: 'success' })

@@ -7,9 +7,9 @@ const whiteList: string[] = [
   '/pages/register',
   '/pages/common/webview/index',
   '/pages/appeal',
-  '/pages/forget_password',
-  '/pages/reset_password',
-  '/pages/login_admin'
+  '/pages/forgot-password',
+  '/pages/reset-password',
+  '/pages/login-admin'
 ]
 
 function checkWhite(url: string): boolean {

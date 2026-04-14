@@ -1,6 +1,5 @@
 <template>
   <view class="user-management">
-    <!-- 搜索框 -->
     <view class="search-bar">
       <uni-search-bar
         placeholder="搜索用户昵称"
@@ -11,7 +10,6 @@
       />
     </view>
 
-    <!-- 用户列表 -->
     <view class="user-list" v-if="userList.length > 0">
       <view
         class="user-card"
@@ -47,44 +45,30 @@
 
 <script>
 import config from '@/config'
+import { banUserById, listManageableUsers, unbanUserById } from '@/api/system/admin'
 
 export default {
   data() {
     return {
       userList: [],
-      searchKeyword: '',
+      searchKeyword: ''
     }
   },
   mounted() {
     this.fetchUserList()
   },
   methods: {
-    // 获取用户列表（role为"0"或"2"，可搜索昵称）
-    async fetchUserList() {
-      try {
-        const res = await uni.request({
-          url: `${config.baseUrl}/user/adminList`,
-          method: 'GET',
-          data: { keyword: this.searchKeyword.trim() },
-        })
-        if (res[1].statusCode === 200 && res[1].data.code === 200) {
-          this.userList = res[1].data.data
-        } else {
-          uni.showToast({ title: '获取用户失败', icon: 'error' })
-        }
-      } catch (error) {
-        uni.showToast({ title: '请求异常', icon: 'error' })
-      }
+    fetchUserList() {
+      listManageableUsers(this.searchKeyword.trim()).then((res) => {
+        this.userList = (res && res.data) || []
+      })
     },
-
-    // 搜索用户
     handleSearch() {
       this.fetchUserList()
     },
     getImagePath(filename) {
-      return config.baseUrl + '/userinfo/' + filename
+      return `${config.baseUrl}/userinfo/${filename}`
     },
-    // 封禁或解封用户
     handleBanToggle(userId, index) {
       const user = this.userList[index]
       const action = user.role === '2' ? 'unban' : 'ban'
@@ -92,31 +76,22 @@ export default {
       uni.showModal({
         title: '确认操作',
         content: confirmMsg,
-        success: async (res) => {
-          if (res.confirm) {
-            try {
-              const res2 = await uni.request({
-                url: `${config.baseUrl}/user/${userId}/${action}`,
-                method: 'POST',
-              })
-              if (res2[1].statusCode === 200 && res2[1].data.code === 200) {
-                uni.showToast({
-                  title: action === 'ban' ? '已封禁' : '已解封',
-                  icon: 'success',
-                })
-                // 更新本地状态
-                this.userList[index].role = action === 'ban' ? '2' : '0'
-              } else {
-                uni.showToast({ title: '操作失败', icon: 'error' })
-              }
-            } catch (e) {
-              uni.showToast({ title: '请求异常', icon: 'error' })
-            }
+        success: (res) => {
+          if (!res.confirm) {
+            return
           }
-        },
+          const request = action === 'ban' ? banUserById(userId) : unbanUserById(userId)
+          request.then(() => {
+            uni.showToast({
+              title: action === 'ban' ? '已封禁' : '已解封',
+              icon: 'success'
+            })
+            this.userList[index].role = action === 'ban' ? '2' : '0'
+          })
+        }
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import {updateUserPwd} from "@/api/system/user"
+import { updateUserPassword } from '@/api/system/user'
 
 export default {
   data() {
@@ -64,7 +64,11 @@ export default {
   methods: {
     submit() {
       this.$refs.form.validate().then(res => {
-        updateUserPwd({password: this.user.newPassword}).then(response => {
+        updateUserPassword({
+          oldPassword: this.user.oldPassword,
+          newPassword: this.user.newPassword,
+          confirmPassword: this.user.confirmPassword
+        }).then(response => {
           this.$modal.msgSuccess("修改成功")
         })
       })

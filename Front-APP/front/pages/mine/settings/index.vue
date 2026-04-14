@@ -29,9 +29,6 @@
       handleToPwd() {
         this.$tab.navigateTo('/pages/mine/pwd/index')
       },
-	  handleTobing() {
-	    this.$tab.navigateTo('/pages/mine/pwd/index2')
-	  },
       handleLogout() {
         this.$modal.confirm('确定注销并退出系统吗？').then(() => {
           this.$store.dispatch('LogOut').then(() => {

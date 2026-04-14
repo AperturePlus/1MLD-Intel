@@ -1,24 +1,21 @@
 <template>
   <view class="container">
-	  <view class="back-button" @tap="goBack">
-	      <text class="back-icon">| </text>
-	      <text class="back-text">返回</text>
-	  </view>
+    <view class="back-button" @tap="goBack">
+      <text class="back-icon">◁</text>
+      <text class="back-text">返回</text>
+    </view>
     <view class="title">编辑资讯</view>
 
-    <!-- 资讯题目 -->
     <view class="form-item">
       <text class="label">资讯题目：</text>
       <input class="input" v-model="form.title" placeholder="请输入题目" />
     </view>
 
-    <!-- 资讯内容 -->
     <view class="form-item">
       <text class="label">资讯内容：</text>
       <textarea class="textarea" v-model="form.solution" placeholder="请输入内容"></textarea>
     </view>
 
-    <!-- 图片上传 -->
     <view class="form-item">
       <text class="label">上传图片：</text>
       <view class="images">
@@ -30,7 +27,6 @@
       </view>
     </view>
 
-    <!-- 提交按钮 -->
     <view class="submit-wrapper">
       <button class="submit-btn" :loading="isSubmitting" @tap="submitForm">更新资讯</button>
     </view>
@@ -38,13 +34,14 @@
 </template>
 
 <script>
-import config from '@/config'
+import upload from '@/utils/upload'
+import { updateArticle } from '@/api/system/advice'
 
 export default {
   data() {
     return {
       form: {
-        id: '', // 唯一不同点：多了ID字段
+        id: '',
         title: '',
         solution: '',
         imageUrl: ''
@@ -55,121 +52,69 @@ export default {
     }
   },
   onLoad(options) {
-    // 只接收ID，不加载原有数据
     if (options.id) {
       this.form.id = options.id
     }
   },
   methods: {
-	  chooseImage() {
-	    uni.chooseImage({
-	      count: 1,
-	      success: (res) => {
-	        this.localFilePath = res.tempFilePaths[0]
-	        this.localImagePath = this.localFilePath
-	      }
-	    })
-	  },
-	  
-    getImagePath(imageName) {
-      return config.baseUrl + '/advice/' + imageName
+    chooseImage() {
+      uni.chooseImage({
+        count: 1,
+        success: (res) => {
+          this.localFilePath = res.tempFilePaths[0]
+          this.localImagePath = this.localFilePath
+        }
+      })
     },
-    
     removeImage() {
       this.localFilePath = ''
       this.localImagePath = ''
       this.form.imageUrl = ''
     },
-    
-    async uploadImage() {
+    uploadImage() {
       if (!this.localFilePath) {
-        throw new Error('请选择图片')
+        return Promise.reject(new Error('请选择图片'))
       }
-      
-      return new Promise((resolve, reject) => {
-        uni.uploadFile({
-          url: config.baseUrl + '/upload/advice',
-          filePath: this.localFilePath,
-          name: 'file',
-          success: (res) => {
-            try {
-              const result = JSON.parse(res.data)
-              if (result.code === 200) {
-                resolve(result.fileName)
-              } else {
-                uni.showToast({ title: result.msg || '上传失败', icon: 'none' })
-                reject(result)
-              }
-            } catch (e) {
-              console.error("JSON解析失败:", res.data)
-              reject(e)
-            }
-          },
-          fail: (err) => {
-            console.error("上传失败:", err)
-            uni.showToast({ title: '图片上传失败', icon: 'none' })
-            reject(err)
-          }
-        })
+      return upload({
+        url: '/upload/advice',
+        filePath: this.localFilePath,
+        name: 'file'
+      }).then((result) => (result.data && result.data.fileName) || result.fileName || '')
+    },
+    goBack() {
+      uni.navigateBack({
+        delta: 1
       })
     },
-	
-	goBack() {
-	    uni.navigateBack({
-	        delta: 1
-	    });
-	    // 或者明确指定跳转到登录页面
-	    // uni.redirectTo({
-	    //     url: '/pages/login/login'
-	    // });
-	},
-    
-    async submitForm() {
+    submitForm() {
       if (!this.form.title || !this.form.solution) {
-        return uni.showToast({ title: '请填写完整信息', icon: 'none' })
+        uni.showToast({ title: '请填写完整信息', icon: 'none' })
+        return
       }
       if (!this.localFilePath) {
-        return uni.showToast({ title: '请选择图片', icon: 'none' })
+        uni.showToast({ title: '请选择图片', icon: 'none' })
+        return
       }
 
       this.isSubmitting = true
-      uni.showLoading({ title: '提交中...', mask: true })
-
-      try {
-        // 上传图片
-        const fileName = await this.uploadImage()
-        this.form.imageUrl = fileName
-
-        // 提交更新请求
-        const res = await uni.request({
-          url: config.baseUrl + '/advice/update',
-          method: 'PUT',
-          data: this.form,
-          header: { 'Content-Type': 'application/json' }
+      this.uploadImage()
+        .then((fileName) => {
+          this.form.imageUrl = fileName
+          return updateArticle(this.form)
         })
-
-        if (res[1].data.code === 200) {
+        .then(() => {
           uni.showToast({ title: '更新成功', icon: 'success' })
-          setTimeout(() => {
-            uni.navigateBack()
-          }, 1500)
-        } else {
-          uni.showToast({ title: '更新失败: ' + res[1].data.msg, icon: 'none' })
-        }
-      } catch (err) {
-        console.error('更新失败:', err)
-        uni.showToast({ title: '更新失败', icon: 'none' })
-      } finally {
-        this.isSubmitting = false
-        uni.hideLoading()
-      }
+          uni.navigateBack()
+        })
+        .finally(() => {
+          this.isSubmitting = false
+        })
     }
   }
 }
 </script>
 
 <style scoped>
-/* 保持与发布页面相同的样式 */
 .container {
   padding: 20rpx;
   background: linear-gradient(to bottom right, #e0f7fa, #fce4ec);

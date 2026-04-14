@@ -30,7 +30,7 @@
 			
 		</view>
 
-		<!-- ✅ 新增管理员登录按钮 -->
+		<!-- 医师登录按钮 -->
 	</view>
 </template>
 
@@ -213,7 +213,7 @@
 		}
 	}
 
-	// ✅ 管理员登录按钮样式
+	// 医师登录按钮样式
 	.admin-login-btn {
 		position: fixed;
 		bottom: 30rpx;
