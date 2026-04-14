@@ -18,7 +18,6 @@
           <text class="label">联系方式 <text class="required">*</text></text>
           <input class="input-box" type="number" maxlength="11" v-model="formData.phone" placeholder="请输入手机号码" placeholder-class="placeholder-style" />
         </view>
-        
         <view class="form-item">
           <text class="label">性别 <text class="required">*</text></text>
           <radio-group class="radio-group" @change="radioChange($event, 'gender')">
@@ -26,7 +25,6 @@
             <label class="radio-label"><radio value="2" color="#2b85e4" style="transform:scale(0.8)" :checked="formData.gender === '2'" /> 女</label>
           </radio-group>
         </view>
-
         <view class="form-item">
           <text class="label">年龄 <text class="required">*</text></text>
           <view class="input-group">
@@ -34,7 +32,6 @@
             <text class="unit">岁</text>
           </view>
         </view>
-
         <view class="form-item">
           <text class="label">身高 <text class="required">*</text></text>
           <view class="input-group">
@@ -42,7 +39,6 @@
             <text class="unit">cm</text>
           </view>
         </view>
-
         <view class="form-item">
           <text class="label">体重 <text class="required">*</text></text>
           <view class="input-group">
@@ -54,13 +50,20 @@
 
       <view class="form-card">
         <view class="card-title">
-          <text class="title-icon">|</text>核心肝功能指标
-          <text class="title-tips">(请参照近期检验报告单填写)</text>
+          <text class="title-icon">|</text>常规肝脏与生化功能
+          <text class="title-tips">(必填，请参照近期报告单)</text>
         </view>
         <view class="form-item">
           <text class="label">谷丙转氨酶 (ALT) <text class="required">*</text></text>
           <view class="input-group">
             <input class="input-box flex-1" type="digit" v-model="formData.alt" placeholder="例如: 35" placeholder-class="placeholder-style" />
+            <text class="unit">U/L</text>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="label">谷草转氨酶 (AST) <text class="required">*</text></text>
+          <view class="input-group">
+            <input class="input-box flex-1" type="digit" v-model="formData.ast" placeholder="例如: 40" placeholder-class="placeholder-style" />
             <text class="unit">U/L</text>
           </view>
         </view>
@@ -72,36 +75,107 @@
           </view>
         </view>
         <view class="form-item">
-          <text class="label">铜蓝蛋白 (CER) <text class="required">*</text></text>
+          <text class="label">白蛋白 (ALB) <text class="required">*</text></text>
           <view class="input-group">
-            <input class="input-box flex-1" type="digit" v-model="formData.ceruloplasmin" placeholder="例如: 0.25" placeholder-class="placeholder-style" />
+            <input class="input-box flex-1" type="digit" v-model="formData.albumin" placeholder="例如: 42" placeholder-class="placeholder-style" />
             <text class="unit">g/L</text>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="label">谷氨酰转移酶 (GGT) <text class="required">*</text></text>
+          <view class="input-group">
+            <input class="input-box flex-1" type="digit" v-model="formData.ggt" placeholder="例如: 45" placeholder-class="placeholder-style" />
+            <text class="unit">U/L</text>
           </view>
         </view>
       </view>
 
       <view class="form-card">
         <view class="card-title">
-          <text class="title-icon">|</text>临床症状与辅助测序
+          <text class="title-icon">|</text>特异性代谢标志物
+          <text class="title-tips">(选填，有相关检验则填写)</text>
         </view>
         <view class="form-item">
-          <text class="label">是否出现黄疸症状？</text>
+          <text class="label">血清铜蓝蛋白 (CER)</text>
+          <view class="input-group">
+            <input class="input-box flex-1" type="digit" v-model="formData.ceruloplasmin" placeholder="筛查肝豆状核变性" placeholder-class="placeholder-style" />
+            <text class="unit">g/L</text>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="label">24小时尿铜</text>
+          <view class="input-group">
+            <input class="input-box flex-1" type="digit" v-model="formData.urinaryCopper" placeholder="筛查肝豆状核变性" placeholder-class="placeholder-style" />
+            <text class="unit">μg/24h</text>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="label">血清铁蛋白 (Ferritin)</text>
+          <view class="input-group">
+            <input class="input-box flex-1" type="digit" v-model="formData.ferritin" placeholder="筛查血色病" placeholder-class="placeholder-style" />
+            <text class="unit">μg/L</text>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="label">空腹血糖 (GLU)</text>
+          <view class="input-group">
+            <input class="input-box flex-1" type="digit" v-model="formData.glucose" placeholder="筛查糖原累积病" placeholder-class="placeholder-style" />
+            <text class="unit">mmol/L</text>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="label">血氨 (Ammonia)</text>
+          <view class="input-group">
+            <input class="input-box flex-1" type="digit" v-model="formData.ammonia" placeholder="筛查尿素循环障碍等" placeholder-class="placeholder-style" />
+            <text class="unit">μmol/L</text>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="label">甲胎蛋白 (AFP)</text>
+          <view class="input-group">
+            <input class="input-box flex-1" type="digit" v-model="formData.afp" placeholder="筛查酪氨酸血症等" placeholder-class="placeholder-style" />
+            <text class="unit">ng/mL</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="form-card">
+        <view class="card-title">
+          <text class="title-icon">|</text>临床症状与辅助检查
+        </view>
+        <view class="form-item">
+          <text class="label">是否出现黄疸(皮肤/巩膜发黄)？</text>
           <radio-group class="radio-group" @change="radioChange($event, 'jaundice')">
-            <label class="radio-label"><radio value="1" color="#2b85e4" style="transform:scale(0.8)" /> 是</label>
+            <label class="radio-label"><radio value="1" color="#2b85e4" style="transform:scale(0.8)" :checked="formData.jaundice === '1'" /> 是</label>
             <label class="radio-label"><radio value="0" color="#2b85e4" style="transform:scale(0.8)" :checked="formData.jaundice === '0'" /> 否</label>
           </radio-group>
         </view>
         <view class="form-item">
-          <text class="label">是否有肝区不适？</text>
-          <radio-group class="radio-group" @change="radioChange($event, 'liverDiscomfort')">
-            <label class="radio-label"><radio value="1" color="#2b85e4" style="transform:scale(0.8)" /> 是</label>
-            <label class="radio-label"><radio value="0" color="#2b85e4" style="transform:scale(0.8)" :checked="formData.liverDiscomfort === '0'" /> 否</label>
+          <text class="label">影像学(B超等)是否提示肝/脾肿大？</text>
+          <radio-group class="radio-group" @change="radioChange($event, 'hepatosplenomegaly')">
+            <label class="radio-label"><radio value="1" color="#2b85e4" style="transform:scale(0.8)" :checked="formData.hepatosplenomegaly === '1'" /> 是</label>
+            <label class="radio-label"><radio value="0" color="#2b85e4" style="transform:scale(0.8)" :checked="formData.hepatosplenomegaly === '0'" /> 否</label>
           </radio-group>
         </view>
         <view class="form-item">
-          <text class="label">是否已进行基因测序？</text>
+          <text class="label">是否有神经/精神系统异常(如震颤、肌张力异常)？</text>
+          <radio-group class="radio-group" @change="radioChange($event, 'neuroSymptoms')">
+            <label class="radio-label"><radio value="1" color="#2b85e4" style="transform:scale(0.8)" :checked="formData.neuroSymptoms === '1'" /> 是</label>
+            <label class="radio-label"><radio value="0" color="#2b85e4" style="transform:scale(0.8)" :checked="formData.neuroSymptoms === '0'" /> 否</label>
+          </radio-group>
+        </view>
+        <view class="form-item">
+          <text class="label">眼科裂隙灯检查是否发现 K-F 角膜环？</text>
+          <radio-group class="radio-group" @change="radioChange($event, 'kfRing')">
+            <label class="radio-label"><radio value="1" color="#2b85e4" style="transform:scale(0.8)" :checked="formData.kfRing === '1'" /> 是</label>
+            <label class="radio-label"><radio value="0" color="#2b85e4" style="transform:scale(0.8)" :checked="formData.kfRing === '0'" /> 否</label>
+            <label class="radio-label"><radio value="-1" color="#2b85e4" style="transform:scale(0.8)" :checked="formData.kfRing === '-1'" /> 未检查</label>
+          </radio-group>
+        </view>
+        <view class="form-item">
+          <text class="label">是否已进行基因靶向测序或全外显子测序？</text>
           <radio-group class="radio-group" @change="radioChange($event, 'hasGeneticData')">
-            <label class="radio-label"><radio value="1" color="#2b85e4" style="transform:scale(0.8)" /> 已测序</label>
+            <label class="radio-label"><radio value="1" color="#2b85e4" style="transform:scale(0.8)" :checked="formData.hasGeneticData === '1'" /> 已测序</label>
             <label class="radio-label"><radio value="0" color="#2b85e4" style="transform:scale(0.8)" :checked="formData.hasGeneticData === '0'" /> 未测序</label>
           </radio-group>
         </view>
@@ -125,26 +199,44 @@
 export default {
   data() {
     return {
-      // 表单响应式数据
       formData: {
+        // 1. 基本信息
         patientName: '',
         phone: '',
-        gender: '1', // 新增：性别，默认 1 为男，2 为女
-        age: '',     // 新增：年龄
-        height: '',  // 新增：身高
-        weight: '',  // 新增：体重
+        gender: '1',
+        age: '',     
+        height: '',  
+        weight: '',  
+        
+        // 2. 核心肝脏与生化功能 (必填)
         alt: '',
+        ast: '',       // 新增: 谷草转氨酶
         bilirubin: '',
-        ceruloplasmin: '',
+        albumin: '',   // 新增: 白蛋白
+        ggt: '',       // 新增: 谷氨酰转移酶
+        
+        // 3. 特异性代谢标志物 (选填)
+        ceruloplasmin: '', 
+        urinaryCopper: '', // 新增: 24h尿铜
+        ferritin: '',      // 新增: 铁蛋白
+        glucose: '',       // 新增: 空腹血糖
+        ammonia: '',       // 新增: 血氨
+        afp: '',           // 新增: 甲胎蛋白
+        
+        // 4. 临床症状与体征
         jaundice: '0',
-        liverDiscomfort: '0',
+        hepatosplenomegaly: '0', // 修改: 明确为肝脾肿大
+        neuroSymptoms: '0',      // 新增: 神经系统症状 (针对肝豆)
+        kfRing: '-1',            // 新增: K-F环 (-1代表未检查)
         hasGeneticData: '0',
+        
+        // 5. 合规
         dataConsent: false
       }
     };
   },
   computed: {
-    // 简易表单验证：确保必填项已填且已勾选知情同意书
+    // 校验逻辑：仅校验基本信息与常规肝功，代谢特异性指标允许留空
     isFormValid() {
       return this.formData.patientName.trim() !== '' && 
              this.formData.phone.trim().length === 11 &&
@@ -152,39 +244,36 @@ export default {
              this.formData.height !== '' &&
              this.formData.weight !== '' &&
              this.formData.alt !== '' &&
+             this.formData.ast !== '' &&       // 校验新增的必填项
              this.formData.bilirubin !== '' &&
-             this.formData.ceruloplasmin !== '' &&
+             this.formData.albumin !== '' &&   // 校验新增的必填项
+             this.formData.ggt !== '' &&       // 校验新增的必填项
              this.formData.dataConsent;
     }
   },
   methods: {
-    // 单选框切换事件
     radioChange(e, field) {
       this.formData[field] = e.detail.value;
     },
-    // 切换知情同意书状态
     toggleConsent() {
       this.formData.dataConsent = !this.formData.dataConsent;
     },
-    // 提交表单逻辑
     submitForm() {
       if (!this.formData.dataConsent) {
         uni.showToast({ title: '请先勾选知情同意书', icon: 'none' });
         return;
       }
       if (!this.isFormValid) {
-        uni.showToast({ title: '请完整填写必填化验指标及基础信息', icon: 'none' });
+        uni.showToast({ title: '请完整填写带星号(*)的必填指标及信息', icon: 'none' });
         return;
       }
 
-      // 模拟提交前的数据脱敏打包环节
       uni.showLoading({ title: '正在处理脱敏...' });
       
       setTimeout(() => {
         uni.hideLoading();
         console.log('前端完成初步脱敏打包准备流转的数据:', this.formData);
         uni.showToast({ title: '数据提交成功', icon: 'success' });
-        // TODO: 使用 Axios 将数据传输给后端的临床数据模块 (Domain-A) 和智能诊断模块 (Domain-B)
       }, 1500);
     }
   }
@@ -192,14 +281,13 @@ export default {
 </script>
 
 <style scoped>
-/* 全局背景与基础排版 */
+/* 原有的样式完全可以复用，无需改动，保持了 UI 的美观一致性 */
 .container {
   min-height: 100vh;
   background-color: #f4f6f9;
   padding-bottom: 40rpx;
 }
 
-/* 头部样式 */
 .header {
   background: linear-gradient(135deg, #2b85e4 0%, #005eaa 100%);
   padding: 60rpx 40rpx 80rpx;
@@ -222,13 +310,11 @@ export default {
   line-height: 1.5;
 }
 
-/* 表单主体包装器（向上偏移产生层叠效果） */
 .form-wrapper {
   padding: 0 30rpx;
   margin-top: -40rpx;
 }
 
-/* 卡片样式 */
 .form-card {
   background-color: #ffffff;
   border-radius: 20rpx;
@@ -260,7 +346,6 @@ export default {
   margin-left: 10rpx;
 }
 
-/* 表单项布局 */
 .form-item {
   margin-bottom: 36rpx;
 }
@@ -281,7 +366,6 @@ export default {
   margin-left: 6rpx;
 }
 
-/* 输入框样式 */
 .input-box {
   background-color: #f8f9fa;
   border: 1px solid #ebedf0;
@@ -302,7 +386,6 @@ export default {
   color: #c0c4cc;
 }
 
-/* 带有单位的组合输入框 */
 .input-group {
   display: flex;
   align-items: center;
@@ -327,7 +410,6 @@ export default {
   margin-left: 10rpx;
 }
 
-/* 单选框样式 */
 .radio-group {
   display: flex;
   gap: 40rpx;
@@ -340,7 +422,6 @@ export default {
   color: #333333;
 }
 
-/* 隐私合规选项 */
 .consent-section {
   padding: 0 10rpx 30rpx;
 }
@@ -362,7 +443,6 @@ export default {
   color: #2b85e4;
 }
 
-/* 提交按钮 */
 .submit-btn {
   background: linear-gradient(to right, #2b85e4, #3c9cff);
   color: #ffffff;

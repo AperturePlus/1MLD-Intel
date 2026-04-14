@@ -18,7 +18,7 @@
 			</view>
 			<view class="input-item flex align-center" style="width: 60%;margin: 0px;" v-if="captchaEnabled">
 				<view class="iconfont icon-code icon"></view>
-				<input v-model="loginForm.code" type="number" class="input" placeholder="请输入验证码" maxlength="4" />
+				<input v-model="loginForm.code" type="text" class="input" placeholder="请输入验证码" maxlength="4" />
 				<view class="login-code">
 					<image :src="codeUrl" @click="getCode" class="login-code-img"></image>
 				</view>
@@ -51,23 +51,22 @@
 </template>
 
 <script>
-	import {
-		getCodeImg
-	} from '@/api/login'
+	// 引入 setToken 方法
+	import { setToken } from '@/utils/auth'
 
 	export default {
 		data() {
 			return {
 				codeUrl: "",
+				actualCode: "", // 用于存储前端生成的真实验证码以便比对
 				captchaEnabled: true,
 				register: true,
-				globalConfig: getApp().globalData.config,
+				globalConfig: getApp().globalData ? getApp().globalData.config : {},
 				loginForm: {
-					username:"",
-					password:"",
+					username: "",
+					password: "",
 					code: "",
-					uuid: '',
-					role:"0"
+					role: "0"
 				}
 			}
 		},
@@ -75,11 +74,11 @@
 			this.getCode()
 		},
 		methods: {
-			handleAdminLogin(){
+			handleAdminLogin() {
 				this.$tab.navigateTo(`/pages/login_admin`)
 			},
 			
-			handleDoctorLogin(){
+			handleDoctorLogin() {
 				this.$tab.navigateTo(`/pages/login_doctor`)
 			},
 			
@@ -94,15 +93,38 @@
 				let site = this.globalConfig.appInfo.agreements[1]
 				this.$tab.navigateTo(`/pages/common/webview/index?title=${site.title}&url=${site.url}`)
 			},
+			
+			// 纯前端生成 SVG 验证码
 			getCode() {
-				getCodeImg().then(res => {
-					this.captchaEnabled = res.captchaEnabled === undefined ? true : res.captchaEnabled
-					if (this.captchaEnabled) {
-						this.codeUrl = 'data:image/png;base64,' + res.data
-						this.loginForm.uuid = res.uuid
-					}
-				})
+				const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+				let code = '';
+				for (let i = 0; i < 4; i++) {
+					code += chars[Math.floor(Math.random() * chars.length)];
+				}
+				this.actualCode = code; 
+
+				let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="38" viewBox="0 0 100 38">
+					<rect width="100" height="38" fill="#e0e0e0" />`; 
+				
+				for (let i = 0; i < 4; i++) {
+					const x = 15 + i * 20;
+					const y = 25 + Math.random() * 5;
+					const angle = Math.random() * 40 - 20; 
+					const r = Math.floor(Math.random() * 150);
+					const g = Math.floor(Math.random() * 150);
+					const b = Math.floor(Math.random() * 150);
+					
+					svg += `<text x="${x}" y="${y}" fill="rgb(${r},${g},${b})" font-size="22" font-weight="bold" transform="rotate(${angle} ${x} ${y})">${code[i]}</text>`;
+				}
+				
+				for (let i = 0; i < 4; i++) {
+					svg += `<line x1="${Math.random()*100}" y1="${Math.random()*38}" x2="${Math.random()*100}" y2="${Math.random()*38}" stroke="#999" stroke-width="1.5" />`;
+				}
+				svg += `</svg>`;
+
+				this.codeUrl = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
 			},
+			
 			async handleLogin() {
 				if (this.loginForm.username === "") {
 					this.$modal.msgError("请输入您的账号")
@@ -115,25 +137,42 @@
 					this.pwdLogin()
 				}
 			},
+			
+			// 纯前端拦截与账号密码校验
 			async pwdLogin() {
-				console.log("即将提交的数据：", this.loginForm)
-				this.$store.dispatch('Login', this.loginForm).then(() => {
-					this.$modal.closeLoading()
-					this.loginSuccess()
-				}).catch(() => {
-					if (this.captchaEnabled) {
-						this.getCode()
+				setTimeout(() => {
+					// 1. 校验验证码 (忽略大小写)
+					if (this.captchaEnabled && this.loginForm.code.toLowerCase() !== this.actualCode.toLowerCase()) {
+						this.$modal.closeLoading()
+						this.$modal.msgError("验证码错误")
+						this.getCode() // 验证码错误刷新
+						return
 					}
-				})
+
+					// 2. 校验账号密码
+					if (this.loginForm.username === 'admin' && this.loginForm.password === '123456') {
+						this.$modal.closeLoading()
+						this.$modal.msgSuccess("登录成功")
+						
+						// 3. 写入假的 Token 以通过路由拦截器
+						setToken('mock-frontend-token-123456')
+						
+						this.loginSuccess()
+					} else {
+						this.$modal.closeLoading()
+						this.$modal.msgError("账号或密码错误")
+						this.getCode() 
+					}
+				}, 600) 
 			},
+			
 			loginSuccess() {
-				this.$store.dispatch('GetInfo').then(res => {
-					console.log(res)
+				setTimeout(() => {
 					this.$tab.reLaunch('/pages/index')
-				})
+				}, 500)
 			},
+			
 			handleAppeal() {
-				console.log("申诉按钮被点击")
 				this.$tab.navigateTo(`/pages/appeal`)
 			},
 			handleForgetPassword() {
@@ -154,7 +193,6 @@
 		min-height: 100vh;
 		position: relative; 
 		z-index: 1;
-		/* 为了防止小屏手机上底部内容和表单重叠，稍微给底部留出空间 */
 		padding-bottom: 120px; 
 
 		.bg-image {
@@ -248,7 +286,6 @@
 			}
 		}
 
-		/* ✅ 新增：底部页脚的样式 */
 		.bottom-footer {
 			position: absolute;
 			bottom: 40rpx;
@@ -259,7 +296,7 @@
 				color: #ffffff;
 				font-size: 14px;
 				text-decoration: underline;
-				margin-bottom: 20rpx; /* 和下方的版权信息拉开一点距离 */
+				margin-bottom: 20rpx; 
 				opacity: 0.9;
 			}
 
@@ -267,7 +304,7 @@
 				color: #ffffff;
 				font-size: 12px;
 				line-height: 1.6;
-				opacity: 0.6; /* 版权信息稍微变暗，以免喧宾夺主 */
+				opacity: 0.6; 
 			}
 		}
 	}

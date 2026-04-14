@@ -133,34 +133,39 @@ export default {
     },
 
     // 退出登录核心逻辑
-    handleLogout() {
-      uni.showModal({
-        title: '提示',
-        content: '确定要退出当前账号吗？',
-        confirmColor: '#fa3534', // 退出确认按钮用红色警示
-        success: (res) => {
-          if (res.confirm) {
-            uni.showLoading({ title: '退出中...' });
-            
-            // 触发 Vuex 的退出登录 action (根据你的实际项目结构调整)
-            this.$store.dispatch('LogOut').then(() => {
-              uni.hideLoading();
-              uni.showToast({ title: '已退出登录', icon: 'success' });
-              
-              // 延迟跳转回登录页，保证 toast 能看清
-              setTimeout(() => {
-                uni.reLaunch({
-                  url: '/pages/login' // 替换为你的实际登录页路径
-                });
-              }, 1000);
-            }).catch(() => {
-              uni.hideLoading();
-              uni.showToast({ title: '退出失败，请重试', icon: 'none' });
-            });
-          }
+    // 退出登录核心逻辑 (已去后端化)
+        handleLogout() {
+          uni.showModal({
+            title: '提示',
+            content: '确定要退出当前账号吗？',
+            confirmColor: '#fa3534', 
+            success: (res) => {
+              if (res.confirm) {
+                uni.showLoading({ title: '退出中...' });
+                
+                // 使用 setTimeout 模拟 500ms 的网络请求延迟，体验更好
+                setTimeout(() => {
+                  // 1. 彻底清除我们之前在前端伪造的 Token (记得替换成你 auth.js 里的对应键名)
+                  uni.removeStorageSync('App-Token');
+                  
+                  // 2. 清除其他可能缓存的用户信息（按需添加）
+                  // uni.removeStorageSync('userInfo');
+                  
+                  uni.hideLoading();
+                  uni.showToast({ title: '已退出登录', icon: 'success' });
+                  
+                  // 3. 延迟跳转回登录页
+                  setTimeout(() => {
+                    uni.reLaunch({
+                      url: '/pages/login' // 确保这里是你真实的登录页路径
+                    });
+                  }, 1000);
+                }, 500);
+              }
+            }
+          });
         }
-      });
-    }
+	
   }
 };
 </script>
