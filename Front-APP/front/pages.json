@@ -114,12 +114,6 @@
 	
 	
 	//*****************主页页面***************************
-    {
-      "path": "pages/release/index",
-      "style": {
-        "navigationBarTitleText": "发表"
-      }
-    },
    
 	{ 
       "path": "pages/question/index",
@@ -134,29 +128,6 @@
 	    "navigationBarTitleText": "全部资讯"
 	  }
 	},
-	
-	//-------------------广场系列页面开始---------------------
-	{
-	  "path": "pages/square/index",
-	  "style": {
-	    "navigationBarTitleText": "广场"
-	  }
-	},
-	
-	{
-	  "path": "pages/square/post_report",
-	  "style": {
-	    "navigationBarTitleText": "帖子举报"
-	  }
-	},
-	{
-	  "path": "pages/square/pay",
-	  "style": {
-	    "navigationBarTitleText": "支付"
-	  }
-	},
-	//-------------------广场系列页面结束---------------------
-	
 	
 	
 	//*****************个人中心页面***************************
@@ -231,50 +202,7 @@
         "navigationBarTitleText": "修改密码"
       }
     },
-	{
-	  "path": "pages/mine/myevaluate",
-	  "style": {
-	    "navigationBarTitleText": "我的评价"
-	  }
-	},
-	{
-	  "path": "pages/mine/mypost",
-	  "style": {
-	    "navigationBarTitleText": "我的发布"
-	  }
-	},
-	{
-	  "path": "pages/mine/fensi",
-	  "style": {
-	    "navigationBarTitleText": "我的粉丝"
-	  }
-	},
-	{
-	  "path": "pages/mine/guanzhu",
-	  "style": {
-	    "navigationBarTitleText": "我的关注"
-	  }
-	},
-	{
-	  "path": "pages/mine/evaluate_report",
-	  "style": {
-	    "navigationBarTitleText": "评价举报"
-	  }
-	},
 	
-	
-	{
-	  "path": "pages/mine/myreport",
-	  "style": {
-	    "navigationBarTitleText": "我的举报"
-	  }
-	},
-	{
-	  "path": "pages/mine/mycollect",
-	  "style": {
-	    "navigationBarTitleText": "我的收藏"
-	  }
-	},
 	{
 	  "path": "pages/indexes",
 	  "style": {
