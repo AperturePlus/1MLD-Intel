@@ -1,17 +1,17 @@
 <template>
   <view class="pwd-retrieve-container">
-	<uni-forms ref="form" :value="user" labelWidth="80px">
-	  <uni-forms-item name="newHeight" label="新">
-	    <uni-easyinput type="height" v-model="user.newHeight" placeholder="请输入新身高" />
+	<uni-forms ref="form" :value="user" labelWidth="100px">
+	  <uni-forms-item name="newHeight" label="身高">
+	    <uni-easyinput type="text" v-model="user.newHeight" placeholder="请输入身高（cm）" />
 	  </uni-forms-item>
-	  <uni-forms-item name="newWeight" label="新">
-	    <uni-easyinput type="weight" v-model="user.newWeight" placeholder="请输入新体重" />
+	  <uni-forms-item name="newWeight" label="体重">
+	    <uni-easyinput type="text" v-model="user.newWeight" placeholder="请输入体重（kg）" />
 	  </uni-forms-item>
-	  <uni-forms-item name="newGFR" label="新">
-	    <uni-easyinput type="GFR" v-model="user.newGFR" placeholder="请输入GFR" />
+	  <uni-forms-item name="newGFR" label="肾小球滤过率">
+	    <uni-easyinput type="text" v-model="user.newGFR" placeholder="请输入GFR（mL/min）" />
 	  </uni-forms-item>
-	  <uni-forms-item name="newComplications" label="新">
-	    <uni-easyinput type="complications" v-model="user.newComplications" placeholder="请输入新并发症情况" />
+	  <uni-forms-item name="newComplications" label="并发症情况">
+	    <uni-easyinput type="text" v-model="user.newComplications" placeholder="请描述当前并发症情况" />
 	  </uni-forms-item>
 	  <button type="primary" @click="submit">提交</button>
 	</uni-forms>
