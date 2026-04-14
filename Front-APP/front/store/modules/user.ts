@@ -1,7 +1,7 @@
 import config from '@/config'
 import storage from '@/utils/storage'
 import constant from '@/utils/constant'
-import { login, logout, getInfo } from '@/api/login'
+import { fetchCurrentUserInfo, loginByPassword, logoutAccount } from '@/api/auth'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 interface UserState {
@@ -60,7 +60,13 @@ const user = {
       const role = userInfo.role
 
       return new Promise((resolve, reject) => {
-        login(username, password, code, uuid, role)
+        loginByPassword({
+          username,
+          password,
+          code,
+          uuid,
+          role
+        })
           .then((res: any) => {
             setToken(res.msg)
             commit('SET_TOKEN', res.msg)
@@ -75,7 +81,7 @@ const user = {
 
     GetInfo({ commit }: any): Promise<any> {
       return new Promise((resolve, reject) => {
-        getInfo()
+        fetchCurrentUserInfo()
           .then((res: any) => {
             const currentUser = res.user
             const avatar =
@@ -107,7 +113,7 @@ const user = {
 
     LogOut({ commit, state }: any): Promise<void> {
       return new Promise((resolve, reject) => {
-        logout(state.token)
+        logoutAccount(state.token)
           .then(() => {
             commit('SET_TOKEN', '')
             commit('SET_ROLES', [])

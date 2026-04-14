@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-export function AddPost(data) {
+export function createPost(data: Record<string, unknown>) {
   return request({
     url: '/post/add',
     method: 'post',
@@ -8,15 +8,15 @@ export function AddPost(data) {
   })
 }
 
-export function getPost(params) {
+export function queryPosts(params?: Record<string, unknown>) {
   return request({
     url: '/post/five',
     method: 'get',
-	params
+    params
   })
 }
 
-export function getMyPosts(nickname) {
+export function getMyPosts(nickname: string) {
   return request({
     url: '/post/my',
     method: 'get',
@@ -24,29 +24,28 @@ export function getMyPosts(nickname) {
   })
 }
 
-export function deletePostById(id) {
+export function deletePostById(id: string) {
   return request({
     url: `/post/delete/${id}`,
     method: 'delete'
   })
 }
 
-// 获取待审核帖子（state = 0）
-export function getPendingPosts() {
+export function listPendingPosts() {
   return request({
     url: '/post/pending',
-    method: 'GET'
+    method: 'get'
   })
 }
 
-// 审核帖子：通过或不通过
-export function reviewPostById(id, state) {
+export function reviewPostById(id: string, state: string) {
   return request({
     url: '/post/review',
-    method: 'POST',
+    method: 'post',
     data: {
-      id: id.toString(),         // 👈 强制转成字符串
+      id: id.toString(),
       state: state.toString()
     }
   })
 }
+

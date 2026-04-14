@@ -19,7 +19,7 @@ export function showConfirm(content: string): Promise<any> {
   })
 }
 
-export function tansParams(params: Record<string, any>): string {
+export function serializeParams(params: Record<string, any>): string {
   let result = ''
 
   Object.keys(params || {}).forEach((propName) => {

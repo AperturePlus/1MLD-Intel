@@ -1,5 +1,6 @@
 import request from '@/utils/request'
-export function GetFollowships(params) {
+
+export function listFollowRelations(params: Record<string, unknown>) {
   return request({
     url: '/followship/followees',
     method: 'get',
@@ -7,7 +8,7 @@ export function GetFollowships(params) {
   })
 }
 
-export function GetFollowers(params) {
+export function listFollowerRelations(params: Record<string, unknown>) {
   return request({
     url: '/followship/followers',
     method: 'get',
@@ -15,7 +16,7 @@ export function GetFollowers(params) {
   })
 }
 
-export function AddFollowship(data) {
+export function addFollowRelation(data: Record<string, unknown>) {
   return request({
     url: '/followship/add',
     method: 'post',
@@ -23,7 +24,7 @@ export function AddFollowship(data) {
   })
 }
 
-export function DeleteFollowship(data) {
+export function removeFollowRelation(data: Record<string, unknown>) {
   return request({
     url: '/followship/delete',
     method: 'post',
@@ -31,7 +32,7 @@ export function DeleteFollowship(data) {
   })
 }
 
-export function CheckFollowship(params) {
+export function checkFollowRelation(params: Record<string, unknown>) {
   return request({
     url: '/followship/check',
     method: 'get',
