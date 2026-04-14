@@ -41,7 +41,12 @@ export default {
   data() {
     return {
       inputBottom: 0,
-      messages: [],
+      messages: [
+        {
+          content: '您好，我是数智肝循 AI 助手，专注于遗传代谢性肝病的健康咨询。您可以向我提问关于饮食管理、检查指标、基因检测、药物治疗等方面的问题。',
+          role: 'assistant'
+        }
+      ],
       inputMessage: ''
     }
   },
