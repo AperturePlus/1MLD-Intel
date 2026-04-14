@@ -2,11 +2,11 @@ import type { AxiosResponse } from 'axios'
 import service from './base'
 import type {
   ActivateLicenseRequest,
-  ApiEnvelope,
   FingerprintResponse,
   LicenseStatusResponse,
   LicenseValidationResponse
-} from './types'
+} from '@/types/license'
+import type { ApiEnvelope } from '@/types/common'
 
 const licenseApi = {
   getLicenseStatus(): Promise<AxiosResponse<ApiEnvelope<LicenseStatusResponse>>> {

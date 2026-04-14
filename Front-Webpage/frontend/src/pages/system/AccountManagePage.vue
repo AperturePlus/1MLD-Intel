@@ -113,11 +113,8 @@ import type { AxiosError } from 'axios'
 import { reactive, ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import identityApi from '@/api/identity'
-import type {
-  ApiEnvelope,
-  PagedResult,
-  UserAccountResponse
-} from '@/api/types'
+import type { ApiEnvelope, PagedResult } from '@/types/common'
+import type { UserAccountResponse } from '@/types/identity'
 
 type QueryFormModel = {
   usernameKeyword: string

@@ -20,7 +20,7 @@ import type {
   PatientRecordPathologySourceType,
   PatientRecordPayload,
   TernaryFlag
-} from '@/api/types'
+} from '@/types/patient'
 import {
   createInitialLaboratoryScreening,
   normalizeLaboratoryScreening

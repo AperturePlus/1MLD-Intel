@@ -1,15 +1,7 @@
 import type { AxiosResponse } from 'axios'
 import service from './base'
-import type { ApiEnvelope, PagedResult, UserAccountResponse } from './types'
-
-export interface UserAccountPageQuery {
-  page?: number
-  size?: number
-  usernameKeyword?: string
-  userType?: string
-  deptName?: string
-  status?: string
-}
+import type { ApiEnvelope, PagedResult } from '@/types/common'
+import type { UserAccountPageQuery, UserAccountResponse } from '@/types/identity'
 
 const parseTenantId = (value: unknown): number | null => {
   if (typeof value !== 'string' || !value.trim()) {

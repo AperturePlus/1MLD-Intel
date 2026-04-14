@@ -853,7 +853,7 @@ import type {
   PatientImportPreview,
   PatientRecordImagingModality,
   TernaryFlag
-} from '@/api/types'
+} from '@/types/patient'
 import {
   LABORATORY_SCREENING_CONFIG,
   type LaboratoryGroupConfig

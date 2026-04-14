@@ -3,7 +3,8 @@ import type { AxiosError } from 'axios'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import userApi from '@/api/user'
-import type { ApiEnvelope, LoginResponse } from '@/api/types'
+import type { LoginResponse } from '@/types/auth'
+import type { ApiEnvelope } from '@/types/common'
 
 type RegisterFormModel = {
   username: string
