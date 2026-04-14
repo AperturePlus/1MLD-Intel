@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import xenosoft.imldintelligence.module.identity.internal.config.IdentityVerificationProperties;
 import xenosoft.imldintelligence.module.identity.internal.service.VerificationEmailSender;
+import org.springframework.mail.javamail.MimeMailMessage;
 
 import java.time.Duration;
 

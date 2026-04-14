@@ -7,7 +7,9 @@
   min-height: calc(100vh - var(--electron-titlebar-safe-top));
   padding: 26px 20px 78px;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(9, 40, 52, 0.88), rgba(7, 63, 78, 0.86));
+  background: linear-gradient(-45deg, #071720, #0a252f, #0d3b49, #08212e);
+  background-size: 400% 400%;
+  animation: bgGradient 18s ease infinite;
 }
 
 .login-container::before,
@@ -24,7 +26,7 @@
   height: 260px;
   top: 8%;
   left: -68px;
-  background: rgba(52, 211, 184, 0.2);
+  background: rgba(52, 211, 184, 0.38);
   animation: drift 8s ease-in-out infinite;
 }
 
@@ -33,7 +35,7 @@
   height: 320px;
   right: -98px;
   bottom: 10%;
-  background: rgba(56, 189, 248, 0.22);
+  background: rgba(56, 189, 248, 0.42);
   animation: drift 9s ease-in-out infinite reverse;
 }
 
@@ -426,5 +428,17 @@
   .page-footer {
     position: static;
     margin-top: 16px;
+  }
+}
+
+@keyframes bgGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }

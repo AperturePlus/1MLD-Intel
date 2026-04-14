@@ -1,5 +1,7 @@
 <template>
   <div class="login-container">
+    <FloatingParticles />
+    <Liver3DModel />
     <div class="page-title">
       <h1>{{ BRANDING.shortName }}</h1>
       <h2>{{ BRANDING.systemName }}</h2>
@@ -151,6 +153,8 @@
 </template>
 
 <script setup lang="ts">
+import FloatingParticles from '@/features/auth/components/FloatingParticles.vue'
+import Liver3DModel from '@/features/auth/components/Liver3DModel.vue'
 import { useAuthPage } from '@/features/auth/composables/useAuthPage'
 import { BRANDING } from '@/constants/branding'
 
