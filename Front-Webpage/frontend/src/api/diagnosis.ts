@@ -1,16 +1,15 @@
 import type { AxiosError, AxiosResponse } from 'axios'
 import service from './base'
 import type {
-  ApiEnvelope,
   DiagnosisQueueResponse,
   DiagnosisResult,
   ExpertReport,
   ExpertReportListResponse,
-  PagedResult,
   ProgressStatus,
   SignExpertReportPayload,
   SignExpertReportResponse
-} from './types'
+} from '@/types/diagnosis'
+import type { ApiEnvelope, PagedResult } from '@/types/common'
 
 interface DiagnosisResultItemApi {
   id: number

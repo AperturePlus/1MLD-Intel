@@ -13,11 +13,13 @@ export interface AppInfo {
 
 export interface AppConfig {
   baseUrl: string
+  mockMode: 'full' | 'off'
   appInfo: AppInfo
 }
 
 const config: AppConfig = {
   baseUrl: 'http://localhost:9090',
+  mockMode: 'full',
   appInfo: {
     name: 'ruoyi-app',
     version: '1.1.0',

@@ -24,27 +24,27 @@
 	},
 	  
 	  {
-	  "path": "pages/forget_password",
+	  "path": "pages/forgot-password",
 	  "style": {
 	     "navigationStyle":"custom"  
 	  }
 	  },
 	  
 	  {
-	    "path": "pages/reset_password",
+	    "path": "pages/reset-password",
 	   "style": {
 	      "navigationStyle":"custom"  
 	   }
 	  },
 	  {
-	    "path": "pages/login_admin",
+	    "path": "pages/login-admin",
 	   "style": {
 	      "navigationStyle":"custom"  
 	   }
 	  },
 	  
 	  {
-	    "path": "pages/login_doctor",
+	    "path": "pages/login-doctor",
 	   "style": {
 	      "navigationStyle":"custom"  
 	   }
@@ -79,7 +79,7 @@
 	},
 	
 	{
-	  "path": "pages/admin/publish_edit",
+	  "path": "pages/admin/publish-edit",
 	 "style": {
 	    "navigationStyle":"custom"  
 	 }
@@ -92,7 +92,7 @@
 	},
 	
 	{
-	  "path": "pages/admin/post_review",
+	  "path": "pages/admin/post-review",
 	 "style": {
 	    "navigationStyle":"custom"  ,
 		"navigationBarTitleText": "帖子审核"
@@ -100,7 +100,7 @@
 	},
 	
 	{
-	  "path": "pages/admin/report_review",
+	  "path": "pages/admin/report-review",
 	 "style": {
 	    "navigationStyle":"custom"  ,
 		"navigationBarTitleText": "举报审核"
@@ -114,12 +114,6 @@
 	
 	
 	//*****************主页页面***************************
-    {
-      "path": "pages/release/index",
-      "style": {
-        "navigationBarTitleText": "发表"
-      }
-    },
    
 	{ 
       "path": "pages/question/index",
@@ -129,34 +123,11 @@
     },
 	
 	{
-	  "path": "pages/zixun/all",
+	  "path": "pages/articles/all",
 	  "style": {
 	    "navigationBarTitleText": "全部资讯"
 	  }
 	},
-	
-	//-------------------广场系列页面开始---------------------
-	{
-	  "path": "pages/square/index",
-	  "style": {
-	    "navigationBarTitleText": "广场"
-	  }
-	},
-	
-	{
-	  "path": "pages/square/post_report",
-	  "style": {
-	    "navigationBarTitleText": "帖子举报"
-	  }
-	},
-	{
-	  "path": "pages/square/pay",
-	  "style": {
-	    "navigationBarTitleText": "支付"
-	  }
-	},
-	//-------------------广场系列页面结束---------------------
-	
 	
 	
 	//*****************个人中心页面***************************
@@ -167,13 +138,13 @@
       }
     },
 	{
-	  "path": "pages/mine/setting/index",
+	  "path": "pages/mine/settings/index",
 	  "style": {
 	    "navigationBarTitleText": "账号设置"
 	  }
 	},
 	{
-	  "path": "pages/user_detail",
+	  "path": "pages/user-detail",
 	  "style": {
 	    "navigationBarTitleText": "用户详情"
 	  }
@@ -219,7 +190,7 @@
     },
 	
 	{
-	      "path": "pages/mine/info/confirmPage",
+	      "path": "pages/mine/info/confirm-page",
 	      "style": {
 	        "navigationBarTitleText": "确认信息"
 	      }
@@ -231,59 +202,16 @@
         "navigationBarTitleText": "修改密码"
       }
     },
-	{
-	  "path": "pages/mine/myevaluate",
-	  "style": {
-	    "navigationBarTitleText": "我的评价"
-	  }
-	},
-	{
-	  "path": "pages/mine/mypost",
-	  "style": {
-	    "navigationBarTitleText": "我的发布"
-	  }
-	},
-	{
-	  "path": "pages/mine/fensi",
-	  "style": {
-	    "navigationBarTitleText": "我的粉丝"
-	  }
-	},
-	{
-	  "path": "pages/mine/guanzhu",
-	  "style": {
-	    "navigationBarTitleText": "我的关注"
-	  }
-	},
-	{
-	  "path": "pages/mine/evaluate_report",
-	  "style": {
-	    "navigationBarTitleText": "评价举报"
-	  }
-	},
-	
 	
 	{
-	  "path": "pages/mine/myreport",
-	  "style": {
-	    "navigationBarTitleText": "我的举报"
-	  }
-	},
-	{
-	  "path": "pages/mine/mycollect",
-	  "style": {
-	    "navigationBarTitleText": "我的收藏"
-	  }
-	},
-	{
-	  "path": "pages/indexes",
+	  "path": "pages/assessment-form",
 	  "style": {
 	    "navigationBarTitleText": "我的指标"
 	  }
 	},
 	
 	{
-	  "path": "pages/statistic",
+	  "path": "pages/assessment-result",
 	  "style": {
 	    "navigationBarTitleText": "我的数据"
 	  }
@@ -334,13 +262,13 @@
         "text": "首页"
       },
       {
-        "pagePath": "pages/statistic",
+        "pagePath": "pages/assessment-result",
         "iconPath": "static/images/tabbar/basics.png",
         "selectedIconPath": "static/images/tabbar/basics.png",
         "text": "评估"
       },
 	 {
-	   "pagePath": "pages/indexes",
+	   "pagePath": "pages/assessment-form",
 	   "iconPath": "static/images/tabbar/release.png",
 	   "selectedIconPath": "static/images/tabbar/release.png",
 	   "text": "指标"

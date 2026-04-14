@@ -7,7 +7,7 @@ import type {
   RegenerateDietPlanResponse,
   ScreeningOverviewQuery,
   ScreeningOverviewResponse
-} from './types'
+} from '@/types/management'
 
 const managementApi = {
   getScreeningOverview(

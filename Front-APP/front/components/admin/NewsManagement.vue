@@ -34,13 +34,15 @@
 
 <script>
 	import {
-		getAdvice,deleteAdvice
+		queryArticles,
+		deleteArticle
 	} from '@/api/system/advice'
 	import config from '@/config'
 export default {
   data() {
     return {
-      newsList: []
+      newsList: [],
+      searchKeyword: ''
     }
   },
   
@@ -51,8 +53,8 @@ export default {
   
   methods: {
     handleSearch(e) {
-      console.log('搜索内容:', e.value)
-      // 实际项目中这里调用搜索接口
+    this.searchKeyword = (e && e.value) || ''
+    this.search()
     },
 	
 	getImagePath(imageName) {
@@ -68,7 +70,7 @@ export default {
 	
     editNews(item) {
       uni.navigateTo({
-        url: `/pages/admin/publish_edit?id=${item.id}`
+        url: `/pages/admin/publish-edit?id=${item.id}`
       })
     },
 	
@@ -79,7 +81,7 @@ export default {
            success: (res) => {
              if (res.confirm) {
                // 调用后端接口
-               deleteAdvice(id).then(() => {
+				   deleteArticle(id).then(() => {
                  // 删除成功后从前端列表移除
                  this.newsList.splice(index, 1)
                  uni.showToast({
@@ -99,18 +101,15 @@ export default {
        },
 	
 	loadData() {
-		console.log('开始加载资讯数据');
 		// 获取健康资讯
-		getAdvice().then(res => {
-			console.log('获取到的数据:', res);
-			this.newsList = res.data;
+    queryArticles().then(res => {
+      this.newsList = (res && res.data) || [];
 		});
 	},
 	
 	search() {
-		console.log(this.query)
-		getAdvice({param:this.query}).then(res => {
-			this.newsList = res.data;
+    queryArticles({ param: this.searchKeyword }).then(res => {
+      this.newsList = (res && res.data) || [];
 		});
 	}
   }

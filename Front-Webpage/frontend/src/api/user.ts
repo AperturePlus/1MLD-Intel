@@ -1,7 +1,6 @@
 import type { AxiosResponse } from 'axios'
 import service from './base'
 import type {
-  ApiEnvelope,
   EmailCodeSendResponse,
   ForgotPasswordRequest,
   LoginRequest,
@@ -10,7 +9,8 @@ import type {
   RegisterResponse,
   ResetPasswordRequest,
   SendRegistrationEmailCodeRequest
-} from './types'
+} from '@/types/auth'
+import type { ApiEnvelope } from '@/types/common'
 
 const userApi = {
   login(data: LoginRequest): Promise<AxiosResponse<ApiEnvelope<LoginResponse>>> {

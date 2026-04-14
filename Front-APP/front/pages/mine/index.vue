@@ -3,40 +3,40 @@
     <view class="header">
       <view class="user-info-box">
         <view class="avatar-wrap">
-          <image class="avatar" :src="userInfo.avatar || '/static/images/default-avatar.png'" mode="aspectFill"></image>
+          <image class="avatar" :src="userProfile.avatar || '/static/images/default-avatar.png'" mode="aspectFill"></image>
         </view>
         <view class="info-text">
           <view class="name-line">
-            <text class="user-name">{{ userInfo.name || '未登录用户' }}</text>
-            <text class="role-tag" v-if="userInfo.role === 'patient'">认证患者</text>
+            <text class="user-name">{{ userProfile.name || '未登录用户' }}</text>
+            <text class="role-tag" v-if="userProfile.role === 'patient'">认证患者</text>
           </view>
-          <text class="phone">{{ maskPhone(userInfo.phone) || '登录同步云端数据' }}</text>
+          <text class="phone">{{ maskPhone(userProfile.phone) || '登录同步云端数据' }}</text>
         </view>
       </view>
     </view>
 
     <view class="content-wrapper">
       <view class="quick-action-card flex justify-around">
-        <view class="action-item" @click="navigateTo('/pages/records/index')">
+        <view class="action-item" @click="navigateTo('/pages/assessment-form')">
           <text class="action-num">12</text>
           <text class="action-label">健康档案</text>
         </view>
-        <view class="action-item" @click="navigateTo('/pages/assessment/history')">
+        <view class="action-item" @click="navigateTo('/pages/assessment-result')">
           <text class="action-num">3</text>
           <text class="action-label">评估记录</text>
         </view>
-        <view class="action-item" @click="navigateTo('/pages/consult/index')">
+        <view class="action-item" @click="navigateTo('/pages/question/index')">
           <text class="action-num">1</text>
           <text class="action-label">问诊记录</text>
         </view>
-        <view class="action-item" @click="navigateTo('/pages/mine/favorite')">
+        <view class="action-item" @click="navigateTo('/pages/articles/all')">
           <text class="action-num">8</text>
           <text class="action-label">我的收藏</text>
         </view>
       </view>
 
       <view class="menu-list-card">
-        <view class="menu-item" @click="navigateTo('/pages/mine/profile')">
+        <view class="menu-item" @click="navigateTo('/pages/mine/info/index')">
           <view class="menu-left">
             <text class="iconfont icon-user menu-icon" style="color: #2b85e4;"></text>
             <text class="menu-text">个人资料</text>
@@ -46,7 +46,7 @@
           </view>
         </view>
 
-        <view class="menu-item" @click="navigateTo('/pages/mine/settings')">
+        <view class="menu-item" @click="navigateTo('/pages/mine/settings/index')">
           <view class="menu-left">
             <text class="iconfont icon-setting menu-icon" style="color: #19be6b;"></text>
             <text class="menu-text">隐私与安全</text>
@@ -71,7 +71,7 @@
       <view class="logout-section">
         <button class="logout-btn" @click="handleLogout">退出登录</button>
       </view>
-      
+
       <view class="footer-copyright">
         <text class="copyright-text">© 2026 四川大学华西临床医学院IMLD课题组</text>
       </view>
@@ -80,48 +80,47 @@
 </template>
 
 <script>
+import { getUserProfile } from '@/api/system/user'
+
 export default {
   data() {
     return {
-      // 模拟更真实的用户信息
-      userInfo: {
-        name: '李晓华',
-        phone: '13987654321',
-        // 替换为一张有真实感、温和的女性患者肖像图（网络免版权高清图）
-        avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80', 
+      userProfile: {
+        name: '',
+        phone: '',
+        avatar: '',
         role: 'patient'
       }
-    };
+    }
   },
   onLoad() {
-    // 页面加载时获取最新的用户信息
-    this.getUserInfo();
+    this.loadUserProfile()
   },
   methods: {
-    // 获取用户信息
-    getUserInfo() {
-      // 实际开发中请从 Vuex (this.$store.state.user.userInfo) 或 uni.getStorageSync 获取
-      // 这里保留静态数据用于展示页面效果
-    },
-    
-    // 手机号脱敏处理 (139****4321)
-    maskPhone(phone) {
-      if (!phone) return '';
-      return phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
-    },
-
-    // 页面跳转统一处理
-    navigateTo(url) {
-      if (!url) return;
-      uni.navigateTo({
-        url: url,
-        fail: () => {
-          uni.showToast({ title: '功能开发中', icon: 'none' });
+    loadUserProfile() {
+      getUserProfile().then((response) => {
+        const data = (response && response.data) || {}
+        this.userProfile = {
+          name: data.nickname || data.userName || '未登录用户',
+          phone: data.phone || '',
+          avatar: data.avatar || '/static/images/default-avatar.png',
+          role: 'patient'
         }
-      });
+      })
     },
-
-    // 关于平台点击事件
+    maskPhone(phone) {
+      if (!phone) return ''
+      return phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')
+    },
+    navigateTo(url) {
+      if (!url) return
+      uni.navigateTo({
+        url,
+        fail: () => {
+          uni.showToast({ title: '功能开发中', icon: 'none' })
+        }
+      })
+    },
     handleAbout() {
       uni.showModal({
         title: '关于数智肝循',
@@ -129,53 +128,41 @@ export default {
         showCancel: false,
         confirmText: '了解',
         confirmColor: '#2b85e4'
-      });
+      })
     },
-
-    // 退出登录核心逻辑
     handleLogout() {
       uni.showModal({
         title: '提示',
         content: '确定要退出当前账号吗？',
-        confirmColor: '#fa3534', // 退出确认按钮用红色警示
+        confirmColor: '#fa3534',
         success: (res) => {
-          if (res.confirm) {
-            uni.showLoading({ title: '退出中...' });
-            
-            // 触发 Vuex 的退出登录 action (根据你的实际项目结构调整)
-            this.$store.dispatch('LogOut').then(() => {
-              uni.hideLoading();
-              uni.showToast({ title: '已退出登录', icon: 'success' });
-              
-              // 延迟跳转回登录页，保证 toast 能看清
-              setTimeout(() => {
-                uni.reLaunch({
-                  url: '/pages/login' // 替换为你的实际登录页路径
-                });
-              }, 1000);
-            }).catch(() => {
-              uni.hideLoading();
-              uni.showToast({ title: '退出失败，请重试', icon: 'none' });
-            });
+          if (!res.confirm) {
+            return
           }
+          uni.showLoading({ title: '退出中...' })
+          this.$store.dispatch('LogOut').then(() => {
+            uni.hideLoading()
+            uni.showToast({ title: '已退出登录', icon: 'success' })
+            uni.reLaunch({
+              url: '/pages/login'
+            })
+          })
         }
-      });
+      })
     }
   }
-};
+}
 </script>
 
 <style scoped>
-/* 全局背景 */
 .container {
   min-height: 100vh;
   background-color: #f4f6f9;
 }
 
-/* 头部渐变背景与用户信息 */
 .header {
   background: linear-gradient(135deg, #2b85e4 0%, #005eaa 100%);
-  padding: 100rpx 40rpx 120rpx; /* 顶部留出状态栏空间，底部留足悬浮空间 */
+  padding: 100rpx 40rpx 120rpx;
   border-bottom-left-radius: 40rpx;
   border-bottom-right-radius: 40rpx;
 }
@@ -234,13 +221,11 @@ export default {
   color: rgba(255, 255, 255, 0.85);
 }
 
-/* 内容区上浮悬浮 */
 .content-wrapper {
   padding: 0 30rpx;
   margin-top: -60rpx;
 }
 
-/* 快捷操作卡片 */
 .quick-action-card {
   background-color: #ffffff;
   border-radius: 20rpx;
@@ -270,7 +255,6 @@ export default {
   color: #666666;
 }
 
-/* 菜单列表卡片 */
 .menu-list-card {
   background-color: #ffffff;
   border-radius: 20rpx;
@@ -317,7 +301,6 @@ export default {
   margin-right: 10rpx;
 }
 
-/* 纯 CSS 绘制的向右小箭头 */
 .arrow {
   width: 14rpx;
   height: 14rpx;
@@ -326,14 +309,13 @@ export default {
   transform: rotate(45deg);
 }
 
-/* 退出登录按钮区 */
 .logout-section {
   margin-bottom: 40rpx;
 }
 
 .logout-btn {
   background-color: #ffffff;
-  color: #fa3534; /* 红色字体表示退出/危险操作 */
+  color: #fa3534;
   font-size: 32rpx;
   font-weight: bold;
   height: 90rpx;
@@ -347,7 +329,6 @@ export default {
   border: none;
 }
 
-/* 底部版权 */
 .footer-copyright {
   text-align: center;
   padding-bottom: 40rpx;

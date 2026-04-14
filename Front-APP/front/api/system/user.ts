@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 import upload from '@/utils/upload'
 
-export function listUser(data: { param: string; [key: string]: unknown }): Promise<any> {
+export function listUsers(data: { param: string; [key: string]: unknown }): Promise<any> {
   return request({
     url: `/user/list/${data.param}`,
     method: 'post',
@@ -9,7 +9,7 @@ export function listUser(data: { param: string; [key: string]: unknown }): Promi
   })
 }
 
-export function getUser(params: Record<string, unknown>): Promise<any> {
+export function queryUsers(params: Record<string, unknown>): Promise<any> {
   return request({
     url: '/user/five',
     method: 'get',
@@ -17,7 +17,7 @@ export function getUser(params: Record<string, unknown>): Promise<any> {
   })
 }
 
-export function getOneUser(nickname: string): Promise<any> {
+export function getUserByNickname(nickname: string): Promise<any> {
   return request({
     url: '/user/one',
     method: 'get',
@@ -27,7 +27,7 @@ export function getOneUser(nickname: string): Promise<any> {
   })
 }
 
-export function updateUserPwd(data: Record<string, unknown>): Promise<any> {
+export function updateUserPassword(data: Record<string, unknown>): Promise<any> {
   return request({
     url: '/user/updatePassword',
     method: 'get',
@@ -50,7 +50,7 @@ export function updateUserProfile(data: Record<string, unknown>): Promise<any> {
   })
 }
 
-export function uploadAvatar(data: { name: string; filePath: string }): Promise<any> {
+export function uploadUserAvatar(data: { name: string; filePath: string }): Promise<any> {
   return upload({
     url: '/system/user/profile/avatar',
     name: data.name,
@@ -58,7 +58,7 @@ export function uploadAvatar(data: { name: string; filePath: string }): Promise<
   })
 }
 
-export function setDiet(data: Record<string, unknown>): Promise<any> {
+export function updateDietPreference(data: Record<string, unknown>): Promise<any> {
   return request({
     url: '/user/setDiet',
     method: 'get',
@@ -66,7 +66,7 @@ export function setDiet(data: Record<string, unknown>): Promise<any> {
   })
 }
 
-export function register(data: Record<string, unknown>): Promise<any> {
+export function registerUser(data: Record<string, unknown>): Promise<any> {
   return request({
     url: '/user/register',
     method: 'post',
@@ -74,7 +74,7 @@ export function register(data: Record<string, unknown>): Promise<any> {
   })
 }
 
-export function getCodeImg(): Promise<any> {
+export function fetchCaptchaImage(): Promise<any> {
   return request({
     url: '/captchaImage',
     headers: {

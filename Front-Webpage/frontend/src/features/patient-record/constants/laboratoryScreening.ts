@@ -1,4 +1,4 @@
-import type { PatientRecordLaboratoryScreening } from '@/api/types'
+import type { PatientRecordLaboratoryScreening } from '@/types/patient'
 
 export type LaboratoryFieldInputType = 'text' | 'select'
 

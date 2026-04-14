@@ -76,10 +76,10 @@ import { ElMessage } from 'element-plus'
 import licenseApi from '@/api/license'
 import type {
   ActivateLicenseRequest,
-  ApiEnvelope,
   LicenseStatusResponse,
   LicenseValidationResponse
-} from '@/api/types'
+} from '@/types/license'
+import type { ApiEnvelope } from '@/types/common'
 
 const status = ref<LicenseStatusResponse | null>(null)
 const validationResult = ref<LicenseValidationResponse | null>(null)

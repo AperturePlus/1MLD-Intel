@@ -2,7 +2,8 @@ import store from '@/store'
 import config from '@/config'
 import { getToken } from '@/utils/auth'
 import errorCode from '@/utils/errorCode'
-import { toast, showConfirm, tansParams } from '@/utils/common'
+import { toast, showConfirm, serializeParams } from '@/utils/common'
+import { handleMockUpload } from '@/mock'
 
 interface UploadOptions {
   url: string
@@ -31,18 +32,29 @@ const upload = (options: UploadOptions): Promise<any> => {
   }
 
   if (uploadConfig.params) {
-    let url = `${uploadConfig.url}?${tansParams(uploadConfig.params as Record<string, any>)}`
+    let url = `${uploadConfig.url}?${serializeParams(uploadConfig.params as Record<string, any>)}`
     url = url.slice(0, -1)
     uploadConfig.url = url
   }
 
   return new Promise((resolve, reject) => {
-    console.log('即将调用 uni.uploadFile，完整配置：', {
-      url: `${baseUrl}${uploadConfig.url}`,
-      filePath: uploadConfig.filePath,
-      header: uploadConfig.header,
-      formData: uploadConfig.formData
-    })
+    if (config.mockMode === 'full') {
+      handleMockUpload({
+        url: uploadConfig.url,
+        filePath: uploadConfig.filePath,
+        name: uploadConfig.name || 'file',
+        formData: uploadConfig.formData,
+        params: uploadConfig.params
+      })
+        .then((result) => {
+          resolve(result)
+        })
+        .catch((error) => {
+          toast(error?.message || 'Mock 上传异常')
+          reject(error)
+        })
+      return
+    }
 
     uni.uploadFile({
       timeout: uploadConfig.timeout || timeout,
@@ -52,8 +64,6 @@ const upload = (options: UploadOptions): Promise<any> => {
       header: uploadConfig.header,
       formData: uploadConfig.formData,
       success: (res: any) => {
-        console.log('upload 成功回调：', res)
-
         const result = JSON.parse(res.data || '{}')
         const code = Number(result.code || 200)
         const msg = errorCode[String(code)] || result.msg || errorCode.default
@@ -68,7 +78,7 @@ const upload = (options: UploadOptions): Promise<any> => {
             if (modalRes.confirm) {
               store.dispatch('LogOut').then(() => {
                 uni.reLaunch({
-                  url: '/pages/login/login'
+                  url: '/pages/login'
                 })
               })
             }

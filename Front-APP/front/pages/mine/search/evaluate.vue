@@ -35,9 +35,9 @@
 </template>
 
 <script>
-import config from '@/config'
 import upload from '@/utils/upload'
-import { getUserProfile } from "@/api/system/user"
+import { getUserProfile } from '@/api/system/user'
+import { createReport } from '@/api/system/report'
 
 export default {
 	
@@ -61,19 +61,17 @@ export default {
   
   onLoad(options) {
     if (options.nickname) {
-  	  console.log("nickname",options.nickname)
-      this.form.reporteenickname=options.nickname
-  	  console.log("执行了加载程序",this.reporteenickname)
+      this.form.reporteenickname = decodeURIComponent(options.nickname)
     }
 	this.getUser();
   },
   
   methods: {
 	  getUser() {
-	      getUserProfile().then(response => {
-	        this.form.reporternickname = response.data.nickname;
-	      });
-	    },
+        getUserProfile().then(response => {
+          this.form.reporternickname = response.data.nickname
+        })
+      },
 		
 		getCurrentTime() {
 		  const now = new Date()
@@ -92,7 +90,6 @@ export default {
         success: (res) => {
           this.localFilePath = res.tempFilePaths[0]
           this.localImagePath = this.localFilePath
-		  console.log("当前图片路径：", this.localFilePath)
         }
       })
     },
@@ -109,45 +106,18 @@ export default {
       this.form.imageUrl = ''
     },
 	
-	//上传图片相关逻辑************************************
     async uploadImage() {
       if (!this.localFilePath) {
         throw new Error('未选择图片')
       }
-      console.log("开始上传图片，路径：", this.localFilePath)
-      return new Promise((resolve, reject) => {
-        uni.uploadFile({
-          url: config.baseUrl + '/upload/report', // 拼接完整后端接口
-          filePath: this.localFilePath,
-          name: 'file', // 后端用 @RequestParam("file") 对应的字段
-          success: (res) => {
-            console.log("uploadFile 返回：", res)
-            try {
-              const result = JSON.parse(res.data)
-              if (result.code === 200) {
-                console.log("文件名：", result.fileName)
-                resolve(result.fileName)
-              } else {
-                uni.showToast({ title: result.msg || '上传失败', icon: 'none' })
-                reject(result)
-              }
-            } catch (e) {
-              console.error("JSON 解析失败：", res.data)
-              reject(e)
-            }
-          },
-          fail: (err) => {
-            console.error("上传失败：", err)
-            uni.showToast({ title: '图片上传失败', icon: 'none' })
-            reject(err)
-          }
-        })
-      })
+      return upload({
+        url: '/upload/report',
+        filePath: this.localFilePath,
+        name: 'file'
+      }).then((result) => (result.data && result.data.fileName) || result.fileName || '')
     },
 	
 	
-  //上传表单相关逻辑************************************
-  //注意检测是否为空的逻辑在下面更改-------------------------------
     async submitForm() {
       if (!this.form.content || !this.form.title) {
         return uni.showToast({ title: '请填写完整信息', icon: 'none' })
@@ -155,29 +125,31 @@ export default {
       if (!this.localFilePath) {
         return uni.showToast({ title: '请先选择图片', icon: 'none' })
       }
-
-     
-		 
       try {
-        // 上传图片并获取文件名
+        const reporteeNickname = this.form.reporteenickname
+        const reporterNickname = this.form.reporternickname
         const fileName = await this.uploadImage()
         this.form.imageUrl = fileName
-		this.isSubmitting = true
-		this.form.createtime = this.getCurrentTime()
-		
-        console.log("提交的数据：", this.form)
-        // 提交表单数据
-        await uni.request({
-          url: config.baseUrl + '/report/add',
-          method: 'POST',
-          data: this.form,
-          header: { 'Content-Type': 'application/json' }
+        this.isSubmitting = true
+        this.form.createtime = this.getCurrentTime()
+
+        await createReport({
+          ...this.form,
+          imageUrl: fileName
         })
 
         uni.showToast({ title: '更新成功', icon: 'success' })
 
-        // 重置表单
-        this.form = { title: '', solution: '', imageUrl: '' }
+        this.form = {
+			title:'',
+			imageUrl: '',
+      reporteenickname: reporteeNickname,
+      reporternickname: reporterNickname,
+			content:'',
+			state:'0',
+			type:'user_evaluate',
+			createtime:''
+		}
         this.localImagePath = ''
         this.localFilePath = ''
       } catch (err) {

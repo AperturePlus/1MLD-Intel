@@ -3,24 +3,21 @@ import config from '@/config'
 import { getToken } from '@/utils/auth'
 import errorCode from '@/utils/errorCode'
 import { toast, showConfirm } from '@/utils/common'
-
-interface RequestOptions {
-  url: string
-  method?: string
-  timeout?: number
-  baseUrl?: string
-  params?: Record<string, unknown>
-  data?: Record<string, unknown> | unknown
-  header?: Record<string, any>
-  headers?: Record<string, any>
-}
+import { handleMockRequest } from '@/mock'
+import { ApiResponse, RequestConfig } from '@/types/api'
 
 const timeout = 10000
 const baseUrl = config.baseUrl
 
-const request = (options: RequestOptions): Promise<any> => {
+const handleResponseCode = (responseData: Record<string, any>) => {
+  const code = Number(responseData.code || 200)
+  const msg = errorCode[String(code)] || responseData.msg || errorCode.default
+  return { code, msg }
+}
+
+const request = (options: RequestConfig): Promise<any> => {
   const isToken = (options.headers || {}).isToken === false
-  const requestConfig: RequestOptions = {
+  const requestConfig: RequestConfig = {
     ...options,
     header: options.header || {}
   }
@@ -31,11 +28,38 @@ const request = (options: RequestOptions): Promise<any> => {
   }
 
   return new Promise((resolve, reject) => {
+    const requestMethod = (requestConfig.method || 'get').toUpperCase()
+    const requestData = requestConfig.params || requestConfig.data || {}
+    const requestUrl = requestConfig.baseUrl || `${baseUrl}${requestConfig.url}`
+
+    if (config.mockMode === 'full') {
+      handleMockRequest({
+        method: requestMethod,
+        url: requestUrl,
+        data: requestData,
+        headers: requestConfig.header
+      })
+        .then((responseData: ApiResponse<any>) => {
+          const { code, msg } = handleResponseCode(responseData as any)
+          if (code !== 200) {
+            toast(msg)
+            reject(code)
+            return
+          }
+          resolve(responseData)
+        })
+        .catch((error: any) => {
+          toast(error?.message || 'Mock 请求异常')
+          reject(error)
+        })
+      return
+    }
+
     uni.request({
       method: requestConfig.method || 'get',
       timeout: requestConfig.timeout || timeout,
-      url: requestConfig.baseUrl || `${baseUrl}${requestConfig.url}`,
-      data: requestConfig.params || requestConfig.data || {},
+      url: requestUrl,
+      data: requestData,
       header: requestConfig.header,
       dataType: 'json'
     })
@@ -49,8 +73,7 @@ const request = (options: RequestOptions): Promise<any> => {
         }
 
         const responseData = (res && res.data) || {}
-        const code = Number(responseData.code || 200)
-        const msg = errorCode[String(code)] || responseData.msg || errorCode.default
+        const { code, msg } = handleResponseCode(responseData)
 
         if (code === 401) {
           showConfirm('登录状态已过期，您可以继续留在该页面，或者重新登录?').then((modalRes: any) => {

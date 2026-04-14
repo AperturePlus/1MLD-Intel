@@ -1,7 +1,6 @@
 import type { AxiosResponse } from 'axios'
 import service from './base'
 import type {
-  ApiEnvelope,
   CreatePatientRecordResponse,
   HisLisPatientImportRequest,
   OcrPatientImportRequest,
@@ -9,7 +8,8 @@ import type {
   PatientListQuery,
   PatientListResponse,
   PatientRecordPayload
-} from './types'
+} from '@/types/patient'
+import type { ApiEnvelope } from '@/types/common'
 
 const parseTenantId = (value: unknown): number | null => {
   if (typeof value !== 'string' || !value.trim()) {

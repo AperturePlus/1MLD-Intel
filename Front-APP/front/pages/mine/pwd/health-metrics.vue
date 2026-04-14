@@ -19,44 +19,43 @@
 </template>
 
 <script>
-  import { updateUserPwd } from "@/api/system/user"
+  import { updateDietPreference } from '@/api/system/user'
 
   export default {
     data() {
       return {
         user: {
-          oldPassword: undefined,
-          newPassword: undefined,
-          confirmPassword: undefined
+          newHeight: '',
+          newWeight: '',
+          newGFR: '',
+          newComplications: ''
         },
         rules: {
-          oldPassword: {
+          newHeight: {
             rules: [{
               required: true,
-              errorMessage: '旧密码不能为空'
+              errorMessage: '身高不能为空'
             }]
           },
-          newPassword: {
+          newWeight: {
             rules: [{
                 required: true,
-                errorMessage: '新密码不能为空',
-              },
-              {
-                minLength: 6,
-                maxLength: 20,
-                errorMessage: '长度在 6 到 20 个字符'
+                errorMessage: '体重不能为空'
               }
             ]
           },
-          confirmPassword: {
+          newGFR: {
             rules: [{
                 required: true,
-                errorMessage: '确认密码不能为空'
-              }, {
-                validateFunction: (rule, value, data) => data.newPassword === value,
-                errorMessage: '两次输入的密码不一致'
+                errorMessage: 'GFR 不能为空'
               }
             ]
+          },
+          newComplications: {
+            rules: [{
+              required: true,
+              errorMessage: '并发症情况不能为空'
+            }]
           }
         }
       }
@@ -67,7 +66,12 @@
     methods: {
       submit() {
         this.$refs.form.validate().then(res => {
-          updateUserPwd(this.user.oldPassword, this.user.newPassword).then(response => {
+          updateDietPreference({
+            height: this.user.newHeight,
+            weight: this.user.newWeight,
+            gfr: this.user.newGFR,
+            complications: this.user.newComplications
+          }).then(response => {
             this.$modal.msgSuccess("修改成功")
           })
         })

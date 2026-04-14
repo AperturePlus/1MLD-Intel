@@ -2,7 +2,7 @@
   <view class="container">
     <view class="header">
       <text class="title">AI 智能营养处方</text>
-      <text class="subtitle">基于您的临床指标与代谢性肾病特征，AI 已为您生成今日专属的【低蛋白、低磷钾】护肾食谱。</text>
+      <text class="subtitle">基于您的临床指标与遗传代谢性肝病特征，AI 已为您生成今日专属的低铜护肝食谱。</text>
     </view>
 
     <view class="content-wrapper">
@@ -90,61 +90,28 @@
 </template>
 
 <script>
+import { fetchDailyRecipe } from '@/api/recipe'
+
 export default {
   data() {
     return {
-      // 早餐数据
-      breakfast: [
-        {
-          name: '麦淀粉煎饼 (100g)',
-          desc: '提供充足碳水化合物，且几乎不含非优质植物蛋白，减轻肾脏代谢负担。',
-          img: 'https://images.unsplash.com/photo-1528207776546-365bb710ee93?w=400&q=80', // 煎饼/面饼图
-          tags: ['高热量', '极低蛋白']
-        },
-        {
-          name: '水煮水嫩蛋清 (2个)',
-          desc: '弃去富含磷的蛋黄，仅保留蛋清，补充人体必需的高生物价优质蛋白。',
-          img: 'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80', // 鸡蛋/蛋清图
-          tags: ['优质蛋白', '无磷']
-        }
-      ],
-      // 午餐数据
-      lunch: [
-        {
-          name: '清蒸鲈鱼 (50g)',
-          desc: '优选深水或淡水白肉鱼，控制分量，提供优质蛋白及 Omega-3 脂肪酸。',
-          img: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80', // 鱼肉/健康餐图
-          tags: ['优质低蛋白', '易消化']
-        },
-        {
-          name: '水煮焯水冬瓜 (150g)',
-          desc: '冬瓜利尿消肿且含钾极低。烹饪前需“开水焯烫去汤”以进一步去除钾离子。',
-          img: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80', // 绿色蔬菜沙拉图
-          tags: ['低钾', '利尿消肿']
-        },
-        {
-          name: '低蛋白大米饭 (1碗)',
-          desc: '特制低蛋白大米，口感软糯，帮助患者在控制蛋白的同时吃饱吃好。',
-          img: 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=400&q=80', // 米饭图
-          tags: ['主食替换']
-        }
-      ],
-      // 晚餐数据
-      dinner: [
-        {
-          name: '蒜蓉炒西葫芦 (150g)',
-          desc: '西葫芦属于低钾瓜果类蔬菜，适合肾病患者，使用少量植物油清炒。',
-          img: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80', // 蔬菜/炒菜图
-          tags: ['低钾低磷', '高膳食纤维']
-        },
-        {
-          name: '纯藕粉羹 (1碗)',
-          desc: '作为晚餐主食，藕粉几乎不含蛋白质，且能提供饱腹感和热量，护肾佳品。',
-          img: 'https://images.unsplash.com/photo-1582515073490-39981397c445?w=400&q=80', // 汤羹/糊状食物图
-          tags: ['零蛋白', '护肾淀粉']
-        }
-      ]
+      breakfast: [],
+      lunch: [],
+      dinner: []
     };
+  },
+  onLoad() {
+    this.loadRecipe()
+  },
+  methods: {
+    loadRecipe() {
+      fetchDailyRecipe().then((res) => {
+        const data = (res && res.data) || {}
+        this.breakfast = data.breakfast || []
+        this.lunch = data.lunch || []
+        this.dinner = data.dinner || []
+      })
+    }
   }
 };
 </script>

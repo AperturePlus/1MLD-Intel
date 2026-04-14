@@ -33,102 +33,106 @@
 
 <script>
 import config from '@/config'
-import { getUserProfile } from '@/api/system/user' // 确保这个方法支持按 nickname 查询
+import { getUserByNickname, getUserProfile } from '@/api/system/user'
+import { addFollowRelation, checkFollowRelation, removeFollowRelation } from '@/api/system/follow'
 
 export default {
   data() {
     return {
       user: null,
-	  follower:'',
-	  followee:'',
-      isFollowing: false // 初始状态为未关注
+      currentUserNickname: '',
+      currentUserImageUrl: '',
+      isFollowing: false
     }
   },
-  onLoad(options) {
-    if (options.nickname) {
-      console.log("nickname",options.nickname)
-      this.loadUser(options.nickname)
-      console.log("执行了加载程序")
-      // 这里可以添加检查是否已关注的逻辑
-      // this.checkFollowStatus(options.nickname)
+  async onLoad(options) {
+    const nickname = options.nickname ? decodeURIComponent(options.nickname) : ''
+    if (!nickname) {
+      return
     }
+    await Promise.all([this.loadCurrentUser(), this.loadUser(nickname)])
+    await this.loadFollowStatus()
   },
   methods: {
     getImagePath(filename) {
       return config.baseUrl + '/userinfo/' + filename
     },
-	
-	
-	getUser() {
-	    getUserProfile().then(response => {
-	      this.form.nickname = response.data.nickname;
-	    });
-	  },
-	
-	
-	
+
+    async loadCurrentUser() {
+      const response = await getUserProfile()
+      this.currentUserNickname = (response && response.data && response.data.nickname) || ''
+      this.currentUserImageUrl = (response && response.data && response.data.imageUrl) || ''
+    },
+
     async loadUser(nickname) {
       try {
-        const res = await new Promise((resolve, reject) => {
-          uni.request({
-            url: config.baseUrl + '/user/one',
-            method: 'GET',
-            header: {
-              'Authorization': 'Bearer ' + uni.getStorageSync('token') // 如果有 token，需要带上
-            },
-            data: {
-              param: nickname // ✅ 关键点：参数名为 param，值为 nickname
-            },
-            success: (res) => resolve(res),
-            fail: (err) => reject(err)
-          })
-        })
-    
-        if (res && res.data && res.data.code === 200) {
-          const userData = res.data.data
-          console.log('userData', userData)
-    
-          // 处理 tags 字符串为数组
-          if (userData.tags && typeof userData.tags === 'string') {
-            userData.tags = userData.tags.split(',').map(tag => tag.trim())
-          } else {
-            userData.tags = []
-          }
-    
-          this.user = userData
-        } else {
-          console.error('请求成功但返回异常', res)
+        const res = await getUserByNickname(nickname)
+        const userData = (res && res.data) || null
+        if (!userData) {
+          return
         }
+        if (userData.tags && typeof userData.tags === 'string') {
+          userData.tags = userData.tags.split(',').map(tag => tag.trim())
+        } else {
+          userData.tags = []
+        }
+        this.user = userData
       } catch (error) {
         console.error('获取用户失败：', error)
       }
     },
+
+    async loadFollowStatus() {
+      if (!this.user || !this.currentUserNickname || this.currentUserNickname === this.user.nickname) {
+        this.isFollowing = false
+        return
+      }
+      try {
+        const response = await checkFollowRelation({
+          follower: this.currentUserNickname,
+          followee: this.user.nickname
+        })
+        this.isFollowing = Boolean(response && response.data && response.data.isFollowing)
+      } catch (_error) {
+        this.isFollowing = false
+      }
+    },
     
-    // 关注/取消关注处理函数
     handleFollow() {
+      if (!this.user) {
+        return
+      }
+      if (this.currentUserNickname === this.user.nickname) {
+        uni.showToast({ title: '不能关注自己', icon: 'none' })
+        return
+      }
       if (this.isFollowing) {
-        // 执行取消关注逻辑
         this.unfollowUser()
       } else {
-        // 执行关注逻辑
         this.followUser()
       }
     },
     
-    // 关注用户
     followUser() {
       uni.showLoading({ title: '处理中...' })
-      // 这里替换为实际的关注API调用
-      console.log('正在关注用户:', this.user.nickname)
-      // 模拟API请求
-      setTimeout(() => {
+      addFollowRelation({
+        follower: this.currentUserNickname,
+        follower_image_url: this.currentUserImageUrl,
+        followee: this.user.nickname,
+        followee_image_url: this.user.imageUrl || ''
+      })
+        .then(() => {
         this.isFollowing = true
-        uni.hideLoading()
         uni.showToast({ title: '关注成功', icon: 'success' })
-      }, 500)
+        })
+        .catch(() => {
+          uni.showToast({ title: '关注失败', icon: 'none' })
+        })
+        .finally(() => {
+          uni.hideLoading()
+        })
     },
     
-    // 取消关注
     unfollowUser() {
       uni.showModal({
         title: '提示',
@@ -136,26 +140,23 @@ export default {
         success: (res) => {
           if (res.confirm) {
             uni.showLoading({ title: '处理中...' })
-            // 这里替换为实际的取消关注API调用
-            console.log('取消关注用户:', this.user.nickname)
-            // 模拟API请求
-            setTimeout(() => {
-              this.isFollowing = false
-              uni.hideLoading()
-              uni.showToast({ title: '已取消关注', icon: 'success' })
-            }, 500)
+            removeFollowRelation({
+              follower: this.currentUserNickname,
+              followee: this.user.nickname
+            })
+              .then(() => {
+                this.isFollowing = false
+                uni.showToast({ title: '已取消关注', icon: 'success' })
+              })
+              .catch(() => {
+                uni.showToast({ title: '取消失败', icon: 'none' })
+              })
+              .finally(() => {
+                uni.hideLoading()
+              })
           }
         }
       })
-    },
-    
-    // 检查关注状态（根据实际API实现）
-    checkFollowStatus(nickname) {
-      // 这里实现检查是否已关注该用户的逻辑
-      // 示例：
-      // api.checkFollow({nickname}).then(res => {
-      //   this.isFollowing = res.data.isFollowing
-      // })
     }
   }
 }
