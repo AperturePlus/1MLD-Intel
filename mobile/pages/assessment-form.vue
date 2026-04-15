@@ -275,6 +275,11 @@ export default {
         .then(() => {
           uni.hideLoading();
           uni.showToast({ title: '数据提交成功', icon: 'success' });
+          setTimeout(() => {
+            uni.switchTab({
+              url: '/pages/assessment-result'
+            });
+          }, 1500);
         })
         .catch(() => {
           uni.hideLoading();

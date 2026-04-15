@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { queryArticles } from '@/api/system/advice'
+import { listArticles, queryArticles } from '@/api/system/advice'
 
 export default {
   data() {
@@ -43,7 +43,8 @@ export default {
   },
   methods: {
     searchArticles() {
-      queryArticles({ param: this.query.trim() }).then((res) => {
+      const keyword = this.query.trim()
+      listArticles({ param: keyword }).then((res) => {
         this.articleList = (res && res.data) || []
       })
     }

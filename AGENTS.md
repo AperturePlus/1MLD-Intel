@@ -111,8 +111,8 @@
 - 模型注册优先复用 `model_registry`；缺省模型仅可自动补齐为本地模型配置，不得引入未授权云模型依赖。
 - 前端开发可保留旧 mock 路径作为回退（`/api/v1/web/diagnosis/*`），但生产联调必须以 `/api/v1/web/diagnoses/*` 为准。
 - 若接口字段或路径变化，必须同步更新：
-  - `Front-Webpage/frontend/src/api/diagnosis.ts`
-  - `Front-Webpage/frontend/src/api/types.ts`
+  - `web/src/api/diagnosis.ts`
+  - `web/src/api/types.ts`
   - 本文件 `AGENTS.md` 对应章节
 
 ## 变更执行清单（每次任务都要检查）

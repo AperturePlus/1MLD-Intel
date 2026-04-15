@@ -1,28 +1,28 @@
-name: App CI
+name: Mobile CI
 
 on:
   pull_request:
     paths:
-      - 'Front-APP/front/**'
-      - '.github/workflows/app-ci.yml'
+      - 'mobile/**'
+      - '.github/workflows/mobile-ci.yml'
   push:
     branches:
       - main
       - develop
     paths:
-      - 'Front-APP/front/**'
-      - '.github/workflows/app-ci.yml'
+      - 'mobile/**'
+      - '.github/workflows/mobile-ci.yml'
   workflow_dispatch:
 
 jobs:
-  app-typecheck:
-    name: Type Check Front-APP
+  mobile-typecheck:
+    name: Type Check Mobile
     runs-on: ubuntu-latest
     permissions:
       contents: read
     defaults:
       run:
-        working-directory: Front-APP/front
+        working-directory: mobile
     steps:
       - name: Checkout
         uses: actions/checkout@v4

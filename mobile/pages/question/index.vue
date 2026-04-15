@@ -3,7 +3,7 @@
     <view class="cu-chat">
       <view v-for="(message, index) in messages" :key="index">
         <view v-if="message.role !== 'user'" class="cu-item" style="padding-bottom: 5rpx;">
-          <view class="cu-avatar radius" style="background-image: url(/static/images/image/早餐3.png)"></view>
+          <view class="cu-avatar radius" style="background-image: url(/static/images/image/smart-qa.png)"></view>
           <view class="main">
             <view class="content shadow">
               <text>{{ message.content }}</text>
@@ -16,7 +16,7 @@
               <text>{{ message.content }}</text>
             </view>
           </view>
-          <view class="cu-avatar radius" style="background-image: url(/static/images/image/早餐2.png)"></view>
+          <view class="cu-avatar radius" style="background-image: url(/static/images/image/smart-recommendation.png)"></view>
         </view>
       </view>
     </view>
@@ -41,7 +41,12 @@ export default {
   data() {
     return {
       inputBottom: 0,
-      messages: [],
+      messages: [
+        {
+          content: '您好，我是数智肝循 AI 助手，专注于遗传代谢性肝病的健康咨询。您可以向我提问关于饮食管理、检查指标、基因检测、药物治疗等方面的问题。',
+          role: 'assistant'
+        }
+      ],
       inputMessage: ''
     }
   },

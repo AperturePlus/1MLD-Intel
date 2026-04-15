@@ -17,21 +17,21 @@
 
     <view class="content-wrapper">
       <view class="quick-action-card flex justify-around">
-        <view class="action-item" @click="navigateTo('/pages/assessment-form')">
-          <text class="action-num">12</text>
-          <text class="action-label">健康档案</text>
+        <view class="action-item" @click="navigateTo('/pages/mine/info/index')">
+          <text class="action-num">{{ followCount }}</text>
+          <text class="action-label">我的关注</text>
         </view>
         <view class="action-item" @click="navigateTo('/pages/assessment-result')">
-          <text class="action-num">3</text>
-          <text class="action-label">评估记录</text>
+          <text class="action-num">{{ evaluateCount }}</text>
+          <text class="action-label">收到评价</text>
         </view>
         <view class="action-item" @click="navigateTo('/pages/question/index')">
-          <text class="action-num">1</text>
-          <text class="action-label">问诊记录</text>
-        </view>
-        <view class="action-item" @click="navigateTo('/pages/articles/all')">
-          <text class="action-num">8</text>
+          <text class="action-num">{{ collectCount }}</text>
           <text class="action-label">我的收藏</text>
+        </view>
+        <view class="action-item" @click="navigateTo('/pages/mine/search/index')">
+          <text class="action-num">{{ userCount }}</text>
+          <text class="action-label">社区用户</text>
         </view>
       </view>
 
@@ -81,6 +81,9 @@
 
 <script>
 import { getUserProfile } from '@/api/system/user'
+import { queryUsers } from '@/api/system/user'
+import { listFollowRelations } from '@/api/system/follow'
+import { listReceivedUserEvaluations, listMyCollections } from '@/api/system/report'
 
 export default {
   data() {
@@ -90,10 +93,14 @@ export default {
         phone: '',
         avatar: '',
         role: 'patient'
-      }
+      },
+      followCount: 0,
+      evaluateCount: 0,
+      collectCount: 0,
+      userCount: 0
     }
   },
-  onLoad() {
+  onShow() {
     this.loadUserProfile()
   },
   methods: {
@@ -106,6 +113,22 @@ export default {
           avatar: data.avatar || '/static/images/default-avatar.png',
           role: 'patient'
         }
+        this.loadCounts(data.nickname || data.userName || '')
+      })
+    },
+    loadCounts(nickname) {
+      if (!nickname) return
+      listFollowRelations({ follower: nickname }).then((res) => {
+        this.followCount = (res && res.data && res.data.length) || 0
+      })
+      listReceivedUserEvaluations(nickname).then((res) => {
+        this.evaluateCount = (res && res.data && res.data.length) || 0
+      })
+      listMyCollections(nickname).then((res) => {
+        this.collectCount = (res && res.data && res.data.length) || 0
+      })
+      queryUsers({}).then((res) => {
+        this.userCount = (res && res.data && res.data.length) || 0
       })
     },
     maskPhone(phone) {
