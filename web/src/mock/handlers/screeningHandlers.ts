@@ -19,13 +19,13 @@ export const screeningExactHandlers = {
           { level: '低', count: 11688, percentage: 100, color: '#67c23a' }
         ],
         topGenes: [
-          { name: 'ATP7B', desc: '肝豆状核变性', percentage: 82 },
-          { name: 'HFE', desc: '遗传性血色病', percentage: 65 },
-          { name: 'SERPINA1', desc: 'α1-抗胰蛋白酶缺乏', percentage: 48 },
-          { name: 'SLC37A4', desc: '糖原累积病 Ib型', percentage: 30 },
-          { name: 'UGT1A1', desc: 'Gilbert综合征', percentage: 22 },
-          { name: 'G6PC', desc: '糖原累积病 Ia型', percentage: 15 },
-          { name: 'NPC1', desc: '尼曼-匹克病', percentage: 8 }
+          { name: 'UGT1A1', desc: 'Gilbert综合征', percentage: 85 },
+          { name: 'SLC10A1', desc: '胆盐输出泵相关', percentage: 78 },
+          { name: 'ABCB4', desc: '多药耐药相关', percentage: 72 },
+          { name: 'ATP7B', desc: '肝豆状核变性', percentage: 65 },
+          { name: 'ABCC2', desc: '多药耐药相关', percentage: 58 },
+          { name: 'HFE', desc: '遗传性血色病', percentage: 45 },
+          { name: 'SERPINA1', desc: 'α1-抗胰蛋白酶缺乏', percentage: 32 }
         ],
         aiEfficiency: {
           diagnosisMatchRate: 94.6,
